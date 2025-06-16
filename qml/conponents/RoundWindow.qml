@@ -31,7 +31,7 @@ Window {
             id: titleBar
             width: parent.width
             height: 40
-            color: Qt.rgba(0.2,0.2,0.2,0.6)
+            color: Qt.rgba(0.106, 0.553, 0.788,1)
             radius: parent.radius
 
             Text {
