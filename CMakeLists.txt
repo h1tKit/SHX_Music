@@ -24,7 +24,8 @@ qt_add_qml_module(
   QML_FILES
   Main.qml
   QML_FILES qml/logic/Player.qml
-  QML_FILES qml/conponents/PlayBar.qml qml/conponents/RoundRectangleButton.qml qml/conponents/RoundWindow.qml qml/conponents/TSlider.qml)
+  QML_FILES qml/conponents/PlayBar.qml qml/conponents/RoundRectangleButton.qml qml/conponents/RoundWindow.qml qml/conponents/TSlider.qml
+  QML_FILES qml/logic/ControlPlay.qml)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 
