@@ -23,19 +23,28 @@ Window {
     Rectangle {
         id: root
         anchors.fill: parent
-        radius: 10
+        radius: 12
         color: "white"
         clip: true
 
         Rectangle {
             id: titleBar
-            width: parent.width
+            anchors.left: parent.left
+            anchors.right: parent.right
             height: 40
             color: Qt.rgba(0.106, 0.553, 0.788,1)
             radius: parent.radius
 
+            Rectangle {               //fix bottom radius
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                height: 20
+                color: parent.color
+            }
+
             Text {
-                text: "music player"
+                text: "SHX Music"
                 color: "white"
                 font.pixelSize: 16
 
@@ -45,45 +54,58 @@ Window {
             }
 
             Row {
+                id: controlButtons
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 1
+                spacing: 4
 
-                Button {
-                    width: 45
-                    height: titleBar.height
-                    flat: true
-                    text: "—"
-                    font.pixelSize: 16
-                    onClicked: window.showMinimized()
-
-                }
-
-                Button {
-                    id: maxButton
-                    width: 45
-                    height: titleBar.height
-                    flat: true
-                    text: window.visibility === Window.Maximized ? "❐" : "□"
-                    font.pixelSize: 16
-                    onClicked: {
-                        window.toggleMaximize()
+                RoundRectangleButton {
+                    id: minButton
+                    width: 36
+                    height: 36
+                    radius: 18
+                    Text {
+                        text: "—"
+                        font.pixelSize: 16
+                        anchors.centerIn: parent
                     }
+                    onTapped: window.showMinimized()
                 }
 
-                Button {
-                    width: 45
-                    height: titleBar.height
-                    flat: true
-                    text: "×"
-                    font.pixelSize: 16
-                    onClicked: window.close()
+                RoundRectangleButton {
+                    id: maxButton
+                    width: 36
+                    height: 36
+                    radius: 18
+                    Text {
+                        text: window.visibility === Window.Maximized ? "❐" : "□"
+                        font.pixelSize: 16
+                        anchors.centerIn: parent
+                    }
+                    onTapped: window.toggleMaximize()
+                }
 
+                RoundRectangleButton {
+                    id: closeButton
+                    width: 36
+                    height: 36
+                    radius: 18
+                    hoverBackgroundColor: Qt.rgba(1,0,0,0.65)
+                    Text {
+                        color: closeButton.isHoverd ? "white" : "black"
+                        text: "×"
+                        font.pixelSize: 16
+                        anchors.centerIn: parent
+                    }
+                    onTapped: window.close()
                 }
             }
 
             MouseArea {
-                anchors.fill: parent
+                anchors.left: parent.left
+                anchors.right: controlButtons.left
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
                 onPressed: {
                     window.startSystemMove()
                 }
@@ -136,11 +158,8 @@ Window {
                     id: playBar
                     Layout.fillWidth: true
                     Layout.preferredHeight: 100
-
                 }
-
             }
-
         }
     }
 
@@ -207,7 +226,6 @@ Window {
             }
         }
     }
-
 
     function toggleMaximize() {
         if (window.visibility === Window.Maximized) {
