@@ -16,6 +16,9 @@ public:
     Q_INVOKABLE void OperationTxt(const QString &filePath);
     QStringList ReadPathFromFile(const QString &filePath);
     QStringList pathList() const { return m_pathList; }
+    void AddPathToTxt(const QString &filePath, QStringList &newFiles);
+    void extracted(QStringList &deleteFiles, QStringList &currentPaths, QStringList &filteredPaths);
+    void DeletePathTotxt(const QString &filePath, QStringList &deleteFiles);
 
 signals:
     void pathListChanged();

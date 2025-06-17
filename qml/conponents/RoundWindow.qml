@@ -149,6 +149,8 @@ Window {
                         //color: Qt.rgba(0,0,0,0.03)
                         Layout.preferredWidth: 150
                         Layout.fillHeight: true
+                        windowWidth:window.width
+                        windowHeight:window.height - playBar.height
                     }
 
                     // Rectangle {
@@ -242,6 +244,23 @@ Window {
                 window.startSystemResize(Qt.BottomEdge)
             }
         }
+    }
+
+    Loader{
+        id:contentLoader
+        anchors.fill:parent
+        //source:"LocalPage.qml"
+
+        onLoaded:{
+            if(item){
+                musicDeal.initLocalModel(musicDeal.localModel, "/run/media/root/manjaro/xie/program/SHX/localMusic.txt")
+                item.model = musicDeal.localModel
+            }
+        }
+    }
+
+    MusicDeal{
+        id: musicDeal
     }
 
     function toggleMaximize() {

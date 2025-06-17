@@ -58,3 +58,60 @@ QStringList MusicPathOperations::ReadPathFromFile(
     file.close();
     return pathList;
 }
+
+void MusicPathOperations::AddPathToTxt(
+    const QString &filePath, QStringList &newFiles)
+{
+    // 读取现有路径
+    QStringList currentPaths = ReadPathFromFile(filePath);
+
+    // 合并并去重（保留原有顺序，新增路径追加到末尾)
+    for (const QString &path : newFiles) {
+        if (!path.isEmpty() && !currentPaths.contains(path)) {
+            currentPaths.append(path);
+        }
+    }
+
+    // 写入文件（无空白行）
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        for (const QString &path : currentPaths) {
+            out << path << "\n"; // 每行一个路径
+        }
+        file.close();
+
+        // 更新属性并发送信号
+        m_pathList = currentPaths;
+        emit pathListChanged();
+    }
+}
+
+void MusicPathOperations::DeletePathTotxt(
+    const QString &filePath, QStringList &deleteFiles)
+{
+    // 读取现有路径
+    QStringList currentPaths = ReadPathFromFile(filePath);
+
+    // 过滤掉需要删除的路径
+    QStringList filteredPaths;
+    for (const QString &path : currentPaths) {
+        if (!path.isEmpty() && !deleteFiles.contains(path)) {
+            filteredPaths.append(path);
+        }
+    }
+
+    // 写入文件（无空白行）
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        for (const QString &path : filteredPaths) {
+            out << path << "\n"; // 每行一个路径
+        }
+        file.close();
+
+        // 更新属性并发送信号
+        m_pathList = filteredPaths;
+        emit pathListChanged();
+    }
+}
