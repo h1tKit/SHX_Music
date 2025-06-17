@@ -13,6 +13,8 @@ Window {
     color: "transparent"
     visible: true
 
+
+
     signal miniSize()
     signal midSize()
     signal maxSize()

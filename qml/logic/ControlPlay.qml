@@ -7,15 +7,18 @@ import QtMultimedia
 
 Item {
     id:control
+    //这个当前播放列表记录路径位置，需要xys提供接口
+    property ListModel playlistModel: model
+
+    ListModel{
+        id:model
+        ListElement { filePath: "file:///root/tmp/海阔天空.mp3" }
+        ListElement { filePath: "file:///root/tmp/Life_Is_Good_Alarm.ogg"}
+        ListElement { filePath: "file:///root/tmp/Justin Timberlake-Five Hundred Miles.mp3" }
+    }
 
     property var musicplayer
-
-    //这个当前播放列表记录路径位置，需要xys提供接口
-    property var currentList: [         //test
-        "file:///root/tmp/海阔天空.mp3",
-        "file:///root/tmp/Justin Timberlake-Five Hundred Miles.mp3",
-        "file:///root/tmp/Life_Is_Good_Alarm.ogg"
-    ]
+    property var currentList: []
     property int currentIndex: 0
 
     property int playMode: 0 // 0-顺序 1-随机 2-单曲循环
@@ -23,24 +26,46 @@ Item {
     property var playHistory: []
     property int historyPosition: -1 // 当前在历史记录中的位置
 
+    onCurrentIndexChanged: changeSong()
 
-    //自动播放下一首
+    //组件建立监听
     Component.onCompleted: {
         //连接信号
+        updateCurrentList();
+        console.log("更新")
+        if (currentList.length > 0) {
+            currentIndex = 0;
+            musicplayer.player.source = currentList[currentIndex];
+                }
         musicplayer.player.mediaStatusChanged.connect(autoPlay)
     }
     Component.onDestruction: {
         //断开信号
         musicplayer.player.mediaStatusChanged.disconnect(autoPlay)
+
      }
 
+    function updateCurrentList() {
+            currentList = []; // 清空当前列表
+            console.log("更新列表")
+            for (var i = 0; i < playlistModel.count; i++) {
+                currentList.push(playlistModel.get(i).filePath);
+            }
+        }
+    Connections {
+        target: playlistModel
+        onCountChanged: updateCurrentList()
+    }
+
+
+
+    //自动播放下一首
     function autoPlay(){
         if (musicplayer.player.mediaStatus === MediaPlayer.EndOfMedia) {
             console.log("自动下一首");
             nextSong();
         }
     }
-
 
     //控制播放和暂停逻辑
     function playpause(){
@@ -55,6 +80,7 @@ Item {
 
     //播放下一首逻辑
     function nextSong() {
+        console.log("下一首")
         //随机模式需要记录历史记录
         if (playMode === 1) {
             addToHistory(currentIndex);

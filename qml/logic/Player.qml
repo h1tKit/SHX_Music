@@ -8,7 +8,6 @@ Item {
 
     MediaPlayer {
         id: _player
-
         audioOutput: _audioOutput
     }
 
