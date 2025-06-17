@@ -17,6 +17,12 @@ Item {
     property real to
     property real dragValue
 
+    property alias doneColor: track.color
+    property alias undoneColor: un.color
+    property alias handleColor: handle.color
+    property alias handleCentralColor: central.color
+    property alias handle: handle
+
     signal draged(real setValue)
 
     Rectangle {

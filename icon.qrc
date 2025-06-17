@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/control">
+        <file>image/play.png</file>
+        <file>image/skip_next.png</file>
+        <file>image/skip_previous.png</file>
+        <file>image/love_empty.png</file>
+        <file>image/love.png</file>
+        <file>image/pause.png</file>
+        <file>image/volume.png</file>
+        <file>image/volume_mute.png</file>
+        <file>image/loop.png</file>
+        <file>image/musiclist.png</file>
+        <file>image/random.png</file>
+        <file>image/single_loop.png</file>
+    </qresource>
+    <qresource prefix="/"/>
+</RCC>

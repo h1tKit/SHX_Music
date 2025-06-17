@@ -4,6 +4,8 @@ import QtQuick.Layouts
 Item {
     id: root
 
+    property var controler
+
     Rectangle {
         id: background
         color: Qt.rgba(0,0,0,0.03)
@@ -21,9 +23,12 @@ Item {
 
     Rectangle {
         id: imageArt
-        color: "pink"
+        color: "transparent"
         width: 80
         height: 80
+        radius: 40
+        border.width: 1
+        border.color: Qt.rgba(0,0,0,0.15)
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 10
@@ -31,7 +36,7 @@ Item {
 
     Rectangle {
         id: details
-        color: "green"
+        color: "transparent"
         width: 80
         height: 50
         anchors.left: imageArt.right
@@ -41,14 +46,44 @@ Item {
 
     }
 
-    Rectangle {
+    RoundRectangleButton {
         id: loveButton
-        width: 30
-        height: 30
+        width: 34
+        height: 34
+        radius: 17
+        hoverBackgroundColor: "transparent"
         anchors.left: details.right
         anchors.leftMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
+        state: "love"
+
+        states: [
+            State {
+                name: "love"
+                PropertyChanges {
+                    target: loveIcon
+                    source : "qrc:/control/image/love.png"
+                }
+            },
+            State {
+                name: "not"
+                PropertyChanges {
+                    target: loveIcon
+                    source : "qrc:/control/image/love_empty.png"
+                }
+            }
+        ]
+
+        onTapped: {
+            state = (state === "love" ? "not" : "love")
+        }
+
+        Image {
+            id: loveIcon
+            anchors.fill: parent
+            scale: 1
+        }
     }
 
     RowLayout {
@@ -63,18 +98,26 @@ Item {
 
         Rectangle {
             id: currentTime
+            color: "transparent"
             Layout.preferredWidth: 30
             Layout.preferredHeight: 15
         }
 
         TSlider {
             id: slider
+            doneColor: Qt.rgba(0.106, 0.553, 0.788,1)
+            undoneColor: Qt.rgba(0.7,0.7,0.7,1)
+            handleColor: "white"
+            handleCentralColor: Qt.rgba(0.106, 0.553, 0.788,1)
+            handle.border.width: 1
+            handle.border.color: Qt.rgba(0,0,0,0.15)
             Layout.preferredHeight: 6
             Layout.fillWidth: true
         }
 
         Rectangle {
             id: totalTime
+            color: "transparent"
             Layout.preferredWidth: 30
             Layout.preferredHeight: 15
         }
@@ -90,57 +133,184 @@ Item {
         spacing: 40
 
         RoundRectangleButton {
+            id: preButton
             radius: 20
             backgroundColor: Qt.rgba(0.133, 0.608, 0.859,1)
             hoverBackgroundColor: Qt.rgba(0.106, 0.553, 0.788,1)
             Layout.preferredHeight: 60
             Layout.preferredWidth: 60
 
-        }
-        RoundRectangleButton {
-            radius: 20
-            backgroundColor: Qt.rgba(0.133, 0.608, 0.859,1)
-            hoverBackgroundColor: Qt.rgba(0.106, 0.553, 0.788,1)
-            Layout.preferredHeight: 60
-            Layout.preferredWidth: 60
-        }
-        RoundRectangleButton {
-            radius: 20
-            backgroundColor: Qt.rgba(0.133, 0.608, 0.859,1)
-            hoverBackgroundColor: Qt.rgba(0.106, 0.553, 0.788,1)
-            Layout.preferredHeight: 60
-            Layout.preferredWidth: 60
-        }
+            onTapped: {
+                controler.prevSong()
+            }
 
+            Image {
+                id: preIcon
+                source: "qrc:/control/image/skip_previous.png"
+                anchors.fill: parent
+                scale: 0.6
+            }
+        }
+        RoundRectangleButton {
+            id: playButton
+            radius: 20
+            backgroundColor: Qt.rgba(0.133, 0.608, 0.859,1)
+            hoverBackgroundColor: Qt.rgba(0.106, 0.553, 0.788,1)
+            Layout.preferredHeight: 60
+            Layout.preferredWidth: 60
+            state: "paused"
+
+            onTapped: {
+                state = state === "playing" ? "paused" : "playing"
+                controler.playpause()
+            }
+
+            states: [
+                State {
+                    name: "playing"
+                    PropertyChanges {
+                        target: playIcon
+                        source: "qrc:/control/image/pause.png"
+                    }
+                },
+                State {
+                    name: "paused"
+                    PropertyChanges {
+                        target: playIcon
+                        source: "qrc:/control/image/play.png"
+                    }
+                }
+            ]
+
+            Image {
+                id: playIcon
+                source: "qrc:/control/image/play.png"
+                anchors.fill: parent
+                scale: 0.6
+            }
+        }
+        RoundRectangleButton {
+            id: nextButton
+            radius: 20
+            backgroundColor: Qt.rgba(0.133, 0.608, 0.859,1)
+            hoverBackgroundColor: Qt.rgba(0.106, 0.553, 0.788,1)
+            Layout.preferredHeight: 60
+            Layout.preferredWidth: 60
+
+            onTapped: {
+                controler.nextSong()
+            }
+
+            Image {
+                id: nextIcon
+                source: "qrc:/control/image/skip_next.png"
+                anchors.fill: parent
+                scale: 0.6
+            }
+        }
     }
 
-    Rectangle {
+    RoundRectangleButton {
         id: playModeButton
-        width: 30
-        height: 30
+        width: 34
+        height: 34
+        hoverBackgroundColor: "transparent"
         anchors.right: volumeButton.left
         anchors.rightMargin: 30
         anchors.verticalCenter: parent.verticalCenter
+
+        onStateChanged: {
+            controler.playMode = (state === "sequence" ? 0 : (state === "random" ? 1 : 2))
+        }
+
+        state: "loop"
+
+        onTapped: {
+            state = (state === "sequence" ? "random" : (state === "random" ? "loop" : "sequence"))
+        }
+
+        states: [
+            State {
+                name: "random"
+                PropertyChanges {
+                    target: playModeIcon
+                    source: "qrc:/control/image/random.png"
+                }
+            },
+            State {
+                name: "sequence"
+                PropertyChanges {
+                    target: playModeIcon
+                    source: "qrc:/control/image/loop.png"
+                }
+            },
+            State {
+                name: "loop"
+                PropertyChanges {
+                    target: playModeIcon
+                    source: "qrc:/control/image/single_loop.png"
+                }
+            }
+        ]
+
+        Image {
+            id: playModeIcon
+            anchors.fill: parent
+        }
     }
 
-    Rectangle {
+    RoundRectangleButton {
         id: volumeButton
         width: 30
         height: 30
-        color: Qt.rgba(0.5,0.7,0.3,1)
+        hoverBackgroundColor: "transparent"
         anchors.right: listButton.left
         anchors.rightMargin: 30
         anchors.verticalCenter: parent.verticalCenter
+        state: "normal"
+
+        onTapped: {
+            state = (state === "normal" ? "mute" : "normal")
+        }
+
+        states: [
+            State {
+                name: "normal"
+                PropertyChanges {
+                    target: volumeIcon
+                    source: "qrc:/control/image/volume.png"
+                }
+            },
+            State {
+                name: "mute"
+                PropertyChanges {
+                    target: volumeIcon
+                    source: "qrc:/control/image/volume_mute.png"
+                }
+            }
+        ]
+
+        Image {
+            id: volumeIcon
+            source: "qrc:/control/image/volume.png"
+            anchors.fill: parent
+        }
     }
 
-    Rectangle {
+    RoundRectangleButton {
         id: listButton
         width: 30
         height: 30
-        color: "blue"
+        hoverBackgroundColor: "transparent"
         anchors.right: parent.right
         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
+
+        Image {
+            id: listIcon
+            source: "qrc:/control/image/musiclist.png"
+            anchors.fill: parent
+        }
     }
 
 }

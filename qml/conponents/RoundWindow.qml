@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../logic"
 
 
 Window {
@@ -18,6 +19,17 @@ Window {
 
     onWidthChanged: {
         window.width > 1000 ? maxSize() : window.width > 650 ? midSize() : miniSize()
+    }
+
+    Player {
+        id: player1
+        player.audioOutput.volume: 0.4
+        player.source: control.currentList[0]
+    }
+
+    ControlPlay {
+        id: control
+        musicplayer: player1
     }
 
     Rectangle {
@@ -54,7 +66,7 @@ Window {
             }
 
             Row {
-                id: controlButtons
+                id: windowControlButtons
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 4
@@ -103,7 +115,7 @@ Window {
 
             MouseArea {
                 anchors.left: parent.left
-                anchors.right: controlButtons.left
+                anchors.right: windowControlButtons.left
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 onPressed: {
@@ -132,21 +144,25 @@ Window {
                     id: rootRow
                     Layout.fillHeight: true
 
-                    Rectangle {
+                    SideMenu {
                         id: menu
-                        color: Qt.rgba(0,0,0,0.03)
+                        //color: Qt.rgba(0,0,0,0.03)
                         Layout.preferredWidth: 150
                         Layout.fillHeight: true
-
-                        Rectangle {
-                            id: line
-                            color: Qt.rgba(0,0,0,0.15)
-                            width: 1
-                            anchors.top: parent.top
-                            anchors.bottom: parent.bottom
-                            anchors.right: parent.right
-                        }
                     }
+
+                    // Rectangle {
+
+
+                    //     Rectangle {
+                    //         id: line
+                    //         color: Qt.rgba(0,0,0,0.15)
+                    //         width: 1
+                    //         anchors.top: parent.top
+                    //         anchors.bottom: parent.bottom
+                    //         anchors.right: parent.right
+                    //     }
+                    // }
 
                     Rectangle {
                         id: viewArea
@@ -156,6 +172,7 @@ Window {
 
                 PlayBar {
                     id: playBar
+                    controler: control
                     Layout.fillWidth: true
                     Layout.preferredHeight: 100
                 }

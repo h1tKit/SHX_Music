@@ -46,7 +46,10 @@ qt_add_qml_module(
   SOURCES
   cpp/musicinfo.cpp
   cpp/musicpathoperations.cpp
-  QML_FILES qml/logic/FavoriteBtnLogic.qml)
+  QML_FILES qml/logic/FavoriteBtnLogic.qml
+  QML_FILES qml/conponents/SideMenu.qml
+  RESOURCES image/brightness.png image/delete.png image/loop.png image/love_empty.png image/love.png image/musiclist.png image/night.png image/pause.png image/play.png image/random.png image/single_loop.png image/skip_next.png image/skip_previous.png image/volume_mute.png image/volume.png
+  RESOURCES icon.qrc)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 
