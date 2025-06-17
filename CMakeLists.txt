@@ -6,8 +6,15 @@ project(
   LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Qml Quick)
+find_package(Taglib REQUIRED)
+
+include_directories(${TAGLIB_INCLUDE_DIRS})
 
 qt_standard_project_setup(REQUIRES 6.9)
 
@@ -23,13 +30,28 @@ qt_add_qml_module(
   main.cpp
   QML_FILES
   Main.qml
-  QML_FILES qml/logic/Player.qml
-  QML_FILES qml/conponents/PlayBar.qml qml/conponents/RoundRectangleButton.qml qml/conponents/RoundWindow.qml qml/conponents/TSlider.qml
-  QML_FILES qml/logic/ControlPlay.qml)
+  QML_FILES
+  qml/logic/Player.qml
+  QML_FILES
+  qml/conponents/PlayBar.qml
+  qml/conponents/RoundRectangleButton.qml
+  qml/conponents/RoundWindow.qml
+  qml/conponents/TSlider.qml
+  QML_FILES
+  qml/logic/ControlPlay.qml
+  SOURCES
+  heads/musicpathoperations.h
+  SOURCES
+  heads/musicinfo.h
+  SOURCES
+  cpp/musicinfo.cpp
+  cpp/musicpathoperations.cpp)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 
 target_link_libraries(appSHXM PRIVATE Qt6::Quick)
+target_link_libraries(appSHXM PRIVATE Qt6::Widgets Qt6::Qml Qt6::Quick)
+target_link_libraries(appSHXM PRIVATE TagLib::TagLib)
 
 set_target_properties(
   appSHXM
