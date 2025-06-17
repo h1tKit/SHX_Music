@@ -45,7 +45,8 @@ qt_add_qml_module(
   heads/musicinfo.h
   SOURCES
   cpp/musicinfo.cpp
-  cpp/musicpathoperations.cpp)
+  cpp/musicpathoperations.cpp
+  QML_FILES qml/logic/FavoriteBtnLogic.qml)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 

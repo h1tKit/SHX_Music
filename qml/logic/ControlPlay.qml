@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtMultimedia
+//控制音乐上一首和暂停播放下一首有关的逻辑
 
 Item {
     id:control
@@ -14,10 +15,22 @@ Item {
     property var playHistory: []
     property int historyPosition: -1 // 当前在历史记录中的位置
 
+
+
     //加载Player以及提供的接口
     Player{
         id:musicplayer
     }
+
+    //控制播放和暂停逻辑
+    function playpause(){
+        if (musicplayer.playbackState === MediaPlayer.PlayingState) {
+           musicplayer.pause();
+        } else {
+            musicplayer.play();
+        }
+    }
+
 
     //播放下一首逻辑
     function nextSong() {
