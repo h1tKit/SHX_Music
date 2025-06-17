@@ -113,6 +113,10 @@ Item {
             handle.border.color: Qt.rgba(0,0,0,0.15)
             Layout.preferredHeight: 6
             Layout.fillWidth: true
+            from: 0
+            to: player1.player.duration
+            value: player1.player.position
+            onDraged: player1.player.position = setValue
         }
 
         Rectangle {

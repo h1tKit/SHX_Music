@@ -24,15 +24,23 @@ Item {
     property int historyPosition: -1 // 当前在历史记录中的位置
 
 
-    onCurrentIndexChanged: {
-        musicplayer.player.source = currentList[currentIndex]
+    //自动播放下一首
+    Component.onCompleted: {
+        //连接信号
+        musicplayer.player.mediaStatusChanged.connect(autoPlay)
+    }
+    Component.onDestruction: {
+        //断开信号
+        musicplayer.player.mediaStatusChanged.disconnect(autoPlay)
+     }
+
+    function autoPlay(){
+        if (musicplayer.player.mediaStatus === MediaPlayer.EndOfMedia) {
+            console.log("自动下一首");
+            nextSong();
+        }
     }
 
-
-    //加载Player以及提供的接口
-    // Player{
-    //     id:musicplayer
-    // }
 
     //控制播放和暂停逻辑
     function playpause(){
