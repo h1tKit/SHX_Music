@@ -9,6 +9,7 @@
 #include <taglib/vorbisfile.h> // OGG Vorbis 支持
 #include <taglib/wavfile.h>    // WAV 支持
 #include <taglib/attachedpictureframe.h>
+#include <QString>
 
 MusicInfo::MusicInfo(
     QObject *parent)
@@ -74,6 +75,18 @@ QVariantMap MusicInfo::readMP3Metadata(
             metadata["artist"] = QString::fromStdString(id3v2Tag->artist().to8Bit(true));
             metadata["album"] = QString::fromStdString(id3v2Tag->album().to8Bit(true)); //专辑名称
             metadata["year"] = id3v2Tag->year();
+            if (metadata["title"].toString().isEmpty()) {
+                metadata["title"] = filePath.split('/').last();
+            }
+            if (metadata["artist"].toString().isEmpty()) {
+                metadata["artist"] = "未知歌手";
+            }
+            if (metadata["album"].toString().isEmpty()) {
+                metadata["album"] = "未知专辑";
+            }
+            if (metadata["year"].toString().isEmpty()) {
+                metadata["year"] = "未知年份";
+            }
             metadata["track"] = id3v2Tag->track();                                      //音轨编号
             metadata["genre"] = QString::fromStdString(id3v2Tag->genre().to8Bit(true)); //音乐流派
 
@@ -121,6 +134,18 @@ QVariantMap MusicInfo::readFLACMetadata(
         metadata["year"] = tag->year();
         metadata["track"] = tag->track();
         metadata["genre"] = QString::fromStdString(tag->genre().to8Bit(true));
+        if (metadata["title"].toString().isEmpty()) {
+            metadata["title"] = filePath.split('/').last();
+        }
+        if (metadata["artist"].toString().isEmpty()) {
+            metadata["artist"] = "未知歌手";
+        }
+        if (metadata["album"].toString().isEmpty()) {
+            metadata["album"] = "未知专辑";
+        }
+        if (metadata["year"].toString().isEmpty()) {
+            metadata["year"] = "未知年份";
+        }
 
         const TagLib::List<TagLib::FLAC::Picture *> pictures = file.pictureList();
         for (auto *picture : pictures) {
@@ -165,6 +190,19 @@ QVariantMap MusicInfo::readOGGMetadata(
         metadata["year"] = tag->year();
         metadata["track"] = tag->track();
         metadata["genre"] = QString::fromStdString(tag->genre().to8Bit(true));
+        if (metadata["title"].toString().isEmpty()) {
+            metadata["title"] = filePath.split('/').last();
+        }
+
+        if (metadata["artist"].toString().isEmpty()) {
+            metadata["artist"] = "未知歌手";
+        }
+        if (metadata["album"].toString().isEmpty()) {
+            metadata["album"] = "未知专辑";
+        }
+        if (metadata["year"].toString().isEmpty()) {
+            metadata["year"] = "未知年份";
+        }
 
         // 2. 获取专辑图片（封面）
         // OGG 使用 XiphComment 的 FLAC 格式图片
@@ -215,6 +253,18 @@ QVariantMap MusicInfo::readWAVMetadata(
         metadata["year"] = tag->year();
         metadata["track"] = tag->track();
         metadata["genre"] = QString::fromStdString(tag->genre().to8Bit(true));
+        if (metadata["title"].toString().isEmpty()) {
+            metadata["title"] = filePath.split('/').last();
+        }
+        if (metadata["artist"].toString().isEmpty()) {
+            metadata["artist"] = "未知歌手";
+        }
+        if (metadata["album"].toString().isEmpty()) {
+            metadata["album"] = "未知专辑";
+        }
+        if (metadata["year"].toString().isEmpty()) {
+            metadata["year"] = "未知年份";
+        }
 
         metadata["coverArt"] = "";
 

@@ -57,7 +57,9 @@ qt_add_qml_module(
   QML_FILES qml/conponents/ViewArea.qml
   QML_FILES qml/conponents/HSlider.qml
   SOURCES cpp/musicmodel.cpp
-  SOURCES heads/musicmodel.h)
+  SOURCES heads/musicmodel.h
+  QML_FILES qml/logic/MusicControl.qml
+  RESOURCES data/currentMusic.txt)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 

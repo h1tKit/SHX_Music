@@ -23,6 +23,7 @@ public:
         BitrateRole,
         SampleRateRole,
         ChannelsRole,
+        MarkRole,
     };
     Q_ENUM(MusicRoles); //QML 中通过类名.枚举值访问枚举
 
@@ -39,6 +40,9 @@ public:
     Q_INVOKABLE void updateMusic(int index, const QVariantMap &data);
     Q_INVOKABLE void loadFromFile(const QString &filePath);
     Q_INVOKABLE QModelIndex createModelIndex(int row, int column = 0);
+    Q_INVOKABLE int getCount();
+    Q_INVOKABLE void setCount();
+    Q_INVOKABLE void clearCount();
 
 signals:
     void musicAdd();
@@ -59,7 +63,9 @@ private:
         int bitrate;
         int sampleRate;
         int channels;
+        int mark;
     };
 
     QList<MusicItem> m_musicList;
+    int count = 0;
 };

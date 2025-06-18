@@ -24,7 +24,7 @@ Window {
     Player {
         id: player1
         player.audioOutput.volume: 0.4
-        player.source: control.currentList[0]
+        //player.source: control.currentList[0]
     }
 
     ControlPlay {
@@ -158,15 +158,22 @@ Window {
             id: menu
             Layout.preferredWidth: 150
             Layout.fillHeight: true
+
+            Component.onCompleted: {
+                viewArea.initLocalModel("/home/br0/7/SHX_Music/data/localMusic.txt")
+            }
         }
 
-        Rectangle {
+        LocalPage {
             id: viewArea        //right top area
-            color: "black"
+            musicplayer: player1
+
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
     }
+
+
 
 
     Item {//resizeWindow

@@ -168,3 +168,18 @@ QModelIndex MusicModel::createModelIndex(
 {
     return createIndex(row, column);
 }
+
+int MusicModel::getCount()
+{
+    return count;
+}
+
+void MusicModel::setCount()
+{
+    count++;
+}
+
+void MusicModel::clearCount()
+{
+    count = 0;
+}

@@ -4,12 +4,13 @@ import MyModel
 
 Item {
     id:localPage
+    property bool isReady: false
 
-    property var filePathTxt: "/run/media/root/manjaro/xie/program/SHX/data/localMusic.txt"
+    property var filePathTxt: "/home/br0/7/SHX_Music/data/localMusic.txt"
     property var currentIndex: -1
     property var deleteFiles: []
 
-    property var contral
+    property var musicplayer
 
     Rectangle{
         anchors.fill: parent
@@ -19,6 +20,8 @@ Item {
     MusicModel{
         id:musicModel
     }
+
+    property alias musicModel: musicModel
 
     ListView {
         id: localListView
@@ -45,21 +48,22 @@ Item {
             }
             MouseArea {
                 anchors.fill: parent
+                /////
                 onClicked: {
+                    console.log("mCount ", musicModel.getCount())
                     currentIndex = index
                     //musicModel.removeMusic(currentIndex)
                     var deleteIndex = currentIndex;
                     if(!deleteFiles.includes[deleteIndex]){
-                        //deleteFiles.push(deleteIndex)
-                        //console.log(deleteIndex)
-
+                        deleteFiles.push(deleteIndex)
+                        console.log(deleteIndex)
                     }
                     var modelIndex = musicModel.createModelIndex(currentIndex, 0);
                     console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
                     var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                    //console.log()
-                    contral.player.source = path
-                    //deleteMusic(filePathTxt, deleteFiles)
+                    console.log(path)
+                    musicplayer.player.source = path
+                    deleteMusic(filePathTxt, deleteFiles)
 
                     //MusicPathOperations.DeletePathTotxt(filePathTxt, )
                 }
@@ -67,10 +71,12 @@ Item {
         }
     }
 
+    //1
     function initLocalModel(filePathTxt){
         MusicPathOperations.OperationTxt(filePathTxt)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
             musicModel.loadFromFile(MusicPathOperations.pathList[i])
+            musicModel.setCount()
         }
     }
 
@@ -79,7 +85,9 @@ Item {
     }
 
     Component.onCompleted:{
-        localPage.initLocalModel(filePathTxt)
+        //localPage.initLocalModel(filePathTxt)
         localListView.update()
+        console.log("localPage...")
+        localPage.isReady = true
     }
 }

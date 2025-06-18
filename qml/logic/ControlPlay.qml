@@ -2,24 +2,21 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtMultimedia
+import MyModel
 
 //控制音乐上一首和暂停播放下一首有关的逻辑
 
 Item {
     id:control
     //这个当前播放列表记录路径位置，需要xys提供接口
-    property ListModel playlistModel: model
 
-    ListModel{
-        id:model
-        ListElement { title:"海阔天空";artist:"beyond";filePath: "file:///root/tmp/海阔天空.mp3" }
-        ListElement { title:"Life_Is_Good_Alarm" ;artist:"黄昆";filePath:"file:///root/tmp/Life_Is_Good_Alarm.ogg"}
-        ListElement { title: "Justin Timberlake-Five Hundred Miles";artist:"黄昆";filePath:"file:///root/tmp/Justin Timberlake-Five Hundred Miles.mp3" }
-    }
+    property alias playdialog: __playDialog
+
+    property var addMusicPath
 
     property var musicplayer
     property var currentList: []
-    property int currentIndex: playlistModel.count > 0 ? 0 : -1  //初始化时绑定到count
+    property int currentIndex: -1//: currentView.currentIndex > 0 ? 0 : -1  //初始化时绑定到count
 
     property int playMode: 0 // 0-顺序 1-随机 2-单曲循环
 
@@ -27,15 +24,15 @@ Item {
     property int historyPointer: -1 // 当前在历史记录中的位置
     property bool isNavigatingHistory: false // 是否正在导航历史记录
 
-    onCurrentIndexChanged:{
-        if (currentIndex >= 0 && currentIndex < playlistModel.count&& !isNavigatingHistory) {
-            changeSong()
-            addToHistory(currentIndex);
-        }
-    }
+    property var filePath: "/home/br0/7/SHX_Music/data/currentMusic.txt"
 
-    //组件建立监听
-    Component.onCompleted: {
+    function initCurrentModel(filePath) {console.log("22222222",control.filePath)
+        MusicPathOperations.OperationTxt(control.filePath)
+        for(var i = 0; i < MusicPathOperations.pathList.length; i++){
+            currentModel.loadFromFile(MusicPathOperations.pathList[i])
+            currentModel.setCount()
+
+        }
         //连接信号
         updateCurrentList();
         console.log("初始化    更新")
@@ -45,6 +42,91 @@ Item {
         }
         musicplayer.player.mediaStatusChanged.connect(autoPlay)
     }
+
+    function addToCurrent(addMusicPath) {
+        currentModel.loadFromFile(addMusicPath)
+        currentModel.setCount()
+    }
+
+    MusicModel {
+        id: currentModel
+    }
+
+    Dialog{
+        id:__playDialog
+        //在上一级设置（Window）这里是试验
+        width: 200
+        height: 400
+        x: parent.width - width - 30  // 10 是右边距
+        y: parent.height - height - 100 // 10 是底部边距
+        parent: Overlay.overlay
+
+        //三个点来适配，
+        //model用playlistModel
+        //判断正在那一首时用index === controller.currentIndex
+        //MouseArea点击歌曲时用controller.playSong(index)
+        //需要把当前ListView的index传过去，来支持相互绑定
+        ListView{
+            id: currentView
+            anchors.fill: parent
+            spacing: 5
+            clip: true
+            visible:true
+            model: currentModel
+            delegate: Rectangle {
+                width: ListView.view.width
+                height: 40
+                color: index === currentIndex ? "#87CEEB" : "transparent"
+
+                Text {
+                    id:titletxt
+                    text: title
+                    anchors.top: parent.top
+                    anchors.topMargin:5
+                    anchors.left: parent.left
+                    anchors.leftMargin: 5
+                    elide: Text.ElideRight
+                    width: parent.width - 20
+                    color: "white"
+                    font.pixelSize: 12
+                }
+                Text {
+                    id:artisttxt
+                    text: artist
+                    anchors.top: titletxt.bottom
+                    anchors.topMargin:5
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    elide: Text.ElideRight
+                    width: parent.width - 20
+                    color: "white"
+                    font.pixelSize: 10
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        control.currentIndex = index
+                        control.playSong(index)
+                    }
+                }
+            }
+            ScrollBar.vertical: ScrollBar {}
+        }
+
+        onClosed: {
+            currentModel.clearMusic()
+            currentModel.clearCount()
+        }
+    }
+
+    onCurrentIndexChanged:{
+        if (currentIndex >= 0 && currentIndex < currentModel.getCount()&& !isNavigatingHistory) {
+            changeSong()
+            addToHistory(currentIndex);
+        }
+    }
+
     Component.onDestruction: {
         //断开信号
         musicplayer.player.mediaStatusChanged.disconnect(autoPlay)
@@ -53,24 +135,29 @@ Item {
 
     //更新currentList
     function updateCurrentList() {
-            currentList = []; // 清空当前列表
-            console.log("更新列表")
-            for (var i = 0; i < playlistModel.count; i++) {
-                currentList.push(playlistModel.get(i).filePath);
-            }
-            if (currentList.length > 0) {
-                    if (currentIndex < 0 || currentIndex >= currentList.length) {
-                        currentIndex = 0
-                    }
-            }else {
-                    currentIndex = -1
-            }
+        currentList = []; // 清空当前列表
+        console.log("更新列表")
+        console.log(currentModel.getCount())
+        console.log("count = ", currentModel.getCount())
+        for (var i = 0; i < currentModel.getCount(); i++) {
+            var ind = currentModel.createModelIndex(i,0)
+            var sourcePath = "file://" + currentModel.data(ind, MusicModel.FilePathRole)
+            currentList.push(sourcePath);
+            console.log(currentModel.data(ind, MusicModel.DurationRole))
         }
-    Connections {
-        target: playlistModel
-        onCountChanged: updateCurrentList()
+        if (currentList.length > 0) {
+            if (currentIndex < 0 || currentIndex >= currentList.length) {
+                currentIndex = 0
+            }
+        }else {
+            currentIndex = -1
+        }
     }
 
+    // Connections {
+    //     target: currentModel
+    //     onCurrentIndexChanged: updateCurrentList()
+    // }
 
     //自动播放下一首
     function autoPlay(){
@@ -93,7 +180,8 @@ Item {
 
     //列表点击时可以播放歌曲
     function playSong(index){
-        musicplayer.player.source=currentList[index]
+        musicplayer.player.source = currentList[index]
+        console.log("index", index)
         currentIndex=index
         musicplayer.player.play();
     }
@@ -165,7 +253,7 @@ Item {
 
     //更新当前播放顺序到Player的Source
     function changeSong() {
-        musicplayer.player.source = currentList[currentIndex];
+        musicplayer.player.source = currentList[control.currentIndex];
         musicplayer.play();
      }
 

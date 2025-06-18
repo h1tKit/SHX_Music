@@ -123,9 +123,9 @@ Item {
             Layout.fillWidth: true
 
             from: 0
-            to: player1.player.duration
-            value: player1.player.position
-            onDraged: player1.player.position = setValue
+            to: player.player.duration
+            value: player.player.position
+            onDraged: player.player.position = setValue
         }
 
         Rectangle {
@@ -180,8 +180,8 @@ Item {
 
             Connections {
                 target: player
-                onPlaying: playButton.state = "playing"
-                onPaused: playButton.state = "paused"
+                onPlaying: {playButton.state = "playing"}
+                onPaused: {playButton.state = "paused"}
             }
 
             states: [
@@ -341,7 +341,8 @@ Item {
         }
 
         onTapped: {
-            listdialog.playdialog.open()
+            controler.initCurrentModel()
+            controler.playdialog.open()
         }
     }
 

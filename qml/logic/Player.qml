@@ -5,6 +5,8 @@ Item {
     id: root
     property alias player: _player
 
+    property bool isReady: false
+
     signal playing()
     signal paused()
 
@@ -23,5 +25,9 @@ Item {
 
     AudioOutput {
         id: _audioOutput
+    }
+
+    Component.onCompleted: {
+        isReady = true
     }
 }
