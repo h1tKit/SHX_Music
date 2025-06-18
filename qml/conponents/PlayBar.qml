@@ -8,6 +8,7 @@ Item {
     property int radius: 12
     property var controler
     property var player
+    property var listdialog
 
     Rectangle {
         id: background
@@ -336,6 +337,10 @@ Item {
             id: listIcon
             source: "qrc:/control/image/musiclist.png"
             anchors.fill: parent
+        }
+
+        onTapped: {
+            listdialog.playdialog.open()
         }
     }
 

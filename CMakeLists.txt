@@ -52,7 +52,8 @@ qt_add_qml_module(
   RESOURCES icon.qrc
   QML_FILES qml/conponents/LocalPage.qml
   QML_FILES qml/logic/MusicDeal.qml
-  QML_FILES qml/conponents/VolumeSlider.qml qml/conponents/PlayingList.qml qml/conponents/SongList.qml)
+  QML_FILES qml/conponents/VolumeSlider.qml qml/conponents/PlayingList.qml qml/conponents/SongList.qml
+  QML_FILES qml/conponents/PlayListDialog.qml)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 
