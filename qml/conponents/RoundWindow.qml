@@ -32,6 +32,7 @@ Window {
         musicplayer: player1
     }
 
+    //
     PlayListDialog{
         id:playDialog1
         controller:control
@@ -136,6 +137,7 @@ Window {
         radius: 12
         player: player1
         controler: control
+        //
         listdialog: playDialog1
         anchors.left: parent.left
         anchors.right: parent.right

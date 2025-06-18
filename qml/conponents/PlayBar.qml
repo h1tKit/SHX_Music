@@ -8,6 +8,7 @@ Item {
     property int radius: 12
     property var controler
     property var player
+    //
     property var listdialog
 
     Rectangle {
@@ -280,7 +281,7 @@ Item {
     VolumeSlider {
         id: volumeSlider
         width: 40
-        height: 130
+        height: 150
         anchors.horizontalCenter: volumeButton.horizontalCenter
         anchors.bottom: volumeButton.top
         anchors.bottomMargin: 20
