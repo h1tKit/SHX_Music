@@ -18,7 +18,7 @@ public:
     QStringList pathList() const { return m_pathList; }
     void AddPathToTxt(const QString &filePath, QStringList &newFiles);
     void extracted(QStringList &deleteFiles, QStringList &currentPaths, QStringList &filteredPaths);
-    void DeletePathTotxt(const QString &filePath, QStringList &deleteFiles);
+    Q_INVOKABLE void DeletePathToTxt(const QString &filePath, QVariantList deleteIndex);
 
 signals:
     void pathListChanged();

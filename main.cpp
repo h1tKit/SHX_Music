@@ -3,6 +3,7 @@
 #include <QQmlContext>
 #include "./heads/musicpathoperations.h"
 #include "./heads/musicinfo.h"
+#include "./heads/musicmodel.h"
 
 int main(
     int argc, char *argv[])
@@ -11,10 +12,14 @@ int main(
 
     MusicInfo musicInfo;
     MusicPathOperations mpo;
+    MusicModel musicModel;
+
+    qmlRegisterType<MusicModel>("MyModel", 1, 0, "MusicModel");
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("musicInfo", &musicInfo);
-    engine.rootContext()->setContextProperty("musicPathOperations", &mpo);
+    engine.rootContext()->setContextProperty("MusicInfo", &musicInfo);
+    engine.rootContext()->setContextProperty("MusicPathOperations", &mpo);
+    // engine.rootContext()->setContextProperty("musicModel", &musicModel);
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

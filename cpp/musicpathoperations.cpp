@@ -3,6 +3,7 @@
 #include <qdebug.h>
 #include <QFile>
 #include <QTextStream>
+#include <qvariant.h>
 
 MusicPathOperations::MusicPathOperations(
     QObject *parent)
@@ -87,31 +88,52 @@ void MusicPathOperations::AddPathToTxt(
     }
 }
 
-void MusicPathOperations::DeletePathTotxt(
-    const QString &filePath, QStringList &deleteFiles)
+void MusicPathOperations::DeletePathToTxt(
+    const QString &filePath, QVariantList deleteIndex)
 {
-    // 读取现有路径
-    QStringList currentPaths = ReadPathFromFile(filePath);
-
-    // 过滤掉需要删除的路径
-    QStringList filteredPaths;
-    for (const QString &path : currentPaths) {
-        if (!path.isEmpty() && !deleteFiles.contains(path)) {
-            filteredPaths.append(path);
+    QList<int> indexes;
+    for (const QVariant &index : deleteIndex) {
+        if (index.canConvert<int>()) {
+            indexes.append(index.toInt());
         }
     }
 
-    // 写入文件（无空白行）
-    QFile file(filePath);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        for (const QString &path : filteredPaths) {
-            out << path << "\n"; // 每行一个路径
-        }
-        file.close();
-
-        // 更新属性并发送信号
-        m_pathList = filteredPaths;
-        emit pathListChanged();
+    //读取原始文件内容
+    QFile inputFile(filePath);
+    if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Failed to open file for reading:" << filePath;
+        return;
     }
+
+    QTextStream in(&inputFile);
+    QStringList lines;
+    while (!in.atEnd()) {
+        lines.append(in.readLine());
+    }
+    inputFile.close();
+
+    //过滤要删除的行（注意行号从0开始）
+    QStringList newLines;
+    for (int i = 0; i < lines.count(); ++i) {
+        if (!deleteIndex.contains(i)) { // 保留不在删除列表中的行
+            newLines.append(lines.at(i));
+        }
+    }
+
+    // 写回文件
+    QFile outputFile(filePath);
+    if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "Failed to open file for writing:" << filePath;
+        return;
+    }
+
+    QTextStream out(&outputFile);
+    for (const QString &line : newLines) {
+        out << line << "\n";
+    }
+    outputFile.close();
+
+    // 4. 更新内存中的路径列表
+    m_pathList = newLines;
+    emit pathListChanged();
 }
