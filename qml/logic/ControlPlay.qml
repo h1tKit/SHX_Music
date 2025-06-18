@@ -70,9 +70,9 @@ Item {
     //控制播放和暂停逻辑
     function playpause(){
         if (musicplayer.player.playbackState === MediaPlayer.PlayingState) {
-           musicplayer.player.pause();
+           musicplayer.pause();
         } else {
-            musicplayer.player.play();
+            musicplayer.play();
             console.log("play()")
         }
     }
@@ -146,13 +146,13 @@ Item {
     //单曲循环逻辑
     function singleLoop() {
         musicplayer.player.position=0
-        musicplayer.player.play();
+        musicplayer.play();
     }
 
     //更新当前播放顺序到Player的Source
     function changeSong() {
         musicplayer.player.source = currentList[currentIndex];
-        musicplayer.player.play();
+        musicplayer.play();
      }
 
     // 添加到历史记录

@@ -112,7 +112,10 @@ Item {
 
         MouseArea {
             id: unMouseArea
-            anchors.fill: parent
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: handle.top
+            anchors.bottom: handle.bottom
             //propagateComposedEvents: true
 
             onPressed: {

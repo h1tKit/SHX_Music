@@ -1,19 +1,25 @@
 import QtQuick
 import QtQuick.Layouts
+import QtMultimedia
 
 Item {
     id: root
 
+    property int radius: 12
     property var controler
+    property var player
 
     Rectangle {
         id: background
-        color: Qt.rgba(0,0,0,0.03)
+        color: Qt.rgba(0.95,0.95,0.95,1)
         anchors.fill: parent
+
+        bottomLeftRadius: root.radius
+        bottomRightRadius: root.radius
 
         Rectangle {
             id: line
-            color: Qt.rgba(0,0,0,0.15)
+            color: Qt.rgba(0.85,0.85,0.85,1)
             height: 1
             anchors.left: parent.left
             anchors.right: parent.right
@@ -22,7 +28,7 @@ Item {
     }
 
     Rectangle {
-        id: imageArt
+        id: musicImage
         color: "transparent"
         width: 80
         height: 80
@@ -39,7 +45,7 @@ Item {
         color: "transparent"
         width: 80
         height: 50
-        anchors.left: imageArt.right
+        anchors.left: musicImage.right
         anchors.leftMargin: 10
         anchors.top: parent.top
         anchors.topMargin: 5
@@ -55,7 +61,7 @@ Item {
         anchors.left: details.right
         anchors.leftMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+        anchors.bottomMargin: 14
         state: "love"
 
         states: [
@@ -113,6 +119,7 @@ Item {
             handle.border.color: Qt.rgba(0,0,0,0.15)
             Layout.preferredHeight: 6
             Layout.fillWidth: true
+
             from: 0
             to: player1.player.duration
             value: player1.player.position
@@ -165,8 +172,14 @@ Item {
             state: "paused"
 
             onTapped: {
-                state = state === "playing" ? "paused" : "playing"
+                //state = state === "playing" ? "paused" : "playing"
                 controler.playpause()
+            }
+
+            Connections {
+                target: player
+                onPlaying: playButton.state = "playing"
+                onPaused: playButton.state = "paused"
             }
 
             states: [
@@ -227,7 +240,7 @@ Item {
             controler.playMode = (state === "sequence" ? 0 : (state === "random" ? 1 : 2))
         }
 
-        state: "loop"
+        state: "sequence"
 
         onTapped: {
             state = (state === "sequence" ? "random" : (state === "random" ? "loop" : "sequence"))
@@ -261,6 +274,15 @@ Item {
             id: playModeIcon
             anchors.fill: parent
         }
+    }
+
+    VolumeSlider {
+        id: volumeSlider
+        width: 40
+        height: 130
+        anchors.horizontalCenter: volumeButton.horizontalCenter
+        anchors.bottom: volumeButton.top
+        anchors.bottomMargin: 20
     }
 
     RoundRectangleButton {

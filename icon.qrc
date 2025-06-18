@@ -12,6 +12,7 @@
         <file>image/musiclist.png</file>
         <file>image/random.png</file>
         <file>image/single_loop.png</file>
+        <file>image/music.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
