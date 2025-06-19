@@ -6,7 +6,6 @@ Item {
     visible: false
 
     property  var filePathTxt:"/run/media/root/data/Qt/shixun/SHX_Music/data/favoriteMusic.txt"
-    property var controller
     property var musicplayer
     property var favoriteIndex: -1
 
@@ -34,11 +33,22 @@ Item {
             color: "lightgrey"
             radius: 15
 
+            Text{
+                id:number
+                text:index+1
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                font.pixelSize: 12
+                elide: Text.ElideRight
+
+            }
+
             Text {
                 id:titletxt
                 text: title
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
+                anchors.left: number.right
                 anchors.leftMargin: 15
                 font.pixelSize: 14
                 elide: Text.ElideRight
@@ -49,8 +59,8 @@ Item {
                 text: artist
                 anchors.top: titletxt.bottom
                 anchors.topMargin:5
-                anchors.left: parent.left
-                anchors.leftMargin: 10
+                anchors.left:number.right
+                anchors.leftMargin: 15
                 elide: Text.ElideRight
                 width: parent.width -350
                 font.pixelSize: 10

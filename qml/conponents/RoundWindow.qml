@@ -24,7 +24,7 @@ Window {
     Player {
         id: player1
         player.audioOutput.volume: 0.4
-        //player.source: control.currentList[0]
+        // player.source: control.currentList[0]
     }
 
     ControlPlay {
@@ -164,42 +164,48 @@ Window {
             Layout.preferredWidth: 150
             Layout.fillHeight: true
 
-            Component.onCompleted: {   
-                viewArea.initLocalModel("/run/media/root/data/Qt/shixun/SHX_Music/data/localMusic.txt")
+            Component.onCompleted: {
+                localPage.initLocalModel("/run/media/root/data/Qt/shixun/SHX_Music/data/localMusic.txt")
                 favoritePage.initLocalModel("/run/media/root/data/Qt/shixun/SHX_Music/data/favoriteMusic.txt")
             }
 
             onOpenLocalList: {
-                viewArea.visible=true
+                localPage.visible=true
                 favoritePage.visible=false
             }
 
             onOpenLoveList: {
-                viewArea.visible=false
+                localPage.visible=false
                 favoritePage.visible=true
             }
         }
 
         LocalPage {
-            id: viewArea        //right top area
+            id: localPage        //right top area
             musicplayer: player1
-            controller: control
 
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             onAddToCurrentModel: {
                 var i = control.searchSong(requestPath)
+                var modelIndex =localPage.musicModel.createModelIndex(currentIndex,0);
+                var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
                 if(i===-1){
-                    // control.InsertCurrentModel()
-                }else{
-                    control.jumpToSong(i)
-                    var modelIndex =viewArea.musicModel.createModelIndex(currentIndex,0);
-                    var path = "file://" + viewArea.musicModel.data(modelIndex, viewArea.musicModel.FilePathRole)
+                    control.insertSongToNext(musicpath)
+
+                    console.log("musicpath",musicpath)
+                    console.log("The insert path",localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole))
+                    // control.jumpToSong(i)
                     musicplayer.source = path
                     musicplayer.player.position=0
                     musicplayer.play()
-                    // addToHistory(currentIndex);
+                }else{
+                    control.jumpToSong(i)
+                    musicplayer.source = path
+                    musicplayer.player.position=0
+                    musicplayer.play()
                 }
             }
         }
@@ -207,23 +213,29 @@ Window {
         FavoritePage{
             id:favoritePage
             musicplayer:player1
-            controller: control
 
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             onAddToCurrentModel: {
                 var i = control.searchSong(requestPath)
+                var modelIndex =favoritePage.musicModel.createModelIndex(favoriteIndex,0);
+                var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
                 if(i===-1){
-                    // control.InsertCurrentModel()
-                }else{
-                    control.jumpToSong(i)
-                    var modelIndex =favoritePage.musicModel.createModelIndex(favoriteIndex,0);
-                    var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                    control.insertSongToNext(musicpath)
+
+                    console.log("musicpath",musicpath)
+                    console.log("The insert path",favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole))
+                    // control.jumpToSong(i)
                     musicplayer.source = path
                     musicplayer.player.position=0
                     musicplayer.play()
-                    // addToHistory(favoriteIndex);
+                }else{
+                    control.jumpToSong(i)
+                    musicplayer.source = path
+                    musicplayer.player.position=0
+                    musicplayer.play()
                 }
             }
         }

@@ -11,7 +11,6 @@ Item {
     property var deleteFiles: []
 
     property var musicplayer
-    property var controller
 
     Rectangle{
         anchors.fill: parent
@@ -37,15 +36,37 @@ Item {
             color: "lightgrey"
             radius: 15
 
-            Text {
-                text: title  // 直接使用角色名访问title
+            Text{
+                id:number
+                text:index+1
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
+                anchors.leftMargin: 5
+                font.pixelSize: 12
+                elide: Text.ElideRight
+
+            }
+
+            Text {
+                id:titletxt
+                text: title
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: number.right
                 anchors.leftMargin: 15
                 font.pixelSize: 14
                 elide: Text.ElideRight
-                width: parent.width - 80
+                width: parent.width -350
+            }
+            Text {
 
+                text: artist
+                anchors.top: titletxt.bottom
+                anchors.topMargin:5
+                anchors.left:number.right
+                anchors.leftMargin: 15
+                elide: Text.ElideRight
+                width: parent.width -350
+                font.pixelSize: 10
             }
             MouseArea {
                 anchors.fill: parent
@@ -64,7 +85,7 @@ Item {
                     // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
                     // console.log(path)
                     // musicplayer.player.source = path
-                    //deleteMusic(filePathTxt, deleteFiles)
+                    // deleteMusic(filePathTxt, deleteFiles)
 
                     //MusicPathOperations.DeletePathTotxt(filePathTxt, )
                 }
