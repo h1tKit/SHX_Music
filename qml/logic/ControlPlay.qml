@@ -69,22 +69,68 @@ Item {
         control.currentIndex = index;
     }
 
-    function insertSongToNext(musicPath) {
-        currentModel.insertMusic(currentIndex,musicPath)
-        console.log("my currentIndex is ",currentIndex)
-        // currentIndex++
-        updateCurrentList();
+    function insertSongToNext(musicPath,sourceModel = null,targetIndexpath = -1) {
+        //空播放列表，有完整model
+        if (currentModel.getCount() === 0 && sourceModel) {
+            replaceWithSourceModel(sourceModel,targetIndexpath);
+            return;
+        }
 
-        currentView.update()
-        currentIndex++; // 明确移动到插入的歌曲位置
-        currentView.positionViewAtIndex(currentIndex, ListView.Center); // 确保视图滚动到正确位置
+        //空播放列表，只提供了单个路径
+        if (currentModel.getCount() === 0) {
+            currentModel.loadFromFile(musicPath);
+            updateCurrentList();
+            currentIndex = 0;
+        } else{
+            //非空播放列表，正常传路径
+            currentModel.insertMusic(currentIndex,musicPath)
+            console.log("my currentIndex is ",currentIndex)
+            // currentIndex++
+            updateCurrentList();
+            currentView.update()
+            currentIndex++;
+            currentView.positionViewAtIndex(currentIndex, ListView.Center);
+            currentView.currentIndex = currentIndex;
+            console.log("my currentIndex is ",currentIndex)
+            // currentIndex=currentView.index
+        }
         currentView.forceLayout();  // 强制重新布局
-        currentView.currentIndex = currentIndex;  // 显式设置当前索引
-        console.log("my currentIndex is ",currentIndex)
-
-        // currentIndex=currentView.index
 
     }
+
+    //可以实现全部播放
+    //从任意model导入所有数据到currentModel
+    function replaceWithSourceModel(sourceModel, targetPath) {
+        // 检查model是否有效
+        if (!sourceModel || sourceModel.getCount() === 0) {
+            console.warn("sourceModel为空或无效，导入取消");
+            return;
+        }
+
+        // 清空当前模型并导入源模型数据
+        currentModel.clearMusic();
+        for (var i = 0; i < sourceModel.getCount(); i++) {
+            var modelIndex = sourceModel.createModelIndex(i, 0);
+            var path = sourceModel.data(modelIndex, sourceModel.FilePathRole);
+            currentModel.loadFromFile(path);
+        }
+
+        updateCurrentList();
+
+        //如果是通过点击歌曲到空列表的方式更新model.查找目标歌曲在新列表中的位置
+        if (targetPath) {
+            var newIndex = searchSong(targetPath);
+            if (newIndex !== -1) {
+                currentIndex = newIndex;
+            } else {
+                currentIndex = 0;
+            }
+        } else {
+            currentIndex = 0; // 没有就默认播放第一首
+        }
+
+    }
+
 
     MusicModel {
         id: currentModel
@@ -166,7 +212,7 @@ Item {
         if (currentIndex >= 0 && currentIndex < currentModel.getCount()&& !isNavigatingHistory) {
             //changeSong()
             currentView.currentIndex = currentIndex
-            addToHistory(currentIndex);
+            // addToHistory(currentIndex);
         }
     }
 
@@ -174,7 +220,7 @@ Item {
         //断开信号
         musicplayer.player.mediaStatusChanged.disconnect(autoPlay)
 
-     }
+    }
 
     //更新currentList
     function updateCurrentList() {
@@ -213,7 +259,7 @@ Item {
     //控制播放和暂停逻辑
     function playpause(){
         if (musicplayer.player.playbackState === MediaPlayer.PlayingState) {
-           musicplayer.pause();
+            musicplayer.pause();
             console.log("pause()")
         } else {
             musicplayer.play();
@@ -254,6 +300,7 @@ Item {
     function prevSong() {
         // if (playHistory.length === 0) return;
 
+
         if(playMode === 0){
             currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
             changeSong();
@@ -263,8 +310,11 @@ Item {
             // 随机模式 - 使用历史记录
             var prevIndex = popHistory();
             if (prevIndex >= 0 && prevIndex < currentList.length) {
+                console.log("shangyishou")
+                isNavigatingHistory = true;
                 currentIndex = prevIndex;
                 changeSong();
+                isNavigatingHistory=false;
             } else {
                 // 没有历史记录时保持当前歌曲
                 console.log("如果再点击上一首会循环播放")
@@ -301,8 +351,10 @@ Item {
     //更新当前播放顺序到Player的Source
     function changeSong() {
         musicplayer.source = currentList[control.currentIndex];
+        console.log("change song")
+        musicplayer.player.position=0
         musicplayer.play();
-     }
+    }
 
     function addToHistory(index) {
         if (playMode !== 1) return;

@@ -194,20 +194,18 @@ Window {
                 var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
                 var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
                 if(i===-1){
-                    control.insertSongToNext(musicpath)
+                    control.insertSongToNext(musicpath,localPage.musicModel,musicpath)
 
                     console.log("musicpath",musicpath)
                     console.log("The insert path",localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole))
-                    // control.jumpToSong(i)
-                    musicplayer.source = path
-                    musicplayer.player.position=0
-                    musicplayer.play()
+                    console.log("添加新歌:", musicpath)
+
                 }else{
                     control.jumpToSong(i)
-                    musicplayer.source = path
-                    musicplayer.player.position=0
-                    musicplayer.play()
+                    console.log("跳转到已有歌曲:", i)
+
                 }
+                control.playSong(control.currentIndex)
             }
             onAddMusic: {
                 addMusicDialog.open()
@@ -226,20 +224,16 @@ Window {
                 var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
                 var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
                 if(i===-1){
-                    control.insertSongToNext(musicpath)
+                    control.insertSongToNext(musicpath,favoritePage.musicModel,musicpath)
 
                     console.log("musicpath",musicpath)
                     console.log("The insert path",favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole))
-                    // control.jumpToSong(i)
-                    musicplayer.source = path
-                    musicplayer.player.position=0
-                    musicplayer.play()
+
                 }else{
                     control.jumpToSong(i)
-                    musicplayer.source = path
-                    musicplayer.player.position=0
-                    musicplayer.play()
+
                 }
+                control.playSong(control.currentIndex)
             }
         }
     }
