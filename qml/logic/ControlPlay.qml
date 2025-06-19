@@ -24,13 +24,12 @@ Item {
     property int historyPointer: -1 // 当前在历史记录中的位置
     property bool isNavigatingHistory: false // 是否正在导航历史记录
 
-    property var filePath: "/home/br0/7/SHX_Music/data/currentMusic.txt"
+    property var filePath: "/run/media/root/data/Qt/shixun/SHX_Music/data/currentMusic.txt"
 
     function initCurrentModel(filePath) {console.log("22222222",control.filePath)
         MusicPathOperations.OperationTxt(control.filePath)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
             currentModel.loadFromFile(MusicPathOperations.pathList[i])
-            currentModel.setCount()
         }
         //连接信号
         updateCurrentList();
@@ -44,7 +43,6 @@ Item {
 
     function addToCurrent(addMusicPath) {
         currentModel.loadFromFile(addMusicPath)
-        currentModel.setCount()
     }
 
     function searchSong(musicPath) {
@@ -230,7 +228,12 @@ Item {
     function prevSong() {
         if (playHistory.length === 0) return;
 
-        if(playMode === 0||playMode === 1){
+        if(playMode === 0){
+            currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
+            changeSong();
+        }
+
+        if(playMode === 1){
             // 如果当前不是在回退历史记录，先保存当前位置
             if (historyPointer === playHistory.length - 1) {
                 addToHistory(currentIndex);

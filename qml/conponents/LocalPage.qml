@@ -6,11 +6,12 @@ Item {
     id:localPage
     property bool isReady: false
 
-    property var filePathTxt: "/home/br0/7/SHX_Music/data/localMusic.txt"
+    property var filePathTxt: "/run/media/root/data/Qt/shixun/SHX_Music/data/localMusic.txt"
     property var currentIndex: -1
     property var deleteFiles: []
 
     property var musicplayer
+    property var controller
 
     Rectangle{
         anchors.fill: parent
@@ -50,25 +51,26 @@ Item {
                 anchors.fill: parent
                 /////
                 onClicked: {
-                    console.log("mCount ", musicModel.getCount())
-                    currentIndex = index
-                    //musicModel.removeMusic(currentIndex)
-                    var deleteIndex = currentIndex;
-                    if(!deleteFiles.includes[deleteIndex]){
-                        deleteFiles.push(deleteIndex)
-                        console.log(deleteIndex)
-                    }
-                    var modelIndex = musicModel.createModelIndex(currentIndex, 0);
-                    console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
-                    var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                    console.log(path)
-                    musicplayer.player.source = path
+                    // console.log("mCount ", musicModel.getCount())
+                    // currentIndex = index
+                    // //musicModel.removeMusic(currentIndex)
+                    // var deleteIndex = currentIndex;
+                    // if(!deleteFiles.includes[deleteIndex]){
+                    //     deleteFiles.push(deleteIndex)
+                    //     console.log(deleteIndex)
+                    // }
+                    // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
+                    // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
+                    // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
+                    // console.log(path)
+                    // musicplayer.player.source = path
                     //deleteMusic(filePathTxt, deleteFiles)
 
                     //MusicPathOperations.DeletePathTotxt(filePathTxt, )
                 }
 
                 onDoubleClicked: {
+                    currentIndex=index
                     addToCurrentModel(musicModel.data(musicModel.createModelIndex(currentIndex), MusicModel.FilePathRole))
                 }
             }
@@ -85,7 +87,6 @@ Item {
         MusicPathOperations.OperationTxt(filePathTxt)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
             musicModel.loadFromFile(MusicPathOperations.pathList[i])
-            musicModel.setCount()
         }
     }
 

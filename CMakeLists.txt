@@ -63,7 +63,9 @@ qt_add_qml_module(
   QML_FILES
   RESOURCES data/localMusic.txt
   SOURCES heads/fileOperations.h
-  SOURCES cpp/fileOperations.cpp)
+  SOURCES cpp/fileOperations.cpp
+  RESOURCES data/favoriteMusic.txt
+  QML_FILES qml/conponents/FavoritePage.qml)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 

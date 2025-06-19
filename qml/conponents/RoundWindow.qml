@@ -164,25 +164,70 @@ Window {
             Layout.preferredWidth: 150
             Layout.fillHeight: true
 
-            Component.onCompleted: {
-                viewArea.initLocalModel("/home/br0/7/SHX_Music/data/localMusic.txt")
+            Component.onCompleted: {   
+                viewArea.initLocalModel("/run/media/root/data/Qt/shixun/SHX_Music/data/localMusic.txt")
+                favoritePage.initLocalModel("/run/media/root/data/Qt/shixun/SHX_Music/data/favoriteMusic.txt")
+            }
+
+            onOpenLocalList: {
+                viewArea.visible=true
+                favoritePage.visible=false
+            }
+
+            onOpenLoveList: {
+                viewArea.visible=false
+                favoritePage.visible=true
             }
         }
 
         LocalPage {
             id: viewArea        //right top area
             musicplayer: player1
+            controller: control
 
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             onAddToCurrentModel: {
                 var i = control.searchSong(requestPath)
-                console.log("addPath ",requestPath)
-                control.jumpToSong(i)
-                console.log("i : ", i)
+                if(i===-1){
+                    // control.InsertCurrentModel()
+                }else{
+                    control.jumpToSong(i)
+                    var modelIndex =viewArea.musicModel.createModelIndex(currentIndex,0);
+                    var path = "file://" + viewArea.musicModel.data(modelIndex, viewArea.musicModel.FilePathRole)
+                    musicplayer.source = path
+                    musicplayer.player.position=0
+                    musicplayer.play()
+                    // addToHistory(currentIndex);
+                }
             }
         }
+
+        FavoritePage{
+            id:favoritePage
+            musicplayer:player1
+            controller: control
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            onAddToCurrentModel: {
+                var i = control.searchSong(requestPath)
+                if(i===-1){
+                    // control.InsertCurrentModel()
+                }else{
+                    control.jumpToSong(i)
+                    var modelIndex =favoritePage.musicModel.createModelIndex(favoriteIndex,0);
+                    var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                    musicplayer.source = path
+                    musicplayer.player.position=0
+                    musicplayer.play()
+                    // addToHistory(favoriteIndex);
+                }
+            }
+        }
+
     }
 
 
