@@ -30,6 +30,11 @@ Window {
     ControlPlay {
         id: control
         musicplayer: player1
+
+        anchors.bottom: playBar.bottom
+        anchors.right: parent.right
+        //anchors.top: parent.top
+        Component.onCompleted: initCurrentModel()
     }
 
     //
@@ -170,6 +175,13 @@ Window {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            onAddToCurrentModel: {
+                var i = control.searchSong(requestPath)
+                console.log("addPath ",requestPath)
+                control.jumpToSong(i)
+                console.log("i : ", i)
+            }
         }
     }
 

@@ -1,9 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 
-// Item{
-
-// }
 
 Item {
     //喜欢列表，需要xys提供接口

@@ -341,8 +341,9 @@ Item {
         }
 
         onTapped: {
-            controler.initCurrentModel()
-            controler.playdialog.open()
+            controler.playdialog.visible = true
+        //     controler.initCurrentModel()
+        //     controler.playdialog.open()
         }
     }
 

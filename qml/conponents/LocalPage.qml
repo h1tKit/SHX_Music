@@ -63,13 +63,22 @@ Item {
                     var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
                     console.log(path)
                     musicplayer.player.source = path
-                    deleteMusic(filePathTxt, deleteFiles)
+                    //deleteMusic(filePathTxt, deleteFiles)
 
                     //MusicPathOperations.DeletePathTotxt(filePathTxt, )
+                }
+
+                onDoubleClicked: {
+                    addToCurrentModel(musicModel.data(musicModel.createModelIndex(currentIndex), MusicModel.FilePathRole))
                 }
             }
         }
     }
+
+    signal addToCurrentModel(var requestPath)
+        // path -> currentModel
+
+    signal addToLoveModel(var requestPath)
 
     //1
     function initLocalModel(filePathTxt){

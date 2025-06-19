@@ -31,16 +31,15 @@ Item {
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
             currentModel.loadFromFile(MusicPathOperations.pathList[i])
             currentModel.setCount()
-
         }
         //连接信号
         updateCurrentList();
         console.log("初始化    更新")
-        if (currentIndex >= 0) {
-            musicplayer.player.source = currentList[currentIndex];
-            addToHistory(currentIndex)
-        }
-        musicplayer.player.mediaStatusChanged.connect(autoPlay)
+        // if (currentIndex >= 0) {
+        //     musicplayer.player.source = currentList[currentIndex];
+        //     addToHistory(currentIndex)
+        // }
+        //musicplayer.player.mediaStatusChanged.connect(autoPlay)
     }
 
     function addToCurrent(addMusicPath) {
@@ -48,11 +47,34 @@ Item {
         currentModel.setCount()
     }
 
+    function searchSong(musicPath) {
+        for(var i = 0; i < currentModel.getCount(); i++) {
+            if (currentModel.data(currentModel.createModelIndex(i,0), MusicModel.FilePathRole) === musicPath) {
+                console.log("Found")
+                return i;   //found
+            }else {
+                console.log("notFound")
+                console.log(currentModel.data(currentModel.createModelIndex(i,0), MusicModel.FilePathRole))
+                console.log(musicPath)
+                continue;  //not found
+            }
+        }
+    }
+
+    function jumpToSong(index) {
+        currentView.currentIndex = index;
+        control.currentIndex = index;
+    }
+
+    function insertSongToNext(musicPath) {
+        //todo
+    }
+
     MusicModel {
         id: currentModel
     }
 
-    Dialog{
+    Rectangle {
         id:__playDialog
         //在上一级设置（Window）这里是试验
         width: 200
@@ -60,6 +82,7 @@ Item {
         x: parent.width - width - 30  // 10 是右边距
         y: parent.height - height - 100 // 10 是底部边距
         parent: Overlay.overlay
+
 
         //三个点来适配，
         //model用playlistModel
@@ -87,7 +110,7 @@ Item {
                     anchors.leftMargin: 5
                     elide: Text.ElideRight
                     width: parent.width - 20
-                    color: "white"
+                    color: "black"
                     font.pixelSize: 12
                 }
                 Text {
@@ -99,7 +122,7 @@ Item {
                     anchors.leftMargin: 10
                     elide: Text.ElideRight
                     width: parent.width - 20
-                    color: "white"
+                    color: "black"
                     font.pixelSize: 10
                 }
 
@@ -114,15 +137,15 @@ Item {
             ScrollBar.vertical: ScrollBar {}
         }
 
-        onClosed: {
-            currentModel.clearMusic()
-            currentModel.clearCount()
-        }
+        // {
+        //     currentModel.clearMusic()
+        //     currentModel.clearCount()
+        // }
     }
 
     onCurrentIndexChanged:{
         if (currentIndex >= 0 && currentIndex < currentModel.getCount()&& !isNavigatingHistory) {
-            changeSong()
+            //changeSong()
             addToHistory(currentIndex);
         }
     }
@@ -253,7 +276,7 @@ Item {
 
     //更新当前播放顺序到Player的Source
     function changeSong() {
-        musicplayer.player.source = currentList[control.currentIndex];
+        musicplayer.source = currentList[control.currentIndex];
         musicplayer.play();
      }
 

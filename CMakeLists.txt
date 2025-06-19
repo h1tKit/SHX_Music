@@ -59,7 +59,9 @@ qt_add_qml_module(
   SOURCES cpp/musicmodel.cpp
   SOURCES heads/musicmodel.h
   QML_FILES qml/logic/MusicControl.qml
-  RESOURCES data/currentMusic.txt)
+  RESOURCES data/currentMusic.txt
+  QML_FILES
+  RESOURCES data/localMusic.txt)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 
