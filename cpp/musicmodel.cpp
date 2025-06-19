@@ -187,7 +187,7 @@ QModelIndex MusicModel::createModelIndex(
 }
 
 void MusicModel::insertMusic(
-    int index, QString &filePath)
+    int index, const QString &filePath)
 {
     MusicItem newItem;
     MusicInfo musicInfo;

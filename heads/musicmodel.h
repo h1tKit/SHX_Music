@@ -40,7 +40,7 @@ public:
     Q_INVOKABLE void updateMusic(int index, const QVariantMap &data);
     Q_INVOKABLE void loadFromFile(const QString &filePath);
     Q_INVOKABLE QModelIndex createModelIndex(int row, int column = 0);
-    Q_INVOKABLE void insertMusic(int index, QString &filePath);
+    Q_INVOKABLE void insertMusic(int index, const QString &filePath);
     Q_INVOKABLE void insertMusics(int index, QStringList &filePaths);
     Q_INVOKABLE QString getMuiscPath(int index); //写回txt写路径回去
     Q_INVOKABLE int getCount();
