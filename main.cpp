@@ -4,6 +4,7 @@
 #include "./heads/musicpathoperations.h"
 #include "./heads/musicinfo.h"
 #include "./heads/musicmodel.h"
+#include "./heads/fileOperations.h"
 
 int main(
     int argc, char *argv[])
@@ -12,14 +13,14 @@ int main(
 
     MusicInfo musicInfo;
     MusicPathOperations mpo;
-    MusicModel musicModel;
+    FileOperations fileOperaTions;
 
     qmlRegisterType<MusicModel>("MyModel", 1, 0, "MusicModel");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("MusicInfo", &musicInfo);
     engine.rootContext()->setContextProperty("MusicPathOperations", &mpo);
-    // engine.rootContext()->setContextProperty("musicModel", &musicModel);
+    engine.rootContext()->setContextProperty("FileOperaTions", &fileOperaTions);
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

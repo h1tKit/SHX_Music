@@ -88,7 +88,25 @@ void MusicPathOperations::AddPathToTxt(
     }
 }
 
-void MusicPathOperations::DeletePathToTxt(
+void MusicPathOperations::WriteToTxt(
+    const QString &filePath, MusicModel &musicModel)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "无法打开文件用于写入:" << filePath;
+        return;
+    }
+
+    QTextStream out(&file);
+    for (int i = 0; i < musicModel.getCount(); i++) {
+        out << musicModel.getMuiscPath(i) << "\n";
+    }
+
+    file.close();
+}
+
+void MusicPathOperations::DeletePathsTxt(
     const QString &filePath, QVariantList deleteIndex)
 {
     QList<int> indexes;
@@ -134,6 +152,46 @@ void MusicPathOperations::DeletePathToTxt(
     outputFile.close();
 
     // 4. 更新内存中的路径列表
+    m_pathList = newLines;
+    emit pathListChanged();
+}
+
+void MusicPathOperations::DeletePathTxt(
+    const QString &filePath, int deleteIndex)
+{
+    QFile inputFile(filePath);
+    if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Failed to open file for reading:" << filePath;
+        return;
+    }
+
+    QTextStream in(&inputFile);
+    //QString content;
+    int currentLine = 0;
+
+    QStringList newLines;
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        if (currentLine != deleteIndex) {
+            //content.append(line + "\n");
+            newLines.append(line + "\n");
+        }
+        currentLine++;
+    }
+    inputFile.close();
+
+    QFile outputFile(filePath);
+    if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "无法写入文件:" << filePath;
+        return;
+    }
+
+    QTextStream out(&outputFile);
+    for (const QString &line : newLines) {
+        out << line << "\n";
+    }
+    outputFile.close();
+
     m_pathList = newLines;
     emit pathListChanged();
 }

@@ -23,7 +23,7 @@ public:
         BitrateRole,
         SampleRateRole,
         ChannelsRole,
-        MarkRole,
+        IsLoveRole,
     };
     Q_ENUM(MusicRoles); //QML 中通过类名.枚举值访问枚举
 
@@ -34,15 +34,17 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    //Q_INVOKABLE void addMusic();
     Q_INVOKABLE void removeMusic(int index);
+    Q_INVOKABLE void removeMusics(QVariantList &indexList);
     Q_INVOKABLE void clearMusic();
     Q_INVOKABLE void updateMusic(int index, const QVariantMap &data);
     Q_INVOKABLE void loadFromFile(const QString &filePath);
     Q_INVOKABLE QModelIndex createModelIndex(int row, int column = 0);
+    Q_INVOKABLE void insertMusic(int index, QString &filePath);
+    Q_INVOKABLE void insertMusics(int index, QStringList &filePaths);
+    Q_INVOKABLE QString getMuiscPath(int index); //写回txt写路径回去
     Q_INVOKABLE int getCount();
-    Q_INVOKABLE void setCount();
-    Q_INVOKABLE void clearCount();
+    Q_INVOKABLE void changeIsLove(int index);
 
 signals:
     void musicAdd();
@@ -63,7 +65,7 @@ private:
         int bitrate;
         int sampleRate;
         int channels;
-        int mark;
+        bool isLove;
     };
 
     QList<MusicItem> m_musicList;

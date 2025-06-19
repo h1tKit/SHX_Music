@@ -2,6 +2,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include "musicmodel.h"
 
 class MusicPathOperations : public QObject
 {
@@ -18,7 +19,9 @@ public:
     QStringList pathList() const { return m_pathList; }
     void AddPathToTxt(const QString &filePath, QStringList &newFiles);
     void extracted(QStringList &deleteFiles, QStringList &currentPaths, QStringList &filteredPaths);
-    Q_INVOKABLE void DeletePathToTxt(const QString &filePath, QVariantList deleteIndex);
+    Q_INVOKABLE void WriteToTxt(const QString &filePath, MusicModel &musicModel);
+    Q_INVOKABLE void DeletePathsTxt(const QString &filePath, QVariantList deleteIndex);
+    Q_INVOKABLE void DeletePathTxt(const QString &filePath, int deleteIndex);
 
 signals:
     void pathListChanged();

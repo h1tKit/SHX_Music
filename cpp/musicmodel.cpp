@@ -48,6 +48,8 @@ QVariant MusicModel::data(
         return item.sampleRate;
     case ChannelsRole:
         return item.channels;
+    case IsLoveRole:
+        return item.isLove;
     default:
         return QVariant();
     }
@@ -68,6 +70,7 @@ QHash<int, QByteArray> MusicModel::roleNames() const
     roles[BitrateRole] = "bitrate";
     roles[SampleRateRole] = "sampleRate";
     roles[ChannelsRole] = "channels";
+    roles[IsLoveRole] = "isLove";
     return roles;
 }
 
@@ -82,6 +85,18 @@ void MusicModel::removeMusic(
     endRemoveRows();
 
     emit musicRemove(index);
+}
+
+void MusicModel::removeMusics(
+    QVariantList &indexList)
+{
+    if (indexList.count() == 0) {
+        return;
+    }
+
+    for (int i = 0; i < indexList.count(); i++) {
+        removeMusic(i);
+    }
 }
 
 void MusicModel::clearMusic()
@@ -123,6 +138,8 @@ void MusicModel::updateMusic(
         item.sampleRate = data["sampleRate"].toInt();
     if (data.contains("channels"))
         item.channels = data["channels"].toInt();
+    if (data.contains("isLove"))
+        item.isLove = false;
 
     QModelIndex idx = createIndex(index, 0);
     emit dataChanged(idx, idx);
@@ -169,17 +186,77 @@ QModelIndex MusicModel::createModelIndex(
     return createIndex(row, column);
 }
 
+void MusicModel::insertMusic(
+    int index, QString &filePath)
+{
+    MusicItem newItem;
+    MusicInfo musicInfo;
+    musicInfo.parseFile(filePath);
+    QVariantMap metadata = musicInfo.metadata();
+    int insertIndex = index + 1;
+
+    beginInsertRows(QModelIndex(), insertIndex, insertIndex);
+
+    if (!metadata.isEmpty()) {
+        newItem.filePath = filePath;
+        newItem.title = metadata["title"].toString();
+        newItem.artist = metadata["artist"].toString();
+        newItem.album = metadata["album"].toString();
+        newItem.genre = metadata["genre"].toString();
+        newItem.coverArt = qvariant_cast<QImage>(metadata["coverArt"]);
+        newItem.track = metadata["track"].toInt();
+        newItem.duration = metadata["duration"].toInt();
+        newItem.year = metadata["year"].toInt();
+        newItem.bitrate = metadata["bitrate"].toInt();
+        newItem.sampleRate = metadata["sampleRate"].toInt();
+        newItem.channels = metadata["channels"].toInt();
+
+        if (newItem.coverArt.isNull()) {
+            //item.coverArt.load(":/default_cover.png");
+        }
+
+        m_musicList.insert(insertIndex, newItem);
+    }
+
+    endInsertRows();
+    emit musicAdd();
+}
+
+void MusicModel::insertMusics(
+    int index, QStringList &filePaths)
+{
+    if (filePaths.isEmpty())
+        return;
+
+    if (index < 0 || index > m_musicList.size()) {
+        index = m_musicList.size(); // 默认插入到末尾
+    }
+
+    int insertIndex = index + 1;
+
+    for (int i = 0; i < filePaths.size(); ++i) {
+        insertMusic(insertIndex, filePaths[i]);
+        insertIndex++;
+    }
+}
+
+QString MusicModel::getMuiscPath(
+    int index)
+{
+    if (m_musicList.count() == 0) {
+        return "";
+    }
+
+    return m_musicList[index].filePath;
+}
+
 int MusicModel::getCount()
 {
-    return count;
+    return m_musicList.size();
 }
 
-void MusicModel::setCount()
+void MusicModel::changeIsLove(
+    int index)
 {
-    count++;
-}
-
-void MusicModel::clearCount()
-{
-    count = 0;
+    m_musicList[index].isLove = !m_musicList[index].isLove;
 }
