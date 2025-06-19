@@ -280,11 +280,35 @@ Item {
 
     VolumeSlider {
         id: volumeSlider
+        visible: false
         width: 40
         height: 150
         anchors.horizontalCenter: volumeButton.horizontalCenter
         anchors.bottom: volumeButton.top
         anchors.bottomMargin: 20
+
+        onVolumeValueChanged: {
+            player.volume = volumeSlider.volumeValue
+        }
+
+        onIsHoverdChanged: {
+            if (isHoverd){
+                console.log("ENTER VOLUMESLIDER")
+                hoverButtonShowTimer.stop()
+            }else {
+                if (!volumeButtonMouseArea.containsMouse) {
+                    hoverButtonShowTimer.start()
+                }
+            }
+        }
+    }
+
+    Timer {
+        id: hoverButtonShowTimer
+        interval: 500
+        onTriggered: {
+            volumeSlider.visible = false
+        }
     }
 
     RoundRectangleButton {
@@ -297,8 +321,28 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         state: "normal"
 
-        onTapped: {
-            state = (state === "normal" ? "mute" : "normal")
+        MouseArea {
+            id: volumeButtonMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            property bool containsMouse: false
+
+            onEntered: {
+                containsMouse = true
+                hoverButtonShowTimer.stop()
+                volumeSlider.visible = true
+            }
+
+            onExited: {
+                containsMouse = false
+                if (!volumeSlider.isHoverd) {
+                    hoverButtonShowTimer.start()
+                }
+            }
+
+            onClicked: {
+                state = (state === "normal" ? "mute" : "normal")
+            }
         }
 
         states: [
@@ -333,6 +377,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
+        state: "close"
 
         Image {
             id: listIcon
@@ -340,10 +385,16 @@ Item {
             anchors.fill: parent
         }
 
+        states: [
+            State {name: "open"},
+            State {name: "close"}
+        ]
+
         onTapped: {
-            controler.playdialog.visible = true
-        //     controler.initCurrentModel()
-        //     controler.playdialog.open()
+            //listButton.state = listButton.state === "open" ? "close" : "open"
+            //controler.setVisible = (listButton.state === "open")
+            controler.setVisible = true
+            console.log("listButtonTapped")
         }
     }
 

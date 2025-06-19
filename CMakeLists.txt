@@ -67,7 +67,8 @@ qt_add_qml_module(
   RESOURCES data/favoriteMusic.txt
   QML_FILES qml/conponents/FavoritePage.qml
   SOURCES heads/searchmusic.h
-  SOURCES cpp/searchmusic.cpp)
+  SOURCES cpp/searchmusic.cpp
+  QML_FILES qml/conponents/MusicFileDialog.qml)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 

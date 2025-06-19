@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import "../logic"
 
 
@@ -24,7 +25,7 @@ Window {
     Player {
         id: player1
         player.audioOutput.volume: 0.4
-        // player.source: control.currentList[0]
+        //player.source: control.currentList[0]
     }
 
     ControlPlay {
@@ -165,10 +166,9 @@ Window {
             Layout.fillHeight: true
 
             Component.onCompleted: {
-                localPage.initLocalModel("/run/media/root/data/Qt/shixun/SHX_Music/data/localMusic.txt")
-                favoritePage.initLocalModel("/run/media/root/data/Qt/shixun/SHX_Music/data/favoriteMusic.txt")
+                localPage.initLocalModel("../../data/localMusic.txt")
+                favoritePage.initLocalModel("../../data/favoriteMusic.txt")
             }
-
             onOpenLocalList: {
                 localPage.visible=true
                 favoritePage.visible=false
@@ -177,11 +177,12 @@ Window {
             onOpenLoveList: {
                 localPage.visible=false
                 favoritePage.visible=true
+                console.log("OPEN LOVE++++++++++++")
             }
         }
 
         LocalPage {
-            id: localPage        //right top area
+            id: localPage         //right top area
             musicplayer: player1
 
             Layout.fillWidth: true
@@ -208,8 +209,10 @@ Window {
                     musicplayer.play()
                 }
             }
+            onAddMusic: {
+                addMusicDialog.open()
+            }
         }
-
         FavoritePage{
             id:favoritePage
             musicplayer:player1
@@ -239,10 +242,104 @@ Window {
                 }
             }
         }
-
     }
 
 
+
+    Dialog {
+        id: addMusicDialog
+
+        signal openByFile()
+        signal openByFolder()
+
+        width: 200
+        height: 100
+
+        x: window.width - width
+        y: titleBar.height + 45
+
+        onAccepted: console.log("Ok clicked")
+        onRejected: console.log("Cancel clicked")
+
+        background: Rectangle{
+            color: Qt.rgba(0.94,0.94,0.94,1)
+            border.width: 2
+            border.color: Qt.rgba(0.82,0.82,0.82,1)
+
+            RoundRectangleButton {
+                id: byFile
+                hoverBackgroundColor: "transparent"
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.verticalCenter: parent.verticalCenter
+                width: 50
+                height: 50
+
+                onTapped: addMusicDialog.openByFile()
+
+                Image {
+                    id: byFileIcon
+                    source: "qrc:/control/image/file_add.png"
+                    anchors.fill: parent
+                }
+            }
+            Rectangle {
+                id: verticalLine
+                color: Qt.rgba(0.85,0.85,0.85,1)
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 20
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 2
+            }
+
+            RoundRectangleButton {
+                id: byFolder
+                hoverBackgroundColor: "transparent"
+                anchors.right: parent.right
+                anchors.rightMargin: 20
+                anchors.verticalCenter: parent.verticalCenter
+                width: 50
+                height: 50
+
+                onTapped: addMusicDialog.openByFolder()
+
+                Image {
+                    id: byFolderIcon
+                    source: "qrc:/control/image/folder_add.png"
+                    anchors.fill: parent
+                }
+            }
+        }
+        onOpenByFile: {
+            // 创建文件对话框组件
+            var fileDialogComponent = Qt.createComponent("MusicFileDialog.qml")
+
+            if (fileDialogComponent.status === Component.Ready) {
+                // 实例化对话框
+                var fileDialog = fileDialogComponent.createObject(byFile, {
+                                                                      "title": "选择文件",
+                                                                      "selectedFile": Qt.resolvedUrl("."),
+                                                                      // "onAccepted": function() {
+                                                                      //     console.log("选择的文件:", fileDialog.fileUrls[0])
+                                                                      //     fileDialog.destroy()  // 关闭后销毁
+                                                                      // },
+                                                                      // "onRejected": function() {
+                                                                      //     console.log("对话框已取消")
+                                                                      //     fileDialog.destroy()  // 关闭后销毁
+                                                                      // }
+                                                                  })
+
+                // 显示对话框
+                fileDialog.open()
+
+                //do
+            } else {
+                console.error("无法加载文件对话框组件:", fileDialogComponent.errorString())
+            }
+        }
+    }
 
 
     Item {//resizeWindow

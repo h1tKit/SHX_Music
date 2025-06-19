@@ -8,6 +8,8 @@ import MyModel
 
 Item {
     id:control
+    property alias setVisible: __playDialog.visible
+
     //这个当前播放列表记录路径位置，需要xys提供接口
 
     property alias playdialog: __playDialog
@@ -22,11 +24,9 @@ Item {
 
     property var playHistory: []
 
-    //不需要了
-    // property int historyPointer: -1 // 当前在历史记录中的位置
     property bool isNavigatingHistory: false // 是否正在导航历史记录
 
-    property var filePath: "/run/media/root/data/Qt/shixun/SHX_Music/data/currentMusic.txt"
+    property var filePath: "../../data/currentMusic.txt"
 
     function initCurrentModel(filePath) {console.log("22222222",control.filePath)
         MusicPathOperations.OperationTxt(control.filePath)
@@ -46,7 +46,6 @@ Item {
 
     function addToCurrent(addMusicPath) {
         currentModel.loadFromFile(addMusicPath)
-        // currentModel.setCount()
     }
 
     function searchSong(musicPath) {
@@ -55,13 +54,14 @@ Item {
                 console.log("Found")
                 return i;   //found
             }else {
-                console.log("notFound")
+                console.log("notFound now")
                 console.log(currentModel.data(currentModel.createModelIndex(i,0), MusicModel.FilePathRole))
                 console.log(musicPath)
                 continue;  //not found
             }
         }
-        return -1
+        console.log("notFound")
+        return -1;
     }
 
     function jumpToSong(index) {
@@ -90,15 +90,17 @@ Item {
         id: currentModel
     }
 
-    Rectangle {
+    Dialog {
         id:__playDialog
+
+        visible: false
         //在上一级设置（Window）这里是试验
         width: 200
         height: 400
+
         x: parent.width - width - 30  // 10 是右边距
         y: parent.height - height - 100 // 10 是底部边距
         parent: Overlay.overlay
-
 
         //三个点来适配，
         //model用playlistModel
@@ -172,7 +174,7 @@ Item {
         //断开信号
         musicplayer.player.mediaStatusChanged.disconnect(autoPlay)
 
-    }
+     }
 
     //更新currentList
     function updateCurrentList() {
@@ -211,7 +213,7 @@ Item {
     //控制播放和暂停逻辑
     function playpause(){
         if (musicplayer.player.playbackState === MediaPlayer.PlayingState) {
-            musicplayer.pause();
+           musicplayer.pause();
             console.log("pause()")
         } else {
             musicplayer.play();
@@ -234,7 +236,6 @@ Item {
     //播放下一首逻辑
     function nextSong() {
         console.log("下一首")
-
 
         if (currentList.length === 0) return;
         if(playMode===0){
@@ -301,9 +302,8 @@ Item {
     function changeSong() {
         musicplayer.source = currentList[control.currentIndex];
         musicplayer.play();
-    }
+     }
 
-    // 添加到历史记录
     function addToHistory(index) {
         if (playMode !== 1) return;
 
@@ -317,7 +317,6 @@ Item {
                 playHistory.shift(); // 移除最旧的记录
             }
         }
-
     }
 
     function popHistory(){

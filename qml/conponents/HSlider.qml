@@ -12,6 +12,9 @@ import QtQuick
 
 Item {
     id: root
+
+    property bool isHandleHovered: false
+
     property real value : Math.round(handle.y / (un.height - handle.height) * (to - from) + from)
     property real from
     property real to
@@ -78,10 +81,12 @@ Item {
                 anchors.fill: parent
                 hoverEnabled: true
                 onEntered: {
+                    root.isHandleHovered = true
                     central.scale = 1.2
                     preScale = 1.2
                 }
                 onExited: {
+                    root.isHandleHovered = false
                     central.scale = 1
                     preScale = 1
                 }
@@ -116,7 +121,6 @@ Item {
             anchors.right: handle.right
             anchors.top: un.top
             anchors.bottom: un.bottom
-            //propagateComposedEvents: true
 
             onPressed: {
                 if(mouseY > handle.y && mouseY < handle.y + handle.height) {

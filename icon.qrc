@@ -13,6 +13,10 @@
         <file>image/random.png</file>
         <file>image/single_loop.png</file>
         <file>image/music.png</file>
+        <file>image/add_square.png</file>
+        <file>image/file_add.png</file>
+        <file>image/folder_add.png</file>
+        <file>image/menu_edit.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

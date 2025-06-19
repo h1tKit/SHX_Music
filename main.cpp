@@ -16,11 +16,12 @@ int main(
     FileOperations fileOperaTions;
 
     qmlRegisterType<MusicModel>("MyModel", 1, 0, "MusicModel");
+    qmlRegisterType<MusicModel>("MyModel", 1, 0, "FileOperations");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("MusicInfo", &musicInfo);
     engine.rootContext()->setContextProperty("MusicPathOperations", &mpo);
-    engine.rootContext()->setContextProperty("FileOperaTions", &fileOperaTions);
+    //engine.rootContext()->setContextProperty("FileOperaTions", &fileOperaTions);
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

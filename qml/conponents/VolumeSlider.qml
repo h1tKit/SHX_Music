@@ -1,16 +1,32 @@
 import QtQuick
 
-Item {
-    id: root
+Rectangle {
+    id: body
 
-    //background
-    Rectangle {
-        id: body
+    property bool isHoverd: false
+    property real volumeValue: 0.0
+    property real inicialVolume: 0.4
+
+    color: Qt.rgba(0.95,0.95,0.95,1)
+    border.width: 1
+    border.color: Qt.rgba(0.85,0.85,0.85,1)
+
+    MouseArea {
+        id: bodyMouseArea
         anchors.fill: parent
-        color: Qt.rgba(0.95,0.95,0.95,1)
-
-        border.width: 1
-        border.color: Qt.rgba(0.85,0.85,0.85,1)
+        hoverEnabled: true
+        onEntered: {
+            console.log("enter body")
+            body.isHoverd = true
+        }
+        onExited: {
+            if (slider.isHandleHovered) {
+                body.isHoverd = true
+            }else {
+                console.log("exit body")
+                body.isHoverd = false
+            }
+        }
     }
 
     Rectangle {
@@ -38,9 +54,9 @@ Item {
         text: slider.value.toString()
         font.pixelSize: 12
         color: Qt.rgba(0.5,0.5,0.5,1)
-        anchors.top: root.top
+        anchors.top: body.top
         anchors.topMargin: 3
-        anchors.horizontalCenter: root.horizontalCenter
+        anchors.horizontalCenter: body.horizontalCenter
     }
 
     HSlider {
@@ -52,13 +68,14 @@ Item {
         handle.border.width: 1
         handle.border.color: Qt.rgba(0,0,0,0.15)
         anchors.top: volumnText.bottom
-        anchors.bottom: root.bottom
-        anchors.horizontalCenter: root.horizontalCenter
+        anchors.bottom: body.bottom
+        anchors.horizontalCenter: body.horizontalCenter
         anchors.margins: 3
         width: 5
 
         from: 0
         to: 100
+        value: inicialVolume * (to - from) + from
 
         transform: [
         Scale {
@@ -67,8 +84,10 @@ Item {
                 yScale: -1
             }
         ]
-        // onDraged: {
-        //     console.log(setValue)
-        // }
+        onDraged: {
+            body.volumeValue = setValue / (to - from)
+            console.log("volume : ", body.volumeValue)
+            volumnText.text = setValue.toString()
+        }
     }
 }

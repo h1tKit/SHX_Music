@@ -5,6 +5,7 @@ Item {
     id: root
     property alias player: _player
     property alias source: _player.source
+    property alias volume: _audioOutput.volume
 
     property bool isReady: false
 
