@@ -415,7 +415,7 @@ Item {
             return "00:00"
 
         var totalSeconds = Math.floor(milliseconds / 1000)
-        console.log("Total Seconds : ", totalSeconds)
+        //console.log("Total Seconds : ", totalSeconds)
         var minutes = Math.floor(totalSeconds / 60)
         var seconds = totalSeconds % 60
         //

@@ -64,27 +64,51 @@ Item {
         return -1;
     }
 
+
+    function searchSongbyReserve(musicPath) {
+            if (currentModel.getCount() <=0) {
+                console.log("模型为空，无数据可搜索currentModel.getCount()",currentModel.getCount());
+                return -1;
+            }
+            for(var i = currentModel.getCount() - 1; i >= 0; i--) {
+                if (currentModel.data(currentModel.createModelIndex(i,0), MusicModel.FilePathRole) === musicPath) {
+                    console.log("Found")
+                    return i;   //found
+                }else {
+                    console.log("notFound now")
+                    console.log(currentModel.data(currentModel.createModelIndex(i,0), MusicModel.FilePathRole))
+                    console.log("searchsong()musicPath",musicPath)
+                    continue;  //not found
+                }
+            }
+            console.log("notFound",)
+            return -1;
+        }
+
+
     function jumpToSong(index) {
         currentView.currentIndex = index;
         control.currentIndex = index;
     }
 
-    function insertSongToNext(musicPath,sourceModel = null,targetIndexpath = -1) {
+    function insertSongToNextbyDbc(musicPath,sourceModel = null,targetIndexpath = -1) {
         //空播放列表，有完整model
         if (currentModel.getCount() === 0 && sourceModel) {
+            console.log("正在执行完整model到空列表")
             replaceWithSourceModel(sourceModel,targetIndexpath);
             return;
         }
 
         //空播放列表，只提供了单个路径
         if (currentModel.getCount() === 0) {
-            currentModel.loadFromFile(musicPath);
+            console.log("正在执行单个路径到空列表")
+            currentModel.insertMusic(-1,musicPath)
             updateCurrentList();
             currentIndex = 0;
         } else{
             //非空播放列表，正常传路径
             currentModel.insertMusic(currentIndex,musicPath)
-            console.log("my currentIndex is ",currentIndex)
+            console.log("正在执行正常到非空列表")
             // currentIndex++
             updateCurrentList();
             currentView.update()
@@ -97,6 +121,28 @@ Item {
         currentView.forceLayout();  // 强制重新布局
 
     }
+
+    function insertSongToNextbyBtn(musicPath){
+            if (currentModel.getCount() === 0) {
+                console.log("正在执行单个路径到空列表")
+                currentModel.insertMusic(-1,musicPath)
+                updateCurrentList();
+                currentIndex = 0;
+                musicplayer.source = currentList[0]
+            }else{
+                //非空播放列表，正常传路径
+                currentModel.insertMusic(currentIndex,musicPath)
+                 console.log("正在执行正常到非空列表")
+                // currentIndex++
+                updateCurrentList();
+                currentView.update()
+                // currentIndex++;
+                currentView.positionViewAtIndex(currentIndex, ListView.Center);
+                currentView.currentIndex = currentIndex;
+                console.log("my currentIndex is ",currentIndex)
+                // currentIndex=currentView.index
+            }
+        }
 
     //可以实现全部播放
     //从任意model导入所有数据到currentModel
@@ -275,6 +321,7 @@ Item {
         musicplayer.player.source = currentList[index]
         console.log("index", index)
         currentIndex=index
+        musicplayer.player.position=0
         musicplayer.player.play();
     }
 

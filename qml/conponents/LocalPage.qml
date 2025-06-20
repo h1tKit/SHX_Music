@@ -21,8 +21,11 @@ Item {
     property var receivedData: [] //接受文件传过来的数据
     property var rootWindow: null // 用于接收 Window 的引用
 
-    signal addToCurrentModel(var requestPath)
+    signal addToCurrentModelbyDbc(var dbcrequestPath)
+    signal addToCurrentModelbyBtn(var btnrequestPath)
     signal addToLoveModel(var requestPath)
+
+    signal playAllPage()
 
     signal addMusic()
 
@@ -211,7 +214,10 @@ Item {
                         width: 120
                         height: 20
 
-                        onTapped: editDialog.playAll()
+                        onTapped: {
+                            localPage.playAllPage()
+                            editDialog.playAll()
+                        }
 
                         Image {
                             id: playAllIcon
@@ -633,7 +639,12 @@ Item {
                 id: addToCurrentButtonArea
 
                 anchors.fill: addToCurrentButton
-                onClicked: console.log("ADDToCurrent")
+                onClicked: {
+                    console.log("ADDToCurrent")
+                    localPage.currentIndex = index
+                    localPage.addToCurrentModelbyBtn(musicModel.data(musicModel.createModelIndex(localPage.currentIndex), MusicModel.FilePathRole))
+                    console.log("SEND ", musicModel.data(musicModel.createModelIndex(localPage.currentIndex), MusicModel.FilePathRole))
+                }
             }
 
             MouseArea {
@@ -666,27 +677,27 @@ Item {
                 anchors.left: single.left
 
                 onClicked: {
-                    console.log("musicModel.getCount() : ", musicModel.getCount())
-                    currentIndex = index
+                    //console.log("musicModel.getCount() : ", musicModel.getCount())
+                    // currentIndex = index
                     //musicModel.removeMusic(currentIndex)
                     // var deleteIndex = currentIndex;
                     // if(!deleteFiles.includes[deleteIndex]){
                     //     deleteFiles.push(deleteIndex)
                     //     console.log(deleteIndex)
                     // }
-                    var modelIndex = musicModel.createModelIndex(currentIndex, 0);
-                    console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
-                    var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                    console.log(path)
-                    musicplayer.player.source = path
+                    // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
+                    // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
+                    // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
+                    // console.log(path)
+                    // musicplayer.player.source = path
                     //deleteMusic(filePathTxt, deleteFiles)
 
                     //MusicPathOperations.DeletePathTotxt(filePathTxt, )
                 }
 
                 onDoubleClicked: {
-                    currentIndex=index
-                    addToCurrentModel(musicModel.data(musicModel.createModelIndex(currentIndex), MusicModel.FilePathRole))
+                    localPage.currentIndex = index
+                    addToCurrentModelbyDbc(musicModel.data(musicModel.createModelIndex(localPage.currentIndex), MusicModel.FilePathRole))
                 }
             }
 
@@ -698,27 +709,27 @@ Item {
                 anchors.left: deleteButton.right
 
                 onClicked: {
-                    console.log("musicModel.getCount() : ", musicModel.getCount())
-                    currentIndex = index
-                    //musicModel.removeMusic(currentIndex)
-                    // var deleteIndex = currentIndex;
-                    // if(!deleteFiles.includes[deleteIndex]){
-                    //     deleteFiles.push(deleteIndex)
-                    //     console.log(deleteIndex)
-                    // }
-                    var modelIndex = musicModel.createModelIndex(currentIndex, 0);
-                    console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
-                    var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                    console.log(path)
-                    musicplayer.player.source = path
-                    //deleteMusic(filePathTxt, deleteFiles)
+                    // console.log("musicModel.getCount() : ", musicModel.getCount())
+                    // currentIndex = index
+                    // //musicModel.removeMusic(currentIndex)
+                    // // var deleteIndex = currentIndex;
+                    // // if(!deleteFiles.includes[deleteIndex]){
+                    // //     deleteFiles.push(deleteIndex)
+                    // //     console.log(deleteIndex)
+                    // // }
+                    // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
+                    // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
+                    // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
+                    // console.log(path)
+                    // musicplayer.player.source = path
+                    // //deleteMusic(filePathTxt, deleteFiles)
 
-                    //MusicPathOperations.DeletePathTotxt(filePathTxt, )
+                    // //MusicPathOperations.DeletePathTotxt(filePathTxt, )
                 }
 
                 onDoubleClicked: {
-                    currentIndex=index
-                    addToCurrentModel(musicModel.data(musicModel.createModelIndex(currentIndex), MusicModel.FilePathRole))
+                    localPage.currentIndex = index
+                    addToCurrentModelbyDbc(musicModel.data(musicModel.createModelIndex(localPage.currentIndex), MusicModel.FilePathRole))
                 }
             }
 //////////////////////////////////////////////

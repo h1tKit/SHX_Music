@@ -197,22 +197,46 @@ Window {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            onAddToCurrentModel: {
-                var i = control.searchSong(requestPath)
+            onPlayAllPage: {
+                control.replaceWithSourceModel(localPage.musicModel)
+                player1.source = control.currentList[0]
+            }
+
+            onAddToCurrentModelbyDbc: {
+                console.log("localrequestpath",dbcrequestPath)
+                var i = control.searchSongbyReserve(dbcrequestPath)
+                // var i = control.searchSong(dbcrequestPath)
+
+
                 var modelIndex =localPage.musicModel.createModelIndex(currentIndex,0);
                 var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
                 var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
                 if(i===-1){
-                    control.insertSongToNext(musicpath, localPage.musicModel, musicpath)
+                    control.insertSongToNextbyDbc(musicpath,localPage.musicModel,musicpath)
 
                     console.log("musicpath",musicpath)
                     console.log("The insert path",localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole))
-                    console.log("添加新歌", musicpath)
+                    console.log("添加新歌:", musicpath)
+
                 }else{
                     control.jumpToSong(i)
-                    console.log("跳转到已有歌曲: ",i)
+                    console.log("跳转到已有歌曲:", i)
+
                 }
                 control.playSong(control.currentIndex)
+            }
+
+            onAddToCurrentModelbyBtn: {
+                var i = control.searchSong(btnrequestPath)
+
+                var modelIndex =localPage.musicModel.createModelIndex(currentIndex,0);
+                var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                    //单纯添加到下一首，及不播放，也不切换光标
+                    control.insertSongToNextbyBtn(musicpath)
+                    console.log("musicpath",musicpath)
+                    console.log("The insert path",localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole))
+                    console.log("添加新歌:", musicpath)
             }
             onAddMusic: {
                 addMusicDialog.open()
@@ -225,20 +249,49 @@ Window {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            onAddToCurrentModel: {
-                var i = control.searchSong(requestPath)
+            onPlayAllPage: {
+                control.replaceWithSourceModel(favoritePage.musicModel)
+                player1.source = control.currentList[0]
+            }
+
+            onAddToCurrentModelbyDbc:{
+                console.log("localrequestpath",dbcrequestPath)
+                var i = control.searchSongbyReserve(dbcrequestPath)
+                // var i = control.searchSong(dbcrequestPath)
+
+
                 var modelIndex =favoritePage.musicModel.createModelIndex(favoriteIndex,0);
                 var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
                 var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
                 if(i===-1){
-                    control.insertSongToNext(musicpath,favoritePage.musicModel, musicpath)
+                    control.insertSongToNextbyDbc(musicpath,favoritePage.musicModel,musicpath)
 
                     console.log("musicpath",musicpath)
                     console.log("The insert path",favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole))
+                    console.log("添加新歌:", musicpath)
+
                 }else{
                     control.jumpToSong(i)
+                    console.log("跳转到已有歌曲:", i)
+
                 }
                 control.playSong(control.currentIndex)
+            }
+
+            ////////////////////////////////////！！！！！！！！千万不能删，只是为了区分单机和双击好测试才注释
+
+            onAddToCurrentModelbyBtn: {
+                var i = control.searchSong(btnrequestPath)
+
+                var modelIndex =favoritePage.musicModel.createModelIndex(favoriteIndex,0);
+                var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                //单纯添加到下一首，及不播放，也不切换光标
+                control.insertSongToNextbyBtn(musicpath)
+                console.log("musicpath",musicpath)
+                console.log("The insert path",favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole))
+                console.log("添加新歌:", musicpath)
+
             }
         }
     }
