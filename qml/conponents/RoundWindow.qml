@@ -3,6 +3,7 @@ import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
+import MyModel
 import "../logic"
 
 
@@ -14,9 +15,16 @@ Window {
     color: "transparent"
     visible: true
 
+    property var reciverFromFile: []
+
     signal miniSize()
     signal midSize()
     signal maxSize()
+    signal dataReady(var data)
+
+    onReciverFromFileChanged:{          //发送在文件读取的文件给localpage
+        dataReady(reciverFromFile)
+    }
 
     onWidthChanged: {
         window.width > 1000 ? maxSize() : window.width > 650 ? midSize() : miniSize()
@@ -184,6 +192,7 @@ Window {
         LocalPage {
             id: localPage         //right top area
             musicplayer: player1
+            rootWindow: window
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -194,16 +203,14 @@ Window {
                 var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
                 var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
                 if(i===-1){
-                    control.insertSongToNext(musicpath,localPage.musicModel,musicpath)
+                    control.insertSongToNext(musicpath, localPage.musicModel, musicpath)
 
                     console.log("musicpath",musicpath)
                     console.log("The insert path",localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole))
-                    console.log("添加新歌:", musicpath)
-
+                    console.log("添加新歌", musicpath)
                 }else{
                     control.jumpToSong(i)
-                    console.log("跳转到已有歌曲:", i)
-
+                    console.log("跳转到已有歌曲: ",i)
                 }
                 control.playSong(control.currentIndex)
             }
@@ -224,21 +231,17 @@ Window {
                 var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
                 var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
                 if(i===-1){
-                    control.insertSongToNext(musicpath,favoritePage.musicModel,musicpath)
+                    control.insertSongToNext(musicpath,favoritePage.musicModel, musicpath)
 
                     console.log("musicpath",musicpath)
                     console.log("The insert path",favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole))
-
                 }else{
                     control.jumpToSong(i)
-
                 }
                 control.playSong(control.currentIndex)
             }
         }
     }
-
-
 
     Dialog {
         id: addMusicDialog
@@ -306,32 +309,22 @@ Window {
                 }
             }
         }
-        onOpenByFile: {
-            // 创建文件对话框组件
-            var fileDialogComponent = Qt.createComponent("MusicFileDialog.qml")
 
-            if (fileDialogComponent.status === Component.Ready) {
-                // 实例化对话框
-                var fileDialog = fileDialogComponent.createObject(byFile, {
-                                                                      "title": "选择文件",
-                                                                      "selectedFile": Qt.resolvedUrl("."),
-                                                                      // "onAccepted": function() {
-                                                                      //     console.log("选择的文件:", fileDialog.fileUrls[0])
-                                                                      //     fileDialog.destroy()  // 关闭后销毁
-                                                                      // },
-                                                                      // "onRejected": function() {
-                                                                      //     console.log("对话框已取消")
-                                                                      //     fileDialog.destroy()  // 关闭后销毁
-                                                                      // }
-                                                                  })
-
-                // 显示对话框
-                fileDialog.open()
-
-                //do
-            } else {
-                console.error("无法加载文件对话框组件:", fileDialogComponent.errorString())
+        MusicFileDialog{
+            id:mfDialog
+            onFilesSelected:{
+                console.log("xxxxxxx接收到", mfDialog.selectedFilePaths.length)
+                reciverFromFile = mfDialog.selectedFilePaths;
+                console.log("=========",reciverFromFile[0])
             }
+        }
+
+        onOpenByFile: {
+            mfDialog.filesDialog.open()
+        }
+
+        onOpenByFolder:{
+            mfDialog.folderDialog.visible = true
         }
     }
 
@@ -341,8 +334,8 @@ Window {
         MouseArea {
             anchors.right: parent.right
             anchors.top: parent.top
-            width: 10
-            height: 10
+            width: 6
+            height: 6
             cursorShape: Qt.SizeBDiagCursor
             onPressed: {
                 window.startSystemResize(Qt.RightEdge | Qt.TopEdge)
@@ -351,8 +344,8 @@ Window {
         MouseArea {
             anchors.left: parent.left
             anchors.top: parent.top
-            width: 10
-            height: 10
+            width: 6
+            height: 6
             cursorShape: Qt.SizeFDiagCursor
             onPressed: {
                 window.startSystemResize(Qt.LeftEdge | Qt.TopEdge)
@@ -361,8 +354,8 @@ Window {
         MouseArea {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            width: 10
-            height: 10
+            width: 6
+            height: 6
             cursorShape: Qt.SizeFDiagCursor
             onPressed: {
                 window.startSystemResize(Qt.RightEdge | Qt.BottomEdge)
@@ -371,8 +364,8 @@ Window {
         MouseArea {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
-            width: 10
-            height: 10
+            width: 6
+            height: 6
             cursorShape: Qt.SizeBDiagCursor
             onPressed: {
                 window.startSystemResize(Qt.LeftEdge | Qt.BottomEdge)
@@ -381,7 +374,7 @@ Window {
         MouseArea {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            width: 8
+            width: 4
             height: parent.height - 16
             cursorShape: Qt.SizeHorCursor
             onPressed: {
@@ -391,7 +384,7 @@ Window {
         MouseArea {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            width: 8
+            width: 4
             height: parent.height - 16
             cursorShape: Qt.SizeHorCursor
             onPressed: {
@@ -402,7 +395,7 @@ Window {
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width - 16
-            height: 8
+            height: 4
             cursorShape: Qt.SizeVerCursor
             onPressed: {
                 window.startSystemResize(Qt.TopEdge)
@@ -412,7 +405,7 @@ Window {
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width - 16
-            height: 8
+            height: 4
             cursorShape: Qt.SizeVerCursor
             onPressed: {
                 window.startSystemResize(Qt.BottomEdge)
@@ -432,5 +425,9 @@ Window {
             titleBar.topRightRadius = 0
             playBar.radius = 0
         }
+    }
+
+    Component.onDestruction: {
+        MusicPathOperations.writeToTxt("../../data/localMusic.txt", localPage.musicModel)
     }
 }

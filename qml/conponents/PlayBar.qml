@@ -102,13 +102,12 @@ Item {
         anchors.leftMargin: 200
         anchors.right: parent.right
         anchors.rightMargin: 200
-        spacing: 5
+        spacing: 20
 
-        Rectangle {
+        Text {
             id: currentTime
-            color: "transparent"
-            Layout.preferredWidth: 30
-            Layout.preferredHeight: 15
+            text: formatTime(player.currentTime)
+            color: Qt.rgba(0.4,0.4,0.4,1)
         }
 
         TSlider {
@@ -128,11 +127,10 @@ Item {
             onDraged: player.player.position = setValue
         }
 
-        Rectangle {
+        Text {
             id: totalTime
-            color: "transparent"
-            Layout.preferredWidth: 30
-            Layout.preferredHeight: 15
+            text: formatTime(player.duration)
+            color: Qt.rgba(0.4,0.4,0.4,1)
         }
     }
 
@@ -289,6 +287,8 @@ Item {
 
         onVolumeValueChanged: {
             player.volume = volumeSlider.volumeValue
+            volumeButton.preVolume = volumeSlider.volumeValue
+            volumeButton.state = "normal"
         }
 
         onIsHoverdChanged: {
@@ -313,6 +313,7 @@ Item {
 
     RoundRectangleButton {
         id: volumeButton
+
         width: 30
         height: 30
         hoverBackgroundColor: "transparent"
@@ -320,6 +321,8 @@ Item {
         anchors.rightMargin: 30
         anchors.verticalCenter: parent.verticalCenter
         state: "normal"
+
+        property real preVolume: 0.4
 
         MouseArea {
             id: volumeButtonMouseArea
@@ -332,16 +335,25 @@ Item {
                 hoverButtonShowTimer.stop()
                 volumeSlider.visible = true
             }
-
             onExited: {
                 containsMouse = false
                 if (!volumeSlider.isHoverd) {
                     hoverButtonShowTimer.start()
                 }
             }
-
             onClicked: {
-                state = (state === "normal" ? "mute" : "normal")
+                console.log("CLICK")
+                volumeButton.state = (volumeButton.state === "normal" ? "mute" : "normal")
+            }
+        }
+
+        onStateChanged: {
+            if (state === "mute") {
+                volumeSlider.mute = true
+                player.volume = 0
+            }else {
+                volumeSlider.mute = false
+                player.volume = preVolume
             }
         }
 
@@ -398,4 +410,17 @@ Item {
         }
     }
 
+    function formatTime(milliseconds) {
+        if (!milliseconds || milliseconds <= 0)
+            return "00:00"
+
+        var totalSeconds = Math.floor(milliseconds / 1000)
+        console.log("Total Seconds : ", totalSeconds)
+        var minutes = Math.floor(totalSeconds / 60)
+        var seconds = totalSeconds % 60
+        //
+        return minutes.toString().padStart(2, '0') +
+                ":" +
+                seconds.toString().padStart(2, '0')
+    }
 }

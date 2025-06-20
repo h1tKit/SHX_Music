@@ -1,20 +1,28 @@
 #pragma once
-#include <QWidget>
+
 #include <QObject>
-#include <QFile>
-#include <QSet>
+#include <QStringList>
+#include <QQmlEngine>
+#include <QQmlApplicationEngine>
+#include <QGuiApplication>
+#include <QWindow>
+#include <QWidget>
+#include <QFileDialog>
 #include <QDir>
 
 class FileOperations : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileOperations(QWidget *parentWidget = nullptr, QObject *parent = nullptr);
+    explicit FileOperations(QObject *parent = nullptr);
 
-    Q_INVOKABLE QStringList selectMultipleFiles();
-    Q_INVOKABLE QStringList selectFolder(const QString &destination); //参数是默认打开的目录
+    // 选择多个音乐文件
+    Q_INVOKABLE QStringList selectMusicFiles();
+
+    // 选择文件夹中的音乐文件
+    Q_INVOKABLE QStringList selectMusicFromFolder(const QString &folderPath = "");
 
 private:
-    QWidget *m_parentWidget;
-    QStringList m_selectedFiles;
+    // 获取QWidget父组件
+    QWidget *getParentWidget() const;
 };

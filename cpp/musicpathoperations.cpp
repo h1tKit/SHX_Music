@@ -88,9 +88,10 @@ void MusicPathOperations::AddPathToTxt(
     }
 }
 
-void MusicPathOperations::WriteToTxt(
-    const QString &filePath, MusicModel &musicModel)
+void MusicPathOperations::writeToTxt(
+    const QString &filePath, MusicModel *musicModel)
 {
+    qDebug() << "1111111111\n";
     QFile file(filePath);
 
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -99,8 +100,9 @@ void MusicPathOperations::WriteToTxt(
     }
 
     QTextStream out(&file);
-    for (int i = 0; i < musicModel.getCount(); i++) {
-        out << musicModel.getMuiscPath(i) << "\n";
+    for (int i = 0; i < musicModel->getCount(); i++) {
+        out << musicModel->getMuiscPath(i) << "\n";
+        qDebug() << musicModel->getMuiscPath(i) << "\n";
     }
 
     file.close();

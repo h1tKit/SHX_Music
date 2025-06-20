@@ -3,6 +3,7 @@ import QtQuick
 Rectangle {
     id: body
 
+    property bool mute: false
     property bool isHoverd: false
     property real volumeValue: 0.0
     property real inicialVolume: 0.4
@@ -61,10 +62,10 @@ Rectangle {
 
     HSlider {
         id: slider
-        doneColor: Qt.rgba(0.106, 0.553, 0.788,1)
+        doneColor: mute ? Qt.rgba(0.45,0.45,0.45,1) : Qt.rgba(0.106, 0.553, 0.788,1)
         undoneColor: Qt.rgba(0.7,0.7,0.7,1)
         handleColor: "white"
-        handleCentralColor: Qt.rgba(0.106, 0.553, 0.788,1)
+        handleCentralColor: mute ? Qt.rgba(0.45,0.45,0.45,1) : Qt.rgba(0.106, 0.553, 0.788,1)
         handle.border.width: 1
         handle.border.color: Qt.rgba(0,0,0,0.15)
         anchors.top: volumnText.bottom
@@ -85,6 +86,7 @@ Rectangle {
             }
         ]
         onDraged: {
+            mute = false
             body.volumeValue = setValue / (to - from)
             console.log("volume : ", body.volumeValue)
             volumnText.text = setValue.toString()

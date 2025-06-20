@@ -6,6 +6,8 @@ Item {
     property alias player: _player
     property alias source: _player.source
     property alias volume: _audioOutput.volume
+    property alias currentTime: _player.position
+    property var duration: _player.duration
 
     property bool isReady: false
 

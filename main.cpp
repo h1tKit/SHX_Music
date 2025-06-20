@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "./heads/musicpathoperations.h"
@@ -9,14 +9,15 @@
 int main(
     int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    qputenv("QT_QPA_PLATFORMTHEME", "xdgdesktopportal");
+    QApplication app(argc, argv);
 
     MusicInfo musicInfo;
     MusicPathOperations mpo;
     FileOperations fileOperaTions;
 
     qmlRegisterType<MusicModel>("MyModel", 1, 0, "MusicModel");
-    qmlRegisterType<MusicModel>("MyModel", 1, 0, "FileOperations");
+    //qmlRegisterType<MusicModel>("MyModel", 1, 0, "FileOperations");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("MusicInfo", &musicInfo);

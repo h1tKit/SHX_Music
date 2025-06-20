@@ -8,7 +8,7 @@ Item {
     id:localPage
     property bool isReady: false
 
-    property var filePathTxt: "/home/br0/7/SHX_Music/data/localMusic.txt"
+    property var filePathTxt: "../../data/localMusic.txt"
     property var currentIndex: -1
     property var deleteFiles: []
 
@@ -18,11 +18,37 @@ Item {
 
     property var selectedList: []
 
+    property var receivedData: [] //接受文件传过来的数据
+    property var rootWindow: null // 用于接收 Window 的引用
+
     signal addToCurrentModel(var requestPath)
     signal addToLoveModel(var requestPath)
 
     signal addMusic()
 
+    state: "singleOp"
+
+    states: [
+        State {
+            name: "singleOp"
+        },
+        State {
+            name: "multiOp"
+        }
+    ]
+
+    onStateChanged: {
+        if(state === "singleOp") {
+            addToLoveButtonInBar.visible = false
+            addToCurrentButtonInBar.visible = false
+            deleteButtonInBar.visible = false
+        }else {
+            addToLoveButtonInBar.visible = true
+            addToCurrentButtonInBar.visible = true
+            deleteButtonInBar.visible = true
+        }
+
+    }
 
     ////////////////////////////////////////////////////////////
     Rectangle {
@@ -60,6 +86,53 @@ Item {
             anchors.left: titleBackground.left
             anchors.right: titleBackground.right
             height: 1
+        }
+
+        RoundRectangleButton {
+            id: addToLoveButtonInBar
+            visible: false
+            width: 30
+            height: 30
+            anchors.right: addToCurrentButtonInBar.left
+            anchors.rightMargin: 10
+            anchors.verticalCenter: titleBackground.verticalCenter
+            hoverBackgroundColor: "transparent"
+
+            Image {
+                id: addToLoveButtonInBarIcon
+                source: "qrc:/control/image/love_add.png"
+                anchors.fill: parent
+            }
+        }
+        RoundRectangleButton {
+            id: addToCurrentButtonInBar
+            visible: false
+            width: 30
+            height: 30
+            anchors.right: deleteButtonInBar.left
+            anchors.rightMargin: 10
+            anchors.verticalCenter: titleBackground.verticalCenter
+
+            Image {
+                id: addToCurrentButtonInBarIcon
+                source: "qrc:/control/image/add.png"
+                anchors.fill: parent
+            }
+        }
+        RoundRectangleButton {
+            id: deleteButtonInBar
+            visible: false
+            width: 30
+            height: 30
+            anchors.right: opButton.left
+            anchors.verticalCenter: titleBackground.verticalCenter
+            anchors.rightMargin: 50
+
+            Image {
+                id: deleteButtonInBarIcon
+                source: "qrc:/control/image/remove.png"
+                anchors.fill: parent
+            }
         }
 
         RoundRectangleButton {
@@ -133,8 +206,6 @@ Item {
                     id: playAllItem
                     RoundRectangleButton {
                         id: playAllButton
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         width: 120
@@ -173,23 +244,53 @@ Item {
                     id: multiOpItem
                     RoundRectangleButton {
                         id: multiOpButton
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         width: 120
                         height: 20
+                        state: "waiting"
 
-                        onTapped: editDialog.multiOp()
+                        states: [
+                            State {
+                                name: "operating"
+                                PropertyChanges {
+                                    target: localPage
+                                    state: "multiOp"
+                                }
+                                PropertyChanges {
+                                    target: multiOpIcon
+                                    border.color: "red"
+                                }
+                            },
+                            State {
+                                name: "waiting"
+                                PropertyChanges {
+                                    target: localPage
+                                    state: "singleOp"
+                                }
+                                PropertyChanges {
+                                    target: multiOpIcon
+                                    border.color: Qt.rgba(0.106, 0.553, 0.788,1)
+                                }
+                            }
+                        ]
 
-                        Image {
-                            id: byFileIcon
-                            source: "qrc:/control/image/file_add.png"
+                        onTapped: {
+                            multiOpButton.state = multiOpButton.state === "operating" ? "waiting" : "operating"
+                            //editDialog.multiOp()
+                        }
+
+                        Rectangle {
+                            id: multiOpIcon
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 10
-                            width: 20
-                            height: 20
+                            width: 16
+                            height: 16
+                            radius: 8
+                            color: "transparent"
+                            border.width: 2
+                            border.color: Qt.rgba(0.106, 0.553, 0.788,1)
 
                         }
                     }
@@ -202,7 +303,6 @@ Item {
                         font.pixelSize: 15
                     }
                 }
-
             }
         }
     }
@@ -225,8 +325,53 @@ Item {
             anchors.bottom: parent.bottom
         }
 
-        RoundRectangleButton {
+        Rectangle {
             id: selectAllButton
+            visible: false
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+            anchors.verticalCenter: parent.verticalCenter
+            width: 16
+            height: 16
+            radius: 8
+            color: "transparent"
+            border.width: 2
+            border.color: Qt.rgba(0.106, 0.553, 0.788,1)
+            state: "unselected"
+
+            states: [
+                State {
+                    name: "selected"
+                    PropertyChanges {
+                        target: singleSelectedMark
+                        color: Qt.rgba(0.106, 0.553, 0.788,1)
+                    }
+                },
+                State {
+                    name: "unselected"
+                    PropertyChanges {
+                        target: singleSelectedMark
+                        color: "transparent"
+                    }
+                }
+            ]
+
+            onStateChanged: {
+                if(state === "selected") {
+                    //selectedList.push(filePath)
+                    //console.log("Selected ", filePath)
+                }else {
+                    //var i = selectedList.indexOf(filePath)
+                    //if (i !== -1) {
+                     //   selectedList.splice(i, 1)
+                     //   console.log("unSelected ", filePath)
+                    //}
+                }
+            }
+        }
+
+        RoundRectangleButton {
+            //id:
             anchors.left: parent.left
             anchors.leftMargin: 5
             anchors.verticalCenter: parent.verticalCenter
@@ -237,17 +382,17 @@ Item {
         }
 
         Text {
-            id: title
+            id: titleColumn
             text: qsTr("音乐标题")
             color: Qt.rgba(0.3,0.3,0.3,1)
             font.pixelSize: 14
-            anchors.left: selectAllButton.left
+            anchors.left: parent.left
             anchors.leftMargin: 60
             anchors.verticalCenter: parent.verticalCenter
         }
 
         Text {
-            id: artist
+            id: artistColumn
             text: qsTr("歌手")
             color: Qt.rgba(0.3,0.3,0.3,1)
             font.pixelSize: 14
@@ -257,7 +402,7 @@ Item {
         }
 
         Text {
-            id: duration
+            id: durationColumn
             text: qsTr("时长")
             color: Qt.rgba(0.3,0.3,0.3,1)
             font.pixelSize: 14
@@ -282,6 +427,8 @@ Item {
         spacing: 0
         clip: true
 
+        ScrollBar.vertical: ScrollBar {}
+
         delegate: Rectangle {
             id: single
             height: 40
@@ -289,6 +436,12 @@ Item {
             color: index % 2 === 1 ? Qt.rgba(0.95,0.95,0.95,1) : Qt.rgba(0.9,0.9,0.9,1)
 
             property color originalColor: index % 2 === 1 ? Qt.rgba(0.95,0.95,0.95,1) : Qt.rgba(0.9,0.9,0.9,1)
+
+            required property var title
+            required property var artist
+            required property var duration
+            required property var filePath
+            required property var index
 
             Text {
                 id: singleTitleText
@@ -298,6 +451,8 @@ Item {
                 anchors.left: single.left
                 anchors.leftMargin: 60
                 anchors.verticalCenter: single.verticalCenter
+                elide: Text.ElideRight
+                width: 200
             }
             Text {
                 id: singleArtistText
@@ -306,18 +461,69 @@ Item {
                 anchors.horizontalCenter: single.horizontalCenter
                 anchors.horizontalCenterOffset: -30
                 anchors.verticalCenter: single.verticalCenter
+                elide: Text.ElideRight
+                width: 200
+                horizontalAlignment: Text.AlignHCenter  // 文本水平居中
             }
             Text {
                 id: singleDurationText
-                text: duration
+                text: formatTime(duration)
                 color: Qt.rgba(0.4,0.4,0.4,1)
                 anchors.right: single.right
                 anchors.rightMargin: 60
                 anchors.verticalCenter: single.verticalCenter
             }
+
+                RoundRectangleButton {
+                    id: addToLoveButton
+                    visible: false
+                    width: 30
+                    height: 30
+                    anchors.right: addToCurrentButton.left
+                    anchors.rightMargin: 10
+                    anchors.verticalCenter: single.verticalCenter
+                    hoverBackgroundColor: "transparent"
+
+                    Image {
+                        id: addToLoveButtonIcon
+                        source: "qrc:/control/image/love_add.png"
+                        anchors.fill: parent
+                    }
+                }
+                RoundRectangleButton {
+                    id: addToCurrentButton
+                    visible: false
+                    width: 30
+                    height: 30
+                    anchors.right: deleteButton.left
+                    anchors.rightMargin: 10
+                    anchors.verticalCenter: single.verticalCenter
+
+                    Image {
+                        id: addToCurrentButtonIcon
+                        source: "qrc:/control/image/add.png"
+                        anchors.fill: parent
+                    }
+                }
+                RoundRectangleButton {
+                    id: deleteButton
+                    visible: false
+                    width: 30
+                    height: 30
+                    anchors.right: singleDurationText.left
+                    anchors.verticalCenter: single.verticalCenter
+                    anchors.rightMargin: 50
+
+                    Image {
+                        id: deleteButtonIcon
+                        source: "qrc:/control/image/remove.png"
+                        anchors.fill: parent
+                    }
+                }
 //////////////////////////////////////////////
             Rectangle {
                 id: singleSelectedMark
+                visible: false
                 width: 16
                 height: 16
                 radius: 8
@@ -360,25 +566,136 @@ Item {
                 }
             }
 
-            MouseArea {
-                anchors.fill: single
-                hoverEnabled: true
-                onEntered: single.color = Qt.rgba(0.8,0.8,0.8,1)
-                onExited: single.color = single.originalColor
+            Connections {
+                target: localPage
+                onStateChanged: {
+                    if (localPage.state === "singleOp") {
+                        addToLoveButtonArea.enabled = true
+                        addToCurrentButtonArea.enabled = true
+                        deleteButtonArea.enabled = true
+
+                        clickToPlayLeftArea.enabled = true
+                        clickToPlayRightArea.enabled = true
+                        clickToPlayFullArea.enabled = false
+
+                        singleSelectedMark.visible = false
+
+                    }else {
+                        addToLoveButtonArea.enabled = false
+                        addToCurrentButtonArea.enabled = false
+                        deleteButtonArea.enabled = false
+
+                        clickToPlayLeftArea.enabled = false
+                        clickToPlayRightArea.enabled = false
+                        clickToPlayFullArea.enabled = true
+
+                        singleSelectedMark.visible = true
+
+                    }
+                }
             }
 
             MouseArea {
-                anchors.fill: singleSelectedMark
+                id: fullHover
+                //enabled: false
+                anchors.fill: single
+                hoverEnabled: true
+                onEntered: {
+                    single.color = Qt.rgba(0.8,0.8,0.8,1)
+                    // "singleOp" show 3 button
+                    if (localPage.state === "singleOp") {
+                        addToLoveButton.visible = true
+                        addToCurrentButton.visible = true
+                        deleteButton.visible = true
+                    }else {
+                        // addToLoveButtonArea.enabled = false
+                        // addToCurrentButtonArea.enabled = false
+                        // deleteButtonArea.enabled = false
+                    }
+                }
+                onExited: {
+                    single.color = single.originalColor
+                    // "multiOp" hide 3 button
+                    //if (localPage.state === "multiOp")
+                    addToLoveButton.visible = false
+                    addToCurrentButton.visible = false
+                    deleteButton.visible = false
+
+                }
+            }
+            MouseArea {
+                id: addToLoveButtonArea
+
+                anchors.fill: addToLoveButton
+                onClicked: console.log("ADDToLove")
+            }
+            MouseArea {
+                id: addToCurrentButtonArea
+
+                anchors.fill: addToCurrentButton
+                onClicked: console.log("ADDToCurrent")
+            }
+
+            MouseArea {
+                id: deleteButtonArea
+
+                anchors.fill: deleteButton
+                onClicked: console.log("DELETE")
+            }
+
+            //TODO : put below into a function ( onClicked\ onDoubleClicked
+
+            MouseArea {
+                id: clickToPlayFullArea
+                enabled: false
+                anchors.top: single.top
+                anchors.bottom: single.bottom
+                anchors.right: single.right
+                anchors.left: single.left
+
                 onClicked: {
                     singleSelectedMark.state = singleSelectedMark.state === "selected" ? "unselected" : "selected"
                 }
             }
 
             MouseArea {
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                anchors.left: singleSelectedMark.right
+                id: clickToPlayLeftArea
+                anchors.top: single.top
+                anchors.bottom: single.bottom
+                anchors.right: addToLoveButton.left
+                anchors.left: single.left
+
+                onClicked: {
+                    console.log("musicModel.getCount() : ", musicModel.getCount())
+                    currentIndex = index
+                    //musicModel.removeMusic(currentIndex)
+                    // var deleteIndex = currentIndex;
+                    // if(!deleteFiles.includes[deleteIndex]){
+                    //     deleteFiles.push(deleteIndex)
+                    //     console.log(deleteIndex)
+                    // }
+                    var modelIndex = musicModel.createModelIndex(currentIndex, 0);
+                    console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
+                    var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
+                    console.log(path)
+                    musicplayer.player.source = path
+                    //deleteMusic(filePathTxt, deleteFiles)
+
+                    //MusicPathOperations.DeletePathTotxt(filePathTxt, )
+                }
+
+                onDoubleClicked: {
+                    currentIndex=index
+                    addToCurrentModel(musicModel.data(musicModel.createModelIndex(currentIndex), MusicModel.FilePathRole))
+                }
+            }
+
+            MouseArea {
+                id: clickToPlayRightArea
+                anchors.top: single.top
+                anchors.bottom: single.bottom
+                anchors.right: single.right
+                anchors.left: deleteButton.right
 
                 onClicked: {
                     console.log("musicModel.getCount() : ", musicModel.getCount())
@@ -409,12 +726,14 @@ Item {
     }
 
     onAddMusic: {
-
+        //FileOperaTions.selectMusicFiles()
     }
 
     function addMusicFolder(){
 
     }
+
+    //function
 
     //1
     function initLocalModel(filePathTxt){
@@ -428,10 +747,39 @@ Item {
         MusicPathOperations.DeletePathToTxt(filePathTxt, deleteFiles)
     }
 
+    function formatTime(milliseconds) {
+        if (!milliseconds || milliseconds <= 0)
+            return "00:00"
+
+        var totalSeconds = milliseconds
+        console.log("total seconds : ", totalSeconds)
+        var minutes = Math.floor(totalSeconds / 60.0)
+        var seconds = totalSeconds % 60
+        //
+        return minutes.toString().padStart(2, '0') +
+                ":" +
+                seconds.toString().padStart(2, '0')
+    }
+
     Component.onCompleted:{
         //localPage.initLocalModel(filePathTxt)
         localListView.update()
-        console.log("localPage...")
+        //console.log("localPage...")
         localPage.isReady = true
+        if (rootWindow && rootWindow.dataReady) {  // 假设window是Sender.qml的实例
+            rootWindow.dataReady.connect(handleData)
+        }
+    }
+    function handleData(data) {
+        receivedData = data  // 保存接收到的数据
+        console.log("接收到数据:", receivedData)
+        // 处理接收到的数据
+    }
+
+    onReceivedDataChanged:{
+        for(var i = 0; i < receivedData.length; i++){
+            musicModel.loadFromFile(receivedData[i])
+            console.log("---------")
+        }
     }
 }

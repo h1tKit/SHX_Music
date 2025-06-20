@@ -17,6 +17,9 @@
         <file>image/file_add.png</file>
         <file>image/folder_add.png</file>
         <file>image/menu_edit.png</file>
+        <file>image/love_add.png</file>
+        <file>image/add.png</file>
+        <file>image/remove.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
