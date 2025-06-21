@@ -1,5 +1,6 @@
 #include "./heads/musicmodel.h"
 #include "./heads/musicinfo.h"
+#include "./heads/musicpathoperations.h"
 #include <QVariantMap>
 #include <qvariant.h>
 
@@ -146,13 +147,13 @@ void MusicModel::updateMusic(
 }
 
 void MusicModel::loadFromFile(
-    const QString &filePath)
+    const QString &filePath, const QString &fileLovePath)
 {
-    qDebug() << "赋值Model\n";
     beginInsertRows(QModelIndex(), m_musicList.count(), m_musicList.count());
 
     MusicItem item;
     MusicInfo musicInfo;
+    MusicPathOperations musicPathOperations;
     musicInfo.parseFile(filePath);
     QVariantMap metadata = musicInfo.metadata();
 
@@ -169,6 +170,9 @@ void MusicModel::loadFromFile(
         item.bitrate = metadata["bitrate"].toInt();
         item.sampleRate = metadata["sampleRate"].toInt();
         item.channels = metadata["channels"].toInt();
+        if (musicPathOperations.IsLoveMusdic(fileLovePath, filePath)) {
+            item.isLove = true;
+        }
 
         if (item.coverArt.isNull()) {
             //item.coverArt.load(":/default_cover.png");
@@ -211,6 +215,7 @@ void MusicModel::insertMusic(
         newItem.bitrate = metadata["bitrate"].toInt();
         newItem.sampleRate = metadata["sampleRate"].toInt();
         newItem.channels = metadata["channels"].toInt();
+        newItem.isLove = false; //默认在播放列表的ISLOVE为FALSE
 
         if (newItem.coverArt.isNull()) {
             //item.coverArt.load(":/default_cover.png");

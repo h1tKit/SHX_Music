@@ -4,6 +4,7 @@
 #include <QString>
 #include <QUrl>
 #include <QImage>
+#include <QVector>
 
 class MusicModel : public QAbstractListModel
 {
@@ -38,7 +39,7 @@ public:
     Q_INVOKABLE void removeMusics(QVariantList &indexList);
     Q_INVOKABLE void clearMusic();
     Q_INVOKABLE void updateMusic(int index, const QVariantMap &data);
-    Q_INVOKABLE void loadFromFile(const QString &filePath);
+    Q_INVOKABLE void loadFromFile(const QString &filePath, const QString &fileLovePath);
     Q_INVOKABLE QModelIndex createModelIndex(int row, int column = 0);
     Q_INVOKABLE void insertMusic(int index, const QString &filePath);
     Q_INVOKABLE void insertMusics(int index, QStringList &filePaths);

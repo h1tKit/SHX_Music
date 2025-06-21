@@ -44,10 +44,7 @@ QStringList MusicPathOperations::ReadPathFromFile(
     }
 
     QTextStream in(&file);
-    int i = 0;
     while (!in.atEnd()) {
-        i++;
-        qDebug() << i << "===---===---===---\n";
         QString line = in.readLine().trimmed(); // 去除首尾空白字符
         if (line.isEmpty()) {
             continue;
@@ -91,10 +88,36 @@ void MusicPathOperations::AddPathToTxt(
     }
 }
 
-void MusicPathOperations::writeToTxt(
-    const QString &filePath, MusicModel *musicModel)
+bool MusicPathOperations::IsLoveMusdic(
+    const QString &fileLovePath, const QString &filePath)
 {
-    qDebug() << "1111111111\n";
+    QFile file(fileLovePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "文件错误:" << fileLovePath;
+        return false;
+    }
+
+    //查看是不是我的喜欢
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed(); // 去除首尾空白字符
+        if (filePath == line) {
+            return true;
+        }
+    }
+
+    if (in.status() != QTextStream::Ok) {
+        qWarning() << "异常终止";
+        return false;
+    }
+
+    return false;
+}
+
+void MusicPathOperations::WriteToTxt(
+    const QString &filePath, MusicModel &musicModel)
+{
     QFile file(filePath);
 
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -103,9 +126,8 @@ void MusicPathOperations::writeToTxt(
     }
 
     QTextStream out(&file);
-    for (int i = 0; i < musicModel->getCount(); i++) {
-        out << musicModel->getMuiscPath(i) << "\n";
-        qDebug() << musicModel->getMuiscPath(i) << "\n";
+    for (int i = 0; i < musicModel.getCount(); i++) {
+        out << musicModel.getMuiscPath(i) << "\n";
     }
 
     file.close();
