@@ -16,6 +16,7 @@ Item {
 
     signal addToCurrentModelbyDbc(var dbcrequestPath)
     signal addToCurrentModelbyBtn(var btnrequestPath)
+    signal removeLoveModelbyBtn(var removeLoverequestPath)
 
     signal playAllPage()
 
@@ -527,7 +528,11 @@ Item {
                 id: deleteButtonArea
 
                 anchors.fill: deleteButton
-                onClicked: console.log("DELETE")
+                onClicked:{
+                    favoriteIndex = index
+                    removeLoveModelbyBtn(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
+                    console.log("DELETE")
+                }
             }
 
             //TODO : put below into a function ( onClicked\ onDoubleClicked
@@ -612,13 +617,54 @@ Item {
         }
     }
 
-    signal removeLoveModel(var requestPath)
+    // signal removeLoveModel(var requestPath)
     //to do
 
-    function initLocalModel(filePathTxt){
+
+    function searchByloveModel(musicPath){
+        for(var i = 0; i < favoritePage.musicModel.getCount(); i++) {
+            if (favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(i,0), MusicModel.FilePathRole) === musicPath) {
+                console.log("Found in lovePage")
+                return i;   //found
+            }else {
+                console.log("notFound in lovePage")
+                console.log(favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(i,0), MusicModel.FilePathRole))
+                console.log(musicPath)
+                continue;  //not found
+            }
+        }
+        console.log("notFound")
+        return -1;
+    }
+
+    function insertSongToLast(musicpath){
+        favoritePage,musicModel.loadFromFile(musicpath)
+        console.log("insertSongToLast  musicpath",musicpath)
+        var newIndex = searchByloveModel(musicpath)
+        console.log("insertSongToLast  newIndex",newIndex)
+        if(newIndex !== -1){
+            favoritePage.musicModel.changeIsLove(newIndex)
+            console.log("改变了当前这首歌为喜欢",favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole))
+        }
+    }
+
+    function removeLoveModel(musicpath){
+        console.log("removelove  musicpath",musicpath)
+        var newIndex = searchByloveModel(musicpath)
+        if(newIndex !== -1){
+            favoritePage.musicModel.removeMusic(newIndex)
+            favoritePage.musicModel.changeIsLove(newIndex)
+            console.log("改变了当前这首歌为不喜欢",favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole))
+        }
+    }
+
+
+
+    function initfavoriteModel(filePathTxt){
         MusicPathOperations.OperationTxt(filePathTxt)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
             musicModel.loadFromFile(MusicPathOperations.pathList[i])
+            musicModel.changeIsLove(i)
         }
     }
 

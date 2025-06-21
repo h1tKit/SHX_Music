@@ -7,9 +7,12 @@ Item {
 
     property int radius: 12
     property var controler
+    property var favoritepage
     property var player
     //
     property var listdialog
+
+    // property alias lovebutton: loveButton
 
     Rectangle {
         id: background
@@ -52,47 +55,71 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 5
 
-    }
-
-    RoundRectangleButton {
-        id: loveButton
-        width: 34
-        height: 34
-        radius: 17
-        hoverBackgroundColor: "transparent"
-        anchors.left: details.right
-        anchors.leftMargin: 30
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 14
-        state: "love"
-
-        states: [
-            State {
-                name: "love"
-                PropertyChanges {
-                    target: loveIcon
-                    source : "qrc:/control/image/love.png"
-                }
-            },
-            State {
-                name: "not"
-                PropertyChanges {
-                    target: loveIcon
-                    source : "qrc:/control/image/love_empty.png"
-                }
-            }
-        ]
-
-        onTapped: {
-            state = (state === "love" ? "not" : "love")
+         Text{
+            text:controler.currentModel.title
         }
 
-        Image {
-            id: loveIcon
-            anchors.fill: parent
-            scale: 1
-        }
     }
+
+    // RoundRectangleButton {
+    //     id: loveButton
+    //     width: 34
+    //     height: 34
+    //     radius: 17
+    //     hoverBackgroundColor: "transparent"
+    //     anchors.left: details.right
+    //     anchors.leftMargin: 30
+    //     anchors.bottom: parent.bottom
+    //     anchors.bottomMargin: 14
+    //     state: "not"
+
+
+    //     states: [
+    //         State {
+    //             name: "love"
+    //             PropertyChanges {
+    //                 target: loveIcon
+    //                 source : "qrc:/control/image/love.png"
+    //             }
+    //         },
+    //         State {
+    //             name: "not"
+    //             PropertyChanges {
+    //                 target: loveIcon
+    //                 source : "qrc:/control/image/love_empty.png"
+    //             }
+    //         }
+    //     ]
+
+    //     onTapped: {
+    //         state = (state === "love" ? "not" : "love")
+    //     }
+
+    //     onStateChanged: {
+    //         console.log("state ",state)
+    //         if(state === "love"){
+    //             var currentpath = controler.currentList[controler.currentIndex]
+    //             var i = favoritepage.searchByloveModel(currentpath)
+    //             var modelIndex = favoritepage.musicModel.createModelIndex(controler.currentIndex,0);
+    //             var musicpath = favoritepage.musicModel.data(modelIndex, favoritepage.musicModel.FilePathRole)
+    //             if(i===-1){
+    //                 console.log("添加进喜欢列表")
+    //                 favoritepage.insertSongToLast(musicpath)
+    //             }else{
+    //                 console.log("错误，从not变为love，不应该找到")
+    //             }
+    //         }
+    //         if(state === "not"){
+    //             //todo remove
+    //         }
+    //     }
+
+    //     Image {
+    //         id: loveIcon
+    //         anchors.fill: parent
+    //         scale: 1
+    //     }
+    // }
 
     RowLayout {
         id: playSlider

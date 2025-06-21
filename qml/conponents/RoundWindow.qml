@@ -44,6 +44,15 @@ Window {
         anchors.right: parent.right
         //anchors.top: parent.top
         Component.onCompleted: initCurrentModel()
+
+        // onChangeIslovebyCurrent: {
+        //     console.log("IslovebyCurrent",IslovebyCurrent)
+        //     if(IslovebyCurrent){
+        //         playBar.lovebutton.state="love"
+        //     }else{
+        //         playBar.lovebutton.state="not"
+        //     }
+        // }
     }
 
     //
@@ -151,6 +160,7 @@ Window {
         radius: 12
         player: player1
         controler: control
+        favoritepage: favoritePage
         //
         listdialog: playDialog1
         anchors.left: parent.left
@@ -175,7 +185,7 @@ Window {
 
             Component.onCompleted: {
                 localPage.initLocalModel("../../data/localMusic.txt")
-                favoritePage.initLocalModel("../../data/favoriteMusic.txt")
+                favoritePage.initfavoriteModel("../../data/favoriteMusic.txt")
             }
             onOpenLocalList: {
                 localPage.visible=true
@@ -200,6 +210,23 @@ Window {
             onPlayAllPage: {
                 control.replaceWithSourceModel(localPage.musicModel)
                 player1.source = control.currentList[0]
+                player1.player.position=0
+                player1.play()
+            }
+
+
+            onAddToLoveModel: {
+                console.log("addloverequestpath",addloverequestPath)
+                var i = favoritePage.searchByloveModel(addloverequestPath)
+                var modelIndex = localPage.musicModel.createModelIndex(currentIndex,0);
+                var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                if(i===-1){
+                    favoritePage.insertSongToLast(musicpath)
+                    console.log("添加进喜欢列表")
+                }else{
+                    console.log("当前喜欢列表已有这首歌")
+                }
             }
 
             onAddToCurrentModelbyDbc: {
@@ -252,6 +279,21 @@ Window {
             onPlayAllPage: {
                 control.replaceWithSourceModel(favoritePage.musicModel)
                 player1.source = control.currentList[0]
+                player1.player.position=0
+                player1.play()
+            }
+
+            onRemoveLoveModelbyBtn: {
+                console.log("removelove  musicpath",removeLoverequestPath)
+                var i = favoritePage.searchByloveModel(removeLoverequestPath)
+                 var modelIndex = favoritePage.musicModel.createModelIndex(favoriteIndex,0);
+                var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                if(i===-1){
+                     console.log("错误，不应该没找到")
+                }else{
+                    favoritePage.removeLoveModel(musicpath)
+                    console.log("从喜欢列表删除")
+                }
             }
 
             onAddToCurrentModelbyDbc:{
@@ -482,5 +524,7 @@ Window {
 
     Component.onDestruction: {
         MusicPathOperations.writeToTxt("../../data/localMusic.txt", localPage.musicModel)
+        MusicPathOperations.writeToTxt("../../data/favoriteMusic.txt", favoritePage.musicModel)
+        MusicPathOperations.writeToTxt("../../data/currentMusic.txt", control.currentModel)
     }
 }

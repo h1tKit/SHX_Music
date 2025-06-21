@@ -23,7 +23,7 @@ Item {
 
     signal addToCurrentModelbyDbc(var dbcrequestPath)
     signal addToCurrentModelbyBtn(var btnrequestPath)
-    signal addToLoveModel(var requestPath)
+    signal addToLoveModel(var addloverequestPath)
 
     signal playAllPage()
 
@@ -495,6 +495,7 @@ Item {
                         source: "qrc:/control/image/love_add.png"
                         anchors.fill: parent
                     }
+
                 }
                 RoundRectangleButton {
                     id: addToCurrentButton
@@ -633,7 +634,11 @@ Item {
                 id: addToLoveButtonArea
 
                 anchors.fill: addToLoveButton
-                onClicked: console.log("ADDToLove")
+                onClicked:{
+                    localPage.currentIndex = index
+                    localPage.addToLoveModel(musicModel.data(musicModel.createModelIndex(localPage.currentIndex), MusicModel.FilePathRole))
+                    console.log("ADDToLove")
+                }
             }
             MouseArea {
                 id: addToCurrentButtonArea

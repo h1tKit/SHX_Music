@@ -13,6 +13,7 @@ Item {
     //这个当前播放列表记录路径位置，需要xys提供接口
 
     property alias playdialog: __playDialog
+    property alias currentModel: currentModel
 
     property var addMusicPath
 
@@ -28,6 +29,9 @@ Item {
 
     property var filePath: "../../data/currentMusic.txt"
 
+    // signal changeIslovebyCurrent(var IslovebyCurrent)
+
+
     function initCurrentModel(filePath) {console.log("22222222",control.filePath)
         MusicPathOperations.OperationTxt(control.filePath)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
@@ -42,6 +46,23 @@ Item {
             console.log("默认加载第一首:", currentList[0])
         }
         musicplayer.player.mediaStatusChanged.connect(autoPlay)
+    }
+
+
+    onCurrentIndexChanged:{
+        if (currentIndex >= 0 && currentIndex < currentModel.getCount()&& !isNavigatingHistory) {
+            //changeSong()
+            currentView.currentIndex = currentIndex
+            // changeIslovebyCurrent(currentModel.data(currentModel.createModelIndex(currentIndex), MusicModel.IsLoveRole))
+            console.log("oncurrentchanged IslovebyCurrent",currentModel.data(currentModel.createModelIndex(currentIndex), MusicModel.IsLoveRole))
+            // addToHistory(currentIndex);
+        }
+    }
+
+    Component.onDestruction: {
+        //断开信号
+        musicplayer.player.mediaStatusChanged.disconnect(autoPlay)
+
     }
 
     function addToCurrent(addMusicPath) {
@@ -177,6 +198,10 @@ Item {
 
     }
 
+    // function givecurrentIslove(){
+
+    // }
+
 
     MusicModel {
         id: currentModel
@@ -254,19 +279,7 @@ Item {
         // }
     }
 
-    onCurrentIndexChanged:{
-        if (currentIndex >= 0 && currentIndex < currentModel.getCount()&& !isNavigatingHistory) {
-            //changeSong()
-            currentView.currentIndex = currentIndex
-            // addToHistory(currentIndex);
-        }
-    }
 
-    Component.onDestruction: {
-        //断开信号
-        musicplayer.player.mediaStatusChanged.disconnect(autoPlay)
-
-    }
 
     //更新currentList
     function updateCurrentList() {
