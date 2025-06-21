@@ -68,7 +68,9 @@ qt_add_qml_module(
   QML_FILES qml/conponents/FavoritePage.qml
   SOURCES heads/searchmusic.h
   SOURCES cpp/searchmusic.cpp
-  QML_FILES qml/conponents/MusicFileDialog.qml)
+  QML_FILES qml/conponents/MusicFileDialog.qml
+  SOURCES heads/imageproviader.h
+  SOURCES cpp/imageproviader.cpp)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 
