@@ -20,6 +20,7 @@
         <file>image/love_add.png</file>
         <file>image/add.png</file>
         <file>image/remove.png</file>
+        <file>image/CD.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

@@ -17,14 +17,14 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onEntered: {
-            console.log("enter body")
+            //console.log("enter body")
             body.isHoverd = true
         }
         onExited: {
             if (slider.isHandleHovered) {
                 body.isHoverd = true
             }else {
-                console.log("exit body")
+                //console.log("exit body")
                 body.isHoverd = false
             }
         }
@@ -88,7 +88,7 @@ Rectangle {
         onDraged: {
             mute = false
             body.volumeValue = setValue / (to - from)
-            console.log("volume : ", body.volumeValue)
+            //console.log("volume : ", body.volumeValue)
             volumnText.text = setValue.toString()
         }
     }

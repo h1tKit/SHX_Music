@@ -8,11 +8,15 @@ import MyModel
 
 Item {
     id:control
-    property alias setVisible: __playDialog.visible
+    property alias dialogVisible: _playDialog.visible
+
+    signal opened()
+    signal closed()
+    signal updateDetail(var songTitle, var artist, var cover)
 
     //这个当前播放列表记录路径位置，需要xys提供接口
 
-    property alias playdialog: __playDialog
+    property alias playdialog: _playDialog
     property alias currentModel: currentModel
 
     property var addMusicPath
@@ -57,6 +61,8 @@ Item {
             console.log("oncurrentchanged IslovebyCurrent",currentModel.data(currentModel.createModelIndex(currentIndex), MusicModel.IsLoveRole))
             // addToHistory(currentIndex);
         }
+        var ind = currentModel.createModelIndex(currentIndex,0)
+        updateDetail(currentModel.data(ind, MusicModel.TitleRole), currentModel.data(ind, MusicModel.ArtistRole), currentModel.data(ind, MusicModel.CoverArtRole))
     }
 
     Component.onDestruction: {
@@ -208,16 +214,31 @@ Item {
     }
 
     Dialog {
-        id:__playDialog
+        id:_playDialog
 
         visible: false
-        //在上一级设置（Window）这里是试验
-        width: 200
-        height: 400
 
-        x: parent.width - width - 30  // 10 是右边距
-        y: parent.height - height - 100 // 10 是底部边距
-        parent: Overlay.overlay
+        //width: 200
+        //height: parent.height
+        width: parent.width
+        height: parent.height
+
+        x: parent.width - width
+        y: parent.height - height
+
+
+        background: Rectangle {
+            id: background
+            anchors.fill: parent
+            color: Qt.rgba(0.95,0.95,0.95,1)
+            radius: 14
+            bottomRightRadius: 0
+            topRightRadius: 0
+            border.width: 1
+            border.color: Qt.rgba(0.55,0.55,0.55,1)
+            antialiasing: true
+
+        }
 
         //三个点来适配，
         //model用playlistModel
@@ -226,41 +247,43 @@ Item {
         //需要把当前ListView的index传过去，来支持相互绑定
         ListView{
             id: currentView
-            anchors.fill: parent
+            width: parent.width
+            height: parent.height
             spacing: 5
             clip: true
             visible:true
             model: currentModel
             currentIndex:control.currentIndex
             delegate: Rectangle {
-                width: ListView.view.width
+                radius: 12
+                width: currentView.width
                 height: 40
-                color: index === currentIndex ? "#87CEEB" : "transparent"
+                color: index === currentIndex ? Qt.rgba(0.106, 0.553, 0.788, 0.8) : "transparent"
 
                 Text {
                     id:titletxt
                     text: title
-                    anchors.top: parent.top
-                    anchors.topMargin:5
+                    anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: 5
                     elide: Text.ElideRight
-                    width: parent.width - 20
-                    color: "black"
-                    font.pixelSize: 12
+                    width: Math.floor(parent.width * 0.5)
+                    color: Qt.rgba(0.15,0.15,0.15,1)
+                    font.pixelSize: 14
                 }
                 Text {
                     id:artisttxt
                     text: artist
-                    anchors.top: titletxt.bottom
-                    anchors.topMargin:5
-                    anchors.left: parent.left
-                    anchors.leftMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
                     elide: Text.ElideRight
-                    width: parent.width - 20
-                    color: "black"
-                    font.pixelSize: 10
+                    width: Math.floor(parent.width * 0.3)
+                    color: Qt.rgba(0.2,0.2,0.2,1)
+                    font.pixelSize: 12
                 }
+
+
 
                 MouseArea {
                     anchors.fill: parent
@@ -277,6 +300,15 @@ Item {
         //     currentModel.clearMusic()
         //     currentModel.clearCount()
         // }
+        onOpened: {
+            control.opened()
+            control.state = "open"
+        }
+
+        onClosed: {
+            control.closed()
+            control.state = "close"
+        }
     }
 
 

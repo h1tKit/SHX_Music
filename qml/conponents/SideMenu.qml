@@ -111,13 +111,7 @@ Item {
                 font.pixelSize: 20
             }
         }
-        RoundRectangleButton {
-            id: minMenuButton
-            Layout.preferredWidth: root.width
-            Layout.preferredHeight: 40
 
-            onTapped: resizeMenu()
-        }
         Item {
             id: bottomSpace
             Layout.fillHeight: true

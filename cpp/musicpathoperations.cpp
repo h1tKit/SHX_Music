@@ -44,7 +44,10 @@ QStringList MusicPathOperations::ReadPathFromFile(
     }
 
     QTextStream in(&file);
+    int i = 0;
     while (!in.atEnd()) {
+        i++;
+        qDebug() << i << "===---===---===---\n";
         QString line = in.readLine().trimmed(); // 去除首尾空白字符
         if (line.isEmpty()) {
             continue;

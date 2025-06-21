@@ -138,13 +138,13 @@ Item {
         signal playAll()
 
         width: 120
-        height: 80
+        height: 41
 
         x: parent.width - width - 30
         y: subTitleBar.height + 20
 
-        onAccepted: console.log("Ok clicked")
-        onRejected: console.log("Cancel clicked")
+        // onAccepted: console.log("Ok clicked")
+        // onRejected: console.log("Cancel clicked")
 
         background: Rectangle{
             color: Qt.rgba(0.94,0.94,0.94,1)
@@ -163,7 +163,7 @@ Item {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         width: 120
-                        height: 20
+                        height: 40
 
                         onTapped: {
                             favoritePage.playAllPage()
@@ -195,71 +195,71 @@ Item {
                     height: 1
                     Layout.fillWidth: true
                 }
-                Item {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    id: multiOpItem
-                    RoundRectangleButton {
-                        id: multiOpButton
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 120
-                        height: 20
-                        state: "waiting"
+                // Item {
+                //     Layout.fillHeight: true
+                //     Layout.fillWidth: true
+                //     id: multiOpItem
+                //     RoundRectangleButton {
+                //         id: multiOpButton
+                //         anchors.left: parent.left
+                //         anchors.verticalCenter: parent.verticalCenter
+                //         width: 120
+                //         height: 20
+                //         state: "waiting"
 
-                        states: [
-                            State {
-                                name: "operating"
-                                PropertyChanges {
-                                    target: favoritePage
-                                    state: "multiOp"
-                                }
-                                PropertyChanges {
-                                    target: multiOpIcon
-                                    border.color: "red"
-                                }
-                            },
-                            State {
-                                name: "waiting"
-                                PropertyChanges {
-                                    target: favoritePage
-                                    state: "singleOp"
-                                }
-                                PropertyChanges {
-                                    target: multiOpIcon
-                                    border.color: Qt.rgba(0.106, 0.553, 0.788,1)
-                                }
-                            }
-                        ]
+                //         states: [
+                //             State {
+                //                 name: "operating"
+                //                 PropertyChanges {
+                //                     target: favoritePage
+                //                     state: "multiOp"
+                //                 }
+                //                 PropertyChanges {
+                //                     target: multiOpIcon
+                //                     border.color: "red"
+                //                 }
+                //             },
+                //             State {
+                //                 name: "waiting"
+                //                 PropertyChanges {
+                //                     target: favoritePage
+                //                     state: "singleOp"
+                //                 }
+                //                 PropertyChanges {
+                //                     target: multiOpIcon
+                //                     border.color: Qt.rgba(0.106, 0.553, 0.788,1)
+                //                 }
+                //             }
+                //         ]
 
-                        onTapped: {
-                            multiOpButton.state = multiOpButton.state === "operating" ? "waiting" : "operating"
-                            //editDialog.multiOp()
-                        }
+                //         onTapped: {
+                //             multiOpButton.state = multiOpButton.state === "operating" ? "waiting" : "operating"
+                //             //editDialog.multiOp()
+                //         }
 
-                        Rectangle {
-                            id: multiOpIcon
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            width: 16
-                            height: 16
-                            radius: 8
-                            color: "transparent"
-                            border.width: 2
-                            border.color: Qt.rgba(0.106, 0.553, 0.788,1)
+                //         Rectangle {
+                //             id: multiOpIcon
+                //             anchors.verticalCenter: parent.verticalCenter
+                //             anchors.left: parent.left
+                //             anchors.leftMargin: 10
+                //             width: 16
+                //             height: 16
+                //             radius: 8
+                //             color: "transparent"
+                //             border.width: 2
+                //             border.color: Qt.rgba(0.106, 0.553, 0.788,1)
 
-                        }
-                    }
-                    Text {
-                        id: multiOpText
-                        text: qsTr("批量操作")
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                        anchors.rightMargin: 15
-                        font.pixelSize: 15
-                    }
-                }
+                //         }
+                //     }
+                //     Text {
+                //         id: multiOpText
+                //         text: qsTr("批量操作")
+                //         anchors.verticalCenter: parent.verticalCenter
+                //         anchors.right: parent.right
+                //         anchors.rightMargin: 15
+                //         font.pixelSize: 15
+                //     }
+                // }
             }
         }
     }
@@ -282,24 +282,13 @@ Item {
             anchors.bottom: parent.bottom
         }
 
-        RoundRectangleButton {
-            id: selectAllButton
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            width: 30
-            height: 30
-
-            hoverBackgroundColor: "blue"
-        }
-
         Text {
             id: title
             text: qsTr("音乐标题")
             color: Qt.rgba(0.3,0.3,0.3,1)
             font.pixelSize: 14
-            anchors.left: selectAllButton.left
-            anchors.leftMargin: 60
+            anchors.left: parent.left
+            anchors.leftMargin: 90
             anchors.verticalCenter: parent.verticalCenter
         }
 
@@ -461,7 +450,7 @@ Item {
 
             Connections {
                 target: favoritePage
-                onStateChanged: {
+                function onStateChanged() {
                     if (favoritePage.state === "singleOp") {
                         addToCurrentButtonArea.enabled = true
                         deleteButtonArea.enabled = true

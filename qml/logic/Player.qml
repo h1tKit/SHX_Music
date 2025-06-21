@@ -22,7 +22,7 @@ Item {
         audioOutput: _audioOutput
 
         onPlaybackStateChanged: {
-            console.log("state changed")
+            //console.log("state changed")
             playbackState === MediaPlayer.PlayingState ? root.playing() : root.paused()
          }
     }

@@ -27,6 +27,10 @@ Item {
 
     signal playAllPage()
 
+    function updatePage() {
+        localListView.update()
+    }
+
     signal addMusic()
 
     state: "singleOp"
@@ -187,13 +191,13 @@ Item {
         signal playAll()
 
         width: 120
-        height: 80
+        height: 41
 
         x: parent.width - width - 30
         y: subTitleBar.height + 20
 
-        onAccepted: console.log("Ok clicked")
-        onRejected: console.log("Cancel clicked")
+        //onAccepted: console.log("Ok clicked")
+        //onRejected: console.log("Cancel clicked")
 
         background: Rectangle{
             color: Qt.rgba(0.94,0.94,0.94,1)
@@ -212,7 +216,7 @@ Item {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         width: 120
-                        height: 20
+                        height: 40
 
                         onTapped: {
                             localPage.playAllPage()
@@ -244,71 +248,6 @@ Item {
                     height: 1
                     Layout.fillWidth: true
                 }
-                Item {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    id: multiOpItem
-                    RoundRectangleButton {
-                        id: multiOpButton
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 120
-                        height: 20
-                        state: "waiting"
-
-                        states: [
-                            State {
-                                name: "operating"
-                                PropertyChanges {
-                                    target: localPage
-                                    state: "multiOp"
-                                }
-                                PropertyChanges {
-                                    target: multiOpIcon
-                                    border.color: "red"
-                                }
-                            },
-                            State {
-                                name: "waiting"
-                                PropertyChanges {
-                                    target: localPage
-                                    state: "singleOp"
-                                }
-                                PropertyChanges {
-                                    target: multiOpIcon
-                                    border.color: Qt.rgba(0.106, 0.553, 0.788,1)
-                                }
-                            }
-                        ]
-
-                        onTapped: {
-                            multiOpButton.state = multiOpButton.state === "operating" ? "waiting" : "operating"
-                            //editDialog.multiOp()
-                        }
-
-                        Rectangle {
-                            id: multiOpIcon
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            width: 16
-                            height: 16
-                            radius: 8
-                            color: "transparent"
-                            border.width: 2
-                            border.color: Qt.rgba(0.106, 0.553, 0.788,1)
-
-                        }
-                    }
-                    Text {
-                        id: multiOpText
-                        text: qsTr("批量操作")
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.right: parent.right
-                        anchors.rightMargin: 15
-                        font.pixelSize: 15
-                    }
-                }
             }
         }
     }
@@ -329,62 +268,6 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-        }
-
-        Rectangle {
-            id: selectAllButton
-            visible: false
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            width: 16
-            height: 16
-            radius: 8
-            color: "transparent"
-            border.width: 2
-            border.color: Qt.rgba(0.106, 0.553, 0.788,1)
-            state: "unselected"
-
-            states: [
-                State {
-                    name: "selected"
-                    PropertyChanges {
-                        target: singleSelectedMark
-                        color: Qt.rgba(0.106, 0.553, 0.788,1)
-                    }
-                },
-                State {
-                    name: "unselected"
-                    PropertyChanges {
-                        target: singleSelectedMark
-                        color: "transparent"
-                    }
-                }
-            ]
-
-            onStateChanged: {
-                if(state === "selected") {
-                    //selectedList.push(filePath)
-                    //console.log("Selected ", filePath)
-                }else {
-                    //var i = selectedList.indexOf(filePath)
-                    //if (i !== -1) {
-                     //   selectedList.splice(i, 1)
-                     //   console.log("unSelected ", filePath)
-                    //}
-                }
-            }
-        }
-
-        RoundRectangleButton {
-            //id:
-            anchors.left: parent.left
-            anchors.leftMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            width: 30
-            height: 30
-
-            hoverBackgroundColor: "blue"
         }
 
         Text {
@@ -434,6 +317,10 @@ Item {
         clip: true
 
         ScrollBar.vertical: ScrollBar {}
+        cacheBuffer: 80
+        reuseItems: true
+
+        Component.onCompleted: console.log("localView 初始化完毕")
 
         delegate: Rectangle {
             id: single
@@ -575,7 +462,7 @@ Item {
 
             Connections {
                 target: localPage
-                onStateChanged: {
+                function onStateChanged() {
                     if (localPage.state === "singleOp") {
                         addToLoveButtonArea.enabled = true
                         addToCurrentButtonArea.enabled = true
@@ -753,6 +640,7 @@ Item {
 
     //1
     function initLocalModel(filePathTxt){
+        console.log("localModel 初始化开始")
         MusicPathOperations.OperationTxt(filePathTxt)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
             musicModel.loadFromFile(MusicPathOperations.pathList[i])
@@ -785,6 +673,7 @@ Item {
         if (rootWindow && rootWindow.dataReady) {  // 假设window是Sender.qml的实例
             rootWindow.dataReady.connect(handleData)
         }
+        console.log("localPage 初始化完毕")
     }
     function handleData(data) {
         receivedData = data  // 保存接收到的数据

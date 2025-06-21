@@ -33,26 +33,18 @@ Window {
     Player {
         id: player1
         player.audioOutput.volume: 0.4
-        //player.source: control.currentList[0]
     }
 
     ControlPlay {
         id: control
         musicplayer: player1
 
-        anchors.bottom: playBar.bottom
-        anchors.right: parent.right
-        //anchors.top: parent.top
-        Component.onCompleted: initCurrentModel()
+        width: 300
+        height: Math.floor((window.height - titleBar.height - playBar.height) * 0.8)
 
-        // onChangeIslovebyCurrent: {
-        //     console.log("IslovebyCurrent",IslovebyCurrent)
-        //     if(IslovebyCurrent){
-        //         playBar.lovebutton.state="love"
-        //     }else{
-        //         playBar.lovebutton.state="not"
-        //     }
-        // }
+        anchors.bottom: playBar.top
+        anchors.right: parent.right
+        Component.onCompleted: initCurrentModel()
     }
 
     //
@@ -350,8 +342,8 @@ Window {
         x: window.width - width
         y: titleBar.height + 45
 
-        onAccepted: console.log("Ok clicked")
-        onRejected: console.log("Cancel clicked")
+        //onAccepted: console.log("Ok clicked")
+        //onRejected: console.log("Cancel clicked")
 
         background: Rectangle{
             color: Qt.rgba(0.94,0.94,0.94,1)
@@ -408,7 +400,7 @@ Window {
         MusicFileDialog{
             id:mfDialog
             onFilesSelected:{
-                console.log("xxxxxxx接收到", mfDialog.selectedFilePaths.length)
+                console.log("接收到 ", mfDialog.selectedFilePaths.length, " 个文件")
                 reciverFromFile = mfDialog.selectedFilePaths;
                 console.log("=========",reciverFromFile[0])
             }
@@ -508,6 +500,11 @@ Window {
         }
     }
 
+    onHeightChanged: {
+        localPage.updatePage()
+    }
+
+
     function toggleMaximize() {
         if (window.visibility === Window.Maximized) {
             titleBar.topLeftRadius = 12
@@ -522,9 +519,14 @@ Window {
         }
     }
 
+    Component.onCompleted: {
+        console.log("程序窗口已创建")
+    }
+
     Component.onDestruction: {
         MusicPathOperations.writeToTxt("../../data/localMusic.txt", localPage.musicModel)
         MusicPathOperations.writeToTxt("../../data/favoriteMusic.txt", favoritePage.musicModel)
         MusicPathOperations.writeToTxt("../../data/currentMusic.txt", control.currentModel)
+        console.log("音乐列表已保存")
     }
 }

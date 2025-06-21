@@ -148,6 +148,7 @@ void MusicModel::updateMusic(
 void MusicModel::loadFromFile(
     const QString &filePath)
 {
+    qDebug() << "赋值Model\n";
     beginInsertRows(QModelIndex(), m_musicList.count(), m_musicList.count());
 
     MusicItem item;

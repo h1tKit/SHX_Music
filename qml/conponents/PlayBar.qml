@@ -32,6 +32,17 @@ Item {
         }
     }
 
+    Connections {
+        target: player
+        function onPlaying() {
+            animation.running = true
+            animation.paused = false
+        }
+        function onPaused() {
+            animation.paused = true
+        }
+    }
+
     Rectangle {
         id: musicImage
         color: "transparent"
@@ -43,6 +54,29 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 10
+        clip: true
+
+        Image {
+            id: coverArt
+            source: "qrc:/control/image/CD.png"
+            anchors.fill: parent
+
+            transform:  Rotation {
+                id: rotationAnim
+                origin.x: coverArt.width/2
+                origin.y: coverArt.height/2
+                axis { x: 0; y: 0; z: 1 }
+                angle: 0
+                NumberAnimation on angle {
+                    id: animation
+                    from: 0
+                    to: 360
+                    duration: 25000
+                    loops: Animation.Infinite
+                    running: false
+                }
+            }
+        }
     }
 
     Rectangle {
@@ -52,11 +86,27 @@ Item {
         height: 50
         anchors.left: musicImage.right
         anchors.leftMargin: 10
-        anchors.top: parent.top
+        anchors.top: playSlider.bottom
         anchors.topMargin: 5
 
-         Text{
-            text:controler.currentModel.title
+        Text {
+            id: detailTitle
+            width: 180
+            anchors.top: parent.top
+            anchors.left: parent.left
+            font.pixelSize: 17
+            color: Qt.rgba(0.3,0.3,0.3,1)
+            elide: Text.ElideRight
+        }
+        Text {
+            id: detailArtist
+            width: 180
+            anchors.top: detailTitle.bottom
+            anchors.topMargin: 5
+            anchors.left: parent.left
+            font.pixelSize: 12
+            color: Qt.rgba(0.35,0.35,0.35,1)
+            elide: Text.ElideRight
         }
 
     }
@@ -205,8 +255,8 @@ Item {
 
             Connections {
                 target: player
-                onPlaying: {playButton.state = "playing"}
-                onPaused: {playButton.state = "paused"}
+                function onPlaying() {playButton.state = "playing"}
+                function onPaused() {playButton.state = "paused"}
             }
 
             states: [
@@ -408,6 +458,23 @@ Item {
         }
     }
 
+    Connections {
+        target: controler
+        function onOpened() {
+            listButton.state = "opened"
+            listButton.enabled = false
+        }
+        function onClosed() {
+            listButton.state = "closed"
+            listButton.enabled = true
+        }
+        function onUpdateDetail(songTitle, artist) {
+            console.log("+++++++++++++", songTitle)
+            detailTitle.text = songTitle
+            detailArtist.text = artist
+        }
+    }
+
     RoundRectangleButton {
         id: listButton
         width: 30
@@ -416,7 +483,7 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
-        state: "close"
+        state: "closed"
 
         Image {
             id: listIcon
@@ -425,15 +492,15 @@ Item {
         }
 
         states: [
-            State {name: "open"},
-            State {name: "close"}
+            State {name: "opened"},
+            State {name: "closed"}
         ]
 
         onTapped: {
-            //listButton.state = listButton.state === "open" ? "close" : "open"
-            //controler.setVisible = (listButton.state === "open")
-            controler.setVisible = true
-            console.log("listButtonTapped")
+            console.log("TAPPED")
+            if (state === "closed") {
+                controler.dialogVisible = true
+            }
         }
     }
 
