@@ -113,11 +113,40 @@ Item {
         }
 
 
+    //跳转
     function jumpToSong(index) {
         currentView.currentIndex = index;
         control.currentIndex = index;
     }
 
+
+    //删除一首歌
+    function removeSongInCurrentModel(musicIndex){
+
+        if(musicIndex!==-1){
+            if(musicIndex===currentIndex){
+                nextSong()
+                updateCurrentList();
+            }if(musicIndex > currentIndex){
+                currentModel.removeMusic(musicIndex)
+                updateCurrentList();
+            }if(musicIndex < currentIndex){
+                currentModel.removeMusic(musicIndex)
+                currentIndex--
+                updateCurrentList();
+            }
+
+        }
+    }
+
+    //清空全部
+    function removeAllInCurrentModel(){
+        currentModel.clearMusic()
+        currentIndex=-1
+        musicplayer.player.source=""
+    }
+
+    //双击插入一首歌事件
     function insertSongToNextbyDbc(musicPath,sourceModel = null,targetIndexpath = -1) {
         //空播放列表，有完整model
         if (currentModel.getCount() === 0 && sourceModel) {
@@ -149,6 +178,7 @@ Item {
 
     }
 
+    //按钮插入一首歌事件
     function insertSongToNextbyBtn(musicPath){
             if (currentModel.getCount() === 0) {
                 console.log("正在执行单个路径到空列表")
