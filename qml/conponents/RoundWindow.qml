@@ -206,6 +206,18 @@ Window {
                 player1.play()
             }
 
+            onRemoveSongbyBtn:{
+                var i = localPage.searchBylocalModel(removerequestPath)
+                var modelIndex = localPage.musicModel.createModelIndex(localPage.currentIndex,0);
+                var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                if(i===-1){
+                    console.log("错误，不应该找不到")
+                }else{
+                    localPage.removeSongbyLocalModel(i)
+                    console.log("删除一首本地音乐")
+                }
+            }
+
 
             onAddToLoveModel: {
                 console.log("addloverequestpath",addloverequestPath)
@@ -278,12 +290,12 @@ Window {
             onRemoveLoveModelbyBtn: {
                 console.log("removelove  musicpath",removeLoverequestPath)
                 var i = favoritePage.searchByloveModel(removeLoverequestPath)
-                 var modelIndex = favoritePage.musicModel.createModelIndex(favoriteIndex,0);
+                var modelIndex = favoritePage.musicModel.createModelIndex(favoriteIndex,0);
                 var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
                 if(i===-1){
-                     console.log("错误，不应该没找到")
+                    console.log("错误，不应该没找到")
                 }else{
-                    favoritePage.removeLoveModel(modelIndex)
+                    favoritePage.removeLoveModel(i)
                     console.log("从喜欢列表删除")
                 }
             }

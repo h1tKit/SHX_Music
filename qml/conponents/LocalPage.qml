@@ -26,6 +26,8 @@ Item {
     signal addToCurrentModelbyBtn(var btnrequestPath)
     signal addToLoveModel(var addloverequestPath)
 
+    signal removeSongbyBtn(var removerequestPath)
+
     signal playAllPage()
 
     function updatePage() {
@@ -544,7 +546,11 @@ Item {
                 id: deleteButtonArea
 
                 anchors.fill: deleteButton
-                onClicked: console.log("DELETE")
+                onClicked: {
+                    localPage.currentIndex = index
+                    localPage.removeSongbyBtn(musicModel.data(musicModel.createModelIndex(localPage.currentIndex), MusicModel.FilePathRole))
+                    console.log("DELETE")
+                }
             }
 
             //TODO : put below into a function ( onClicked\ onDoubleClicked
@@ -640,6 +646,28 @@ Item {
     //function
 
     //1
+
+    function searchBylocalModel(musicPath){
+        for(var i = 0; i < localPage.musicModel.getCount(); i++) {
+            if (localPage.musicModel.data(localPage.musicModel.createModelIndex(i,0), MusicModel.FilePathRole) === musicPath) {
+                console.log("Found in localPage")
+                return i;   //found
+            }else {
+                console.log("notFound in localPage")
+                console.log(localPage.musicModel.data(localPage.musicModel.createModelIndex(i,0), MusicModel.FilePathRole))
+                console.log(musicPath)
+                continue;  //not found
+            }
+        }
+        console.log("notFound")
+        return -1;
+    }
+
+
+    function removeSongbyLocalModel(musicIndex){
+        localPage.musicModel.removeMusic(musicIndex)
+    }
+
     function initLocalModel(filePathTxt){
         console.log("localModel 初始化开始")
         MusicPathOperations.OperationTxt(filePathTxt)
@@ -648,9 +676,13 @@ Item {
         }
     }
 
-    function deleteMusic(filePath, deleteFiles){
-        MusicPathOperations.DeletePathToTxt(filePathTxt, deleteFiles)
-    }
+    // function deleteMusic(filePath, deleteFiles){
+    //     MusicPathOperations.DeletePathToTxt(filePathTxt, deleteFiles)
+    // }
+
+
+
+
 
     function formatTime(milliseconds) {
         if (!milliseconds || milliseconds <= 0)

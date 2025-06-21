@@ -325,10 +325,10 @@ Item {
 
                 MouseArea {
                     anchors.fill: parent
-                    // onClicked: {
-                    //     control.currentIndex = index
-                    //     control.playSong(index)
-                    // }
+                    onClicked: {
+                        control.currentIndex = index
+                        control.playSong(index)
+                    }
                     onDoubleClicked: {
                         removeSongInCurrentModel(index)
                     }
