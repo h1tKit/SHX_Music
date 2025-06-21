@@ -20,7 +20,7 @@ public:
     void AddPathToTxt(const QString &filePath, QStringList &newFiles);
     void extracted(QStringList &deleteFiles, QStringList &currentPaths, QStringList &filteredPaths);
     bool IsLoveMusdic(const QString &fileLovePath, const QString &filePath);
-    Q_INVOKABLE void WriteToTxt(const QString &filePath, MusicModel &musicModel);
+    Q_INVOKABLE void writeToTxt(const QString &filePath, MusicModel *musicModel);
     Q_INVOKABLE void DeletePathsTxt(const QString &filePath, QVariantList deleteIndex);
     Q_INVOKABLE void DeletePathTxt(const QString &filePath, int deleteIndex);
 

@@ -115,8 +115,8 @@ bool MusicPathOperations::IsLoveMusdic(
     return false;
 }
 
-void MusicPathOperations::WriteToTxt(
-    const QString &filePath, MusicModel &musicModel)
+void MusicPathOperations::writeToTxt(
+    const QString &filePath, MusicModel *musicModel)
 {
     QFile file(filePath);
 
@@ -126,8 +126,8 @@ void MusicPathOperations::WriteToTxt(
     }
 
     QTextStream out(&file);
-    for (int i = 0; i < musicModel.getCount(); i++) {
-        out << musicModel.getMuiscPath(i) << "\n";
+    for (int i = 0; i < musicModel->getCount(); i++) {
+        out << musicModel->getMuiscPath(i) << "\n";
     }
 
     file.close();

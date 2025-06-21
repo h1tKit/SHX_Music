@@ -32,6 +32,7 @@ Item {
     property bool isNavigatingHistory: false // 是否正在导航历史记录
 
     property var filePath: "../../data/currentMusic.txt"
+    property var favoritefilePath :"../../data/favoriteMusic.txt"
 
     // signal changeIslovebyCurrent(var IslovebyCurrent)
 
@@ -39,7 +40,7 @@ Item {
     function initCurrentModel(filePath) {console.log("22222222",control.filePath)
         MusicPathOperations.OperationTxt(control.filePath)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
-            currentModel.loadFromFile(MusicPathOperations.pathList[i])
+            currentModel.loadFromFile(MusicPathOperations.pathList[i],favoritefilePath)
             // currentModel.setCount()
         }
         //连接信号
@@ -72,7 +73,7 @@ Item {
     }
 
     function addToCurrent(addMusicPath) {
-        currentModel.loadFromFile(addMusicPath)
+        currentModel.loadFromFile(addMusicPath,favoritefilePath)
     }
 
     function searchSong(musicPath) {
@@ -123,8 +124,13 @@ Item {
     //删除一首歌
     function removeSongInCurrentModel(musicIndex){
 
+        console.log("remove a song currentIndex",currentIndex)
         if(musicIndex!==-1){
             if(musicIndex===currentIndex){
+                if(currentModel.getCount()===1){
+                    removeAllInCurrentModel()
+                    return
+                }
                 nextSong()
                 updateCurrentList();
             }if(musicIndex > currentIndex){
@@ -135,7 +141,9 @@ Item {
                 currentIndex--
                 updateCurrentList();
             }
-
+            // if(currentModel.getCount()===1){
+            //     removeAllInCurrentModel()
+            // }
         }
     }
 
@@ -215,7 +223,7 @@ Item {
         for (var i = 0; i < sourceModel.getCount(); i++) {
             var modelIndex = sourceModel.createModelIndex(i, 0);
             var path = sourceModel.data(modelIndex, sourceModel.FilePathRole);
-            currentModel.loadFromFile(path);
+            currentModel.loadFromFile(path,favoritefilePath);
         }
 
         updateCurrentList();
@@ -317,9 +325,12 @@ Item {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: {
-                        control.currentIndex = index
-                        control.playSong(index)
+                    // onClicked: {
+                    //     control.currentIndex = index
+                    //     control.playSong(index)
+                    // }
+                    onDoubleClicked: {
+                        removeSongInCurrentModel(index)
                     }
                 }
             }

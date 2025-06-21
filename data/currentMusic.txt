@@ -1,0 +1,16 @@
+/run/media/root/data/music/Always online.mp3
+/run/media/root/data/music/Baby.mp3
+/run/media/root/data/music/你的答案-阿冗.mp3
+/run/media/root/data/music/多远都要在一起.mp3
+/run/media/root/data/music/奔跑-黄征羽泉.mp3
+/run/media/root/data/music/好想爱这个世界啊.mp3
+/run/media/root/data/music/妈妈的话-Zyboy忠宇.mp3
+/run/media/root/data/music/我们俩-郭顶.mp3
+/run/media/root/data/music/我怀念的.mp3
+/run/media/root/data/music/海阔天空.mp3
+/run/media/root/data/music/特别的人.mp3
+/run/media/root/data/music/我怀念的.mp3
+/run/media/root/data/music/我们俩-郭顶.mp3
+/run/media/root/data/music/若把你.mp3
+/run/media/root/data/music/越来越不懂.mp3
+/run/media/root/data/music/遇见.mp3

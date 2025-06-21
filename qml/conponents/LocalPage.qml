@@ -9,6 +9,7 @@ Item {
     property bool isReady: false
 
     property var filePathTxt: "../../data/localMusic.txt"
+    property var favoritefilePathTxt:"../../data/favoriteMusic.txt"
     property var currentIndex: -1
     property var deleteFiles: []
 
@@ -643,7 +644,7 @@ Item {
         console.log("localModel 初始化开始")
         MusicPathOperations.OperationTxt(filePathTxt)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
-            musicModel.loadFromFile(MusicPathOperations.pathList[i])
+            musicModel.loadFromFile(MusicPathOperations.pathList[i],favoritefilePathTxt)
         }
     }
 
@@ -683,7 +684,7 @@ Item {
 
     onReceivedDataChanged:{
         for(var i = 0; i < receivedData.length; i++){
-            musicModel.loadFromFile(receivedData[i])
+            musicModel.loadFromFile(receivedData[i],favoritefilePathTxt)
             console.log("---------")
         }
     }

@@ -627,23 +627,31 @@ Item {
     }
 
     function insertSongToLast(musicpath){
-        favoritePage,musicModel.loadFromFile(musicpath)
+        favoritePage,musicModel.loadFromFile(musicpath,filePathTxt)
+
         console.log("insertSongToLast  musicpath",musicpath)
         var newIndex = searchByloveModel(musicpath)
         console.log("insertSongToLast  newIndex",newIndex)
-        if(newIndex !== -1){
+        if(newIndex !== -1&&favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole)===false){
             favoritePage.musicModel.changeIsLove(newIndex)
             console.log("改变了当前这首歌为喜欢",favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole))
         }
     }
 
-    function removeLoveModel(musicpath){
-        console.log("removelove  musicpath",musicpath)
-        var newIndex = searchByloveModel(musicpath)
-        if(newIndex !== -1){
-            favoritePage.musicModel.removeMusic(newIndex)
-            favoritePage.musicModel.changeIsLove(newIndex)
-            console.log("改变了当前这首歌为不喜欢",favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole))
+    // function removeLoveModel(musicpath){
+    //     console.log("removelove  musicpath",musicpath)
+    //     var newIndex = searchByloveModel(musicpath)
+    //     if(newIndex !== -1){
+    //         favoritePage.musicModel.removeMusic(newIndex)
+    //         favoritePage.musicModel.changeIsLove(newIndex)
+    //         console.log("改变了当前这首歌为不喜欢",favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole))
+    //     }
+    // }
+
+    function removeLoveModel(musicIndex){
+        if(musicIndex!==-1){
+            favoritePage.musicModel.changeIsLove(musicIndex)
+            favoritePage.musicModel.removeMusic(musicIndex)
         }
     }
 
@@ -652,7 +660,7 @@ Item {
     function initfavoriteModel(filePathTxt){
         MusicPathOperations.OperationTxt(filePathTxt)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
-            musicModel.loadFromFile(MusicPathOperations.pathList[i])
+            musicModel.loadFromFile(MusicPathOperations.pathList[i],filePathTxt)
             musicModel.changeIsLove(i)
         }
     }

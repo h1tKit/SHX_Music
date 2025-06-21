@@ -283,7 +283,7 @@ Window {
                 if(i===-1){
                      console.log("错误，不应该没找到")
                 }else{
-                    favoritePage.removeLoveModel(musicpath)
+                    favoritePage.removeLoveModel(modelIndex)
                     console.log("从喜欢列表删除")
                 }
             }
