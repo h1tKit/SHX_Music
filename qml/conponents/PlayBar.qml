@@ -43,16 +43,16 @@ Item {
         }
         function onSourceEmpty() {
             details.visible = false
-            currentTime.color = "transparent"
-            totalTime.color = "transparent"
+            currentTime.text = "00:00"
+            totalTime.text = "00:00"
+//TODO
         }
         function onSourceNotEmpty() {
-            console.log("SET NOT EMPTY ", player.duration)
             details.visible = true
-            currentTime.color = Qt.rgba(0.4,0.4,0.4,1)
-            totalTime.color = Qt.rgba(0.4,0.4,0.4,1)
-            //currentTime.text = Qt.binding(function(player.currentTime) {return formatTime(player.currentTime)})
-            //totalTime.text = formatTime(player.duration)
+            currentTime.text = Qt.binding(function() {
+                return formatTime(player.currentTime)})
+            totalTime.text = Qt.binding(function() {
+                return formatTime(player.duration)})
         }
     }
 
@@ -199,7 +199,7 @@ Item {
         Text {
             id: currentTime
             text: formatTime(player.currentTime)
-            color: "transparent"
+            color: Qt.rgba(0.4,0.4,0.4,1)
         }
 
         TSlider {
@@ -222,7 +222,7 @@ Item {
         Text {
             id: totalTime
             text: formatTime(player.duration)
-            color: "transparent"
+            color: Qt.rgba(0.4,0.4,0.4,1)
         }
     }
 
