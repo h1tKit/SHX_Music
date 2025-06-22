@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtMultimedia
 import MyModel
+import "../conponents"
 
 //控制音乐上一首和暂停播放下一首有关的逻辑
 
@@ -13,6 +14,7 @@ Item {
     signal opened()
     signal closed()
     signal updateDetail(var songTitle, var artist, var cover)
+    //signal sourceEmpty()
 
     //这个当前播放列表记录路径位置，需要xys提供接口
 
@@ -151,7 +153,9 @@ Item {
     function removeAllInCurrentModel(){
         currentModel.clearMusic()
         currentIndex=-1
-        musicplayer.player.source=""
+        musicplayer.source= ""
+        //sourceEmpty()
+        console.log("SOURCE EMPTY")
     }
 
     //双击插入一首歌事件
@@ -215,7 +219,7 @@ Item {
         // 检查model是否有效
         if (!sourceModel || sourceModel.getCount() === 0) {
             console.warn("sourceModel为空或无效，导入取消");
-            return;
+            return -1;
         }
 
         // 清空当前模型并导入源模型数据
@@ -267,7 +271,10 @@ Item {
 
         background: Rectangle {
             id: background
-            anchors.fill: parent
+            width: parent.width
+            height: parent.height
+
+            //anchors.fill: parent
             color: Qt.rgba(0.95,0.95,0.95,1)
             radius: 14
             bottomRightRadius: 0
@@ -275,6 +282,59 @@ Item {
             border.width: 1
             border.color: Qt.rgba(0.55,0.55,0.55,1)
             antialiasing: true
+
+            Rectangle {
+                id: subBar
+                color: Qt.rgba(0.106, 0.553, 0.788,1)
+                height: 40
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.left: parent.left
+                topLeftRadius: 14
+
+
+                RoundRectangleButton {
+                    id: removeAllButton
+                    anchors.right: subBar.right
+                    anchors.rightMargin: 5 + (subBar.width - 300) * 0.08
+                    anchors.left: removeAllText.left
+                    anchors.bottom: subBar.bottom
+                    anchors.top: subBar.top
+                    radius: 14
+                    hoverBackgroundColor: Qt.rgba(0.8,0.1,0.1,0.8)
+
+                    onIsHoverdChanged: {
+                        if (isHoverd) {
+                            removeAllIcon.scale = 1.2
+                        }else {
+                            removeAllIcon.scale = 1
+                        }
+                    }
+
+                    onTapped: {
+                        removeAllInCurrentModel()
+                    }
+                }
+                Text {
+                    id: removeAllText
+                    text: "清空"
+                    color: Qt.rgba(0.95,0.95,0.95,1)
+                    anchors.verticalCenter: subBar.verticalCenter
+                    anchors.right: removeAllIcon.left
+                    anchors.rightMargin: 5
+                    font.pixelSize: 16
+                }
+
+                Image {
+                    id: removeAllIcon
+                    source: "qrc:/control/image/delete.png"
+                    anchors.right: subBar.right
+                    anchors.rightMargin: 5 + (subBar.width - 300) * 0.08
+                    anchors.verticalCenter: subBar.verticalCenter
+                    width: 20
+                    height: 20
+                }
+            }
 
         }
 
@@ -286,17 +346,21 @@ Item {
         ListView{
             id: currentView
             width: parent.width
-            height: parent.height
+            height: parent.height - subBar.height
+
+            y: subBar.height
             spacing: 5
             clip: true
             visible:true
             model: currentModel
             currentIndex:control.currentIndex
             delegate: Rectangle {
+                id: single
                 radius: 12
                 width: currentView.width
                 height: 40
-                color: index === currentIndex ? Qt.rgba(0.106, 0.553, 0.788, 0.8) : "transparent"
+                color: index === currentIndex ? Qt.rgba(0.106, 0.553, 0.788, 0.8) : index % 2 == 0 ? Qt.rgba(0.95,0.95,0.95,1) : Qt.rgba(0.85,0.85,0.85,1)
+                property color preColor: index === currentIndex ? Qt.rgba(0.106, 0.553, 0.788, 0.8) : index % 2 == 0 ? Qt.rgba(0.95,0.95,0.95,1) : Qt.rgba(0.85,0.85,0.85,1)
 
                 Text {
                     id:titletxt
@@ -314,25 +378,56 @@ Item {
                     text: artist
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
-                    anchors.rightMargin: 10
+                    anchors.rightMargin: 25
                     elide: Text.ElideRight
                     width: Math.floor(parent.width * 0.3)
                     color: Qt.rgba(0.2,0.2,0.2,1)
                     font.pixelSize: 12
                 }
-
-
+                Image {
+                    id: removeFromCurrentButton
+                    visible: false
+                    source: "qrc:/control/image/remove.png"
+                    anchors.right: single.right
+                    anchors.rightMargin: 5 + (single.width - 300) * 0.1
+                    anchors.verticalCenter: single.verticalCenter
+                    width: 28
+                    height: 28
+                }
 
                 MouseArea {
+                    id: singleFullArea
                     anchors.fill: parent
+                    hoverEnabled: true
                     onClicked: {
                         control.currentIndex = index
                         control.playSong(index)
                     }
-                    onDoubleClicked: {
+                    // onDoubleClicked: {
+                    //     removeSongInCurrentModel(index)
+                    // }
+                }
+
+                MouseArea {
+                    id: removeFromCurrentButtonArea
+                    anchors.fill: removeFromCurrentButton
+                    onClicked: {
                         removeSongInCurrentModel(index)
                     }
                 }
+                Connections {
+                    target: singleFullArea
+                    function onEntered() {
+                        removeFromCurrentButton.visible = true
+                        single.color = index === currentIndex ? Qt.rgba(0.106, 0.553, 0.788, 0.8) : Qt.rgba(0.1,0.5,0.8,0.5)
+                    }
+                    function onExited() {
+                        removeFromCurrentButton.visible = false
+                        single.color = index === currentIndex ? Qt.rgba(0.106, 0.553, 0.788, 0.8) : index % 2 == 0 ? Qt.rgba(0.95,0.95,0.95,1) : Qt.rgba(0.85,0.85,0.85,1)
+                        single.color = Qt.binding(function() {return index === currentIndex ? Qt.rgba(0.106, 0.553, 0.788, 0.8) : index % 2 == 0 ? Qt.rgba(0.95,0.95,0.95,1) : Qt.rgba(0.85,0.85,0.85,1) })
+                    }
+                }
+
             }
             ScrollBar.vertical: ScrollBar {}
         }

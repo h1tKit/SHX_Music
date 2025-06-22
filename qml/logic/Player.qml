@@ -13,6 +13,8 @@ Item {
 
     signal playing()
     signal paused()
+    signal sourceEmpty()
+    signal sourceNotEmpty()
 
     property var play: function(){_player.play()}
     property var pause: function(){_player.pause()}
@@ -25,6 +27,15 @@ Item {
             //console.log("state changed")
             playbackState === MediaPlayer.PlayingState ? root.playing() : root.paused()
          }
+
+        onSourceChanged: {
+            if ( isUrlEmpty(source) ) {
+                sourceEmpty()
+            }else {
+                console.log("NOT EMPTY>>>>>>>>>>>>>>>")
+                sourceNotEmpty()
+            }
+        }
     }
 
     AudioOutput {
@@ -33,5 +44,13 @@ Item {
 
     Component.onCompleted: {
         isReady = true
+    }
+
+    //
+    function isUrlEmpty(url) {
+        if (!url) return true;
+        if (typeof url === 'string' && url.trim() === "") return true;
+        const emptyUrls = ["", "file:///", "file://", "about:blank"];
+        return emptyUrls.includes(url.toString());
     }
 }

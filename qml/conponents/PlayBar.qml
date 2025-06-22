@@ -41,6 +41,19 @@ Item {
         function onPaused() {
             animation.paused = true
         }
+        function onSourceEmpty() {
+            details.visible = false
+            currentTime.color = "transparent"
+            totalTime.color = "transparent"
+        }
+        function onSourceNotEmpty() {
+            console.log("SET NOT EMPTY ", player.duration)
+            details.visible = true
+            currentTime.color = Qt.rgba(0.4,0.4,0.4,1)
+            totalTime.color = Qt.rgba(0.4,0.4,0.4,1)
+            //currentTime.text = Qt.binding(function(player.currentTime) {return formatTime(player.currentTime)})
+            //totalTime.text = formatTime(player.duration)
+        }
     }
 
     Rectangle {
@@ -58,6 +71,7 @@ Item {
 
         Image {
             id: coverArt
+
             source: "qrc:/control/image/CD.png"
             anchors.fill: parent
 
@@ -111,65 +125,66 @@ Item {
 
     }
 
-    // RoundRectangleButton {
-    //     id: loveButton
-    //     width: 34
-    //     height: 34
-    //     radius: 17
-    //     hoverBackgroundColor: "transparent"
-    //     anchors.left: details.right
-    //     anchors.leftMargin: 30
-    //     anchors.bottom: parent.bottom
-    //     anchors.bottomMargin: 14
-    //     state: "not"
+    RoundRectangleButton {
+        id: loveButton
+        visible: false
+        width: 34
+        height: 34
+        radius: 17
+        hoverBackgroundColor: "transparent"
+        anchors.right: playModeButton.left
+        anchors.rightMargin: 30
+        anchors.verticalCenter: parent.verticalCenter
+
+        state: "not"
 
 
-    //     states: [
-    //         State {
-    //             name: "love"
-    //             PropertyChanges {
-    //                 target: loveIcon
-    //                 source : "qrc:/control/image/love.png"
-    //             }
-    //         },
-    //         State {
-    //             name: "not"
-    //             PropertyChanges {
-    //                 target: loveIcon
-    //                 source : "qrc:/control/image/love_empty.png"
-    //             }
-    //         }
-    //     ]
+        states: [
+            State {
+                name: "love"
+                PropertyChanges {
+                    target: loveIcon
+                    source : "qrc:/control/image/love.png"
+                }
+            },
+            State {
+                name: "not"
+                PropertyChanges {
+                    target: loveIcon
+                    source : "qrc:/control/image/love_empty.png"
+                }
+            }
+        ]
 
-    //     onTapped: {
-    //         state = (state === "love" ? "not" : "love")
-    //     }
+        onTapped: {
+            state = (state === "love" ? "not" : "love")
+        }
 
-    //     onStateChanged: {
-    //         console.log("state ",state)
-    //         if(state === "love"){
-    //             var currentpath = controler.currentList[controler.currentIndex]
-    //             var i = favoritepage.searchByloveModel(currentpath)
-    //             var modelIndex = favoritepage.musicModel.createModelIndex(controler.currentIndex,0);
-    //             var musicpath = favoritepage.musicModel.data(modelIndex, favoritepage.musicModel.FilePathRole)
-    //             if(i===-1){
-    //                 console.log("添加进喜欢列表")
-    //                 favoritepage.insertSongToLast(musicpath)
-    //             }else{
-    //                 console.log("错误，从not变为love，不应该找到")
-    //             }
-    //         }
-    //         if(state === "not"){
-    //             //todo remove
-    //         }
-    //     }
+        onStateChanged: {
+            // console.log("state ",state)
+            // if(state === "love"){
+            //     var currentpath = controler.currentList[controler.currentIndex]
+            //     var i = favoritepage.searchByloveModel(currentpath)
+            //     var modelIndex = favoritepage.musicModel.createModelIndex(controler.currentIndex,0);
+            //     var musicpath = favoritepage.musicModel.data(modelIndex, favoritepage.musicModel.FilePathRole)
+            //     if(i===-1){
+            //         console.log("添加进喜欢列表")
+            //         favoritepage.insertSongToLast(musicpath)
+            //     }else{
+            //         console.log("错误，从not变为love，不应该找到")
+            //     }
+            // }
+            // if(state === "not"){
+            //     //todo remove
+            // }
+        }
 
-    //     Image {
-    //         id: loveIcon
-    //         anchors.fill: parent
-    //         scale: 1
-    //     }
-    // }
+        Image {
+            id: loveIcon
+            anchors.fill: parent
+            scale: 1
+        }
+    }
 
     RowLayout {
         id: playSlider
@@ -184,7 +199,7 @@ Item {
         Text {
             id: currentTime
             text: formatTime(player.currentTime)
-            color: Qt.rgba(0.4,0.4,0.4,1)
+            color: "transparent"
         }
 
         TSlider {
@@ -207,7 +222,7 @@ Item {
         Text {
             id: totalTime
             text: formatTime(player.duration)
-            color: Qt.rgba(0.4,0.4,0.4,1)
+            color: "transparent"
         }
     }
 
@@ -505,8 +520,10 @@ Item {
     }
 
     function formatTime(milliseconds) {
-        if (!milliseconds || milliseconds <= 0)
+        if (!milliseconds || milliseconds <= 0) {
+            console.log("BINDING YES")
             return "00:00"
+        }
 
         var totalSeconds = Math.floor(milliseconds / 1000)
         //console.log("Total Seconds : ", totalSeconds)

@@ -21,6 +21,7 @@
         <file>image/add.png</file>
         <file>image/remove.png</file>
         <file>image/CD.png</file>
+        <file>image/delete.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

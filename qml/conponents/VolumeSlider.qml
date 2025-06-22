@@ -85,9 +85,12 @@ Rectangle {
                 yScale: -1
             }
         ]
-        onDraged: {
+    }
+    Connections {
+        target: slider
+        function onDraged(setValue) {
             mute = false
-            body.volumeValue = setValue / (to - from)
+            body.volumeValue = setValue / (slider.to - slider.from)
             //console.log("volume : ", body.volumeValue)
             volumnText.text = setValue.toString()
         }

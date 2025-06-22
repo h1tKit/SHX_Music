@@ -39,8 +39,8 @@ Window {
         id: control
         musicplayer: player1
 
-        width: 300
-        height: Math.floor((window.height - titleBar.height - playBar.height) * 0.8)
+        width: 300 + (window.width - 900) * 0.3
+        height: (window.height - titleBar.height - playBar.height) * 0.8
 
         anchors.bottom: playBar.top
         anchors.right: parent.right
@@ -200,10 +200,14 @@ Window {
             Layout.fillHeight: true
 
             onPlayAllPage: {
-                control.replaceWithSourceModel(localPage.musicModel)
-                player1.source = control.currentList[0]
-                player1.player.position=0
-                player1.play()
+                if(control.replaceWithSourceModel(localPage.musicModel) !== -1) {
+
+                    player1.source = control.currentList[0]
+                    player1.player.position=0
+                    player1.play()
+                }else {
+                    console.log("错误， 传递空model")
+                }
             }
 
             onRemoveSongbyBtn:{
@@ -281,10 +285,14 @@ Window {
             Layout.fillHeight: true
 
             onPlayAllPage: {
-                control.replaceWithSourceModel(favoritePage.musicModel)
-                player1.source = control.currentList[0]
-                player1.player.position=0
-                player1.play()
+                if(control.replaceWithSourceModel(favoritePage.musicModel) !== -1) {
+                    player1.source = control.currentList[0]
+                    player1.player.position=0
+                    player1.play()
+                }else {
+                    console.log("错误， 传递空model")
+
+                }
             }
 
             onRemoveLoveModelbyBtn: {
