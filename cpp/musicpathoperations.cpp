@@ -222,3 +222,10 @@ void MusicPathOperations::DeletePathTxt(
     m_pathList = newLines;
     emit pathListChanged();
 }
+
+QString MusicPathOperations::SeekLyricPath(
+    const QString &filePath)
+{
+    int lastDotIndex = filePath.lastIndexOf('.');
+    return (filePath.left(lastDotIndex) + "lrc");
+}

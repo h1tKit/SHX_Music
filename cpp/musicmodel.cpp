@@ -72,6 +72,7 @@ QHash<int, QByteArray> MusicModel::roleNames() const
     roles[SampleRateRole] = "sampleRate";
     roles[ChannelsRole] = "channels";
     roles[IsLoveRole] = "isLove";
+    roles[LyricPathRole] = "lyricPath";
     return roles;
 }
 
@@ -141,6 +142,8 @@ void MusicModel::updateMusic(
         item.channels = data["channels"].toInt();
     if (data.contains("isLove"))
         item.isLove = false;
+    if (data.contains("lyricPath"))
+        item.lyricPath = "";
 
     QModelIndex idx = createIndex(index, 0);
     emit dataChanged(idx, idx);
@@ -173,6 +176,7 @@ void MusicModel::loadFromFile(
         if (musicPathOperations.IsLoveMusdic(fileLovePath, filePath)) {
             item.isLove = true;
         }
+        item.lyricPath = musicPathOperations.SeekLyricPath(filePath);
 
         if (item.coverArt.isNull()) {
             //item.coverArt.load(":/default_cover.png");
@@ -197,6 +201,7 @@ void MusicModel::insertMusic(
     MusicItem newItem;
     MusicInfo musicInfo;
     musicInfo.parseFile(filePath);
+    MusicPathOperations musicPathOperations;
     QVariantMap metadata = musicInfo.metadata();
     int insertIndex = index + 1;
 
@@ -216,6 +221,7 @@ void MusicModel::insertMusic(
         newItem.sampleRate = metadata["sampleRate"].toInt();
         newItem.channels = metadata["channels"].toInt();
         newItem.isLove = false; //默认在播放列表的ISLOVE为FALSE
+        newItem.lyricPath = musicPathOperations.SeekLyricPath(filePath);
 
         if (newItem.coverArt.isNull()) {
             //item.coverArt.load(":/default_cover.png");

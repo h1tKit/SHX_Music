@@ -70,7 +70,9 @@ qt_add_qml_module(
   SOURCES cpp/searchmusic.cpp
   QML_FILES qml/conponents/MusicFileDialog.qml
   SOURCES heads/imageproviader.h
-  SOURCES cpp/imageproviader.cpp)
+  SOURCES cpp/imageproviader.cpp
+  SOURCES heads/lyricparser.h
+  SOURCES cpp/lyricparser.cpp)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 

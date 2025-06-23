@@ -6,6 +6,7 @@
 #include "./heads/musicmodel.h"
 #include "./heads/fileOperations.h"
 #include "./heads/imageproviader.h"
+#include "./heads/lyricparser.h"
 
 int main(
     int argc, char *argv[])
@@ -23,6 +24,7 @@ int main(
     // imageProvider.setImage(image);
 
     qmlRegisterType<MusicModel>("MyModel", 1, 0, "MusicModel");
+    qmlRegisterType<LyricParser>("Lyric", 1, 0, "LyricParser");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("MusicInfo", &musicInfo);

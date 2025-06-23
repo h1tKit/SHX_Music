@@ -25,6 +25,7 @@ public:
         SampleRateRole,
         ChannelsRole,
         IsLoveRole,
+        LyricPathRole,
     };
     Q_ENUM(MusicRoles); //QML 中通过类名.枚举值访问枚举
 
@@ -67,6 +68,7 @@ private:
         int sampleRate;
         int channels;
         bool isLove;
+        QString lyricPath;
     };
 
     QList<MusicItem> m_musicList;

@@ -23,6 +23,7 @@ public:
     Q_INVOKABLE void writeToTxt(const QString &filePath, MusicModel *musicModel);
     Q_INVOKABLE void DeletePathsTxt(const QString &filePath, QVariantList deleteIndex);
     Q_INVOKABLE void DeletePathTxt(const QString &filePath, int deleteIndex);
+    QString SeekLyricPath(const QString &filePath);
 
 signals:
     void pathListChanged();
