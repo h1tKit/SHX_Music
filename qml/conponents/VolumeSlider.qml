@@ -12,26 +12,23 @@ Rectangle {
     border.width: 1
     border.color: Qt.rgba(0.85,0.85,0.85,1)
 
-    MouseArea {
-        id: bodyMouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        onEntered: {
-            //console.log("enter body")
-            body.isHoverd = true
-        }
-        onExited: {
-            if (slider.isHandleHovered) {
+    HoverHandler {
+        onHoveredChanged: {
+            if(hovered){
                 body.isHoverd = true
             }else {
-                //console.log("exit body")
-                body.isHoverd = false
+                if (slider.isHandleHovered) {
+                    body.isHoverd = true
+                }else {
+                    body.isHoverd = false
+                }
             }
         }
     }
 
     Rectangle {
         id: bottomPart
+        visible: false
         rotation: 45
         width: parent.width/3.5
         height: width
@@ -47,6 +44,7 @@ Rectangle {
         id: cut
         color: Qt.rgba(0.95,0.95,0.95,1)
         anchors.fill: parent
+        radius: parent.radius
         anchors.margins: 1
     }
 
@@ -91,7 +89,6 @@ Rectangle {
         function onDraged(setValue) {
             mute = false
             body.volumeValue = setValue / (slider.to - slider.from)
-            //console.log("volume : ", body.volumeValue)
             volumnText.text = setValue.toString()
         }
     }

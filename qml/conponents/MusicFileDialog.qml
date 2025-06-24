@@ -34,7 +34,6 @@ Item{
         currentFolder: Qt.resolvedUrl("file:///")  // 设置默认打开目录为根目录
         onAccepted:{
             const selectFolder = _folderDialog.selectedFolder.toString()
-            console.log(selectFolder)
             processFolder(selectFolder)
         }
     }
@@ -63,6 +62,5 @@ Item{
 
     function processFolder(folderUrl) {
         folderModel.folder = folderUrl
-        console.log("xxxxxxxxx", folderUrl)
     }
 }

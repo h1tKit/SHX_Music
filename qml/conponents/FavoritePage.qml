@@ -117,6 +117,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             width: 30
             height: 30
+            radius: 8
 
             onTapped: {
                 editDialog.open()
@@ -183,6 +184,7 @@ Item {
                     Text {
                         id: playAllText
                         text: qsTr("播放全部")
+                        color: Qt.rgba(0.2,0.2,0.2,1)
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
                         anchors.rightMargin: 15
@@ -288,7 +290,7 @@ Item {
             color: Qt.rgba(0.3,0.3,0.3,1)
             font.pixelSize: 14
             anchors.left: parent.left
-            anchors.leftMargin: 90
+            anchors.leftMargin: 60
             anchors.verticalCenter: parent.verticalCenter
         }
 
@@ -372,37 +374,55 @@ Item {
             }
 
 
-                RoundRectangleButton {
-                    id: addToCurrentButton
-                    visible: false
-                    width: 30
-                    height: 30
-                    anchors.right: deleteButton.left
-                    anchors.rightMargin: 10
-                    anchors.verticalCenter: single.verticalCenter
+            RoundRectangleButton {
+                id: addToCurrentButton
+                visible: false
+                width: 30
+                height: 30
+                radius: 8
+                anchors.right: deleteButton.left
+                anchors.rightMargin: 10
+                anchors.verticalCenter: single.verticalCenter
 
-                    Image {
-                        id: addToCurrentButtonIcon
-                        source: "qrc:/control/image/add.png"
-                        anchors.fill: parent
+                Image {
+                    id: addToCurrentButtonIcon
+                    source: "qrc:/control/image/add.png"
+                    anchors.fill: parent
+                }
+
+                TapHandler {
+                    id: addToCurrentButtonArea
+                    onTapped: {
+                        favoriteIndex = index
+                        addToCurrentModelbyBtn(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
                     }
                 }
-                RoundRectangleButton {
-                    id: deleteButton
-                    visible: false
-                    width: 30
-                    height: 30
-                    anchors.right: singleDurationText.left
-                    anchors.verticalCenter: single.verticalCenter
-                    anchors.rightMargin: 50
+            }
+            RoundRectangleButton {
+                id: deleteButton
+                visible: false
+                width: 30
+                height: 30
+                radius: 8
+                anchors.right: singleDurationText.left
+                anchors.verticalCenter: single.verticalCenter
+                anchors.rightMargin: 50
 
-                    Image {
-                        id: deleteButtonIcon
-                        source: "qrc:/control/image/remove.png"
-                        anchors.fill: parent
+                Image {
+                    id: deleteButtonIcon
+                    source: "qrc:/control/image/remove.png"
+                    anchors.fill: parent
+                }
+
+                TapHandler {
+                    id: deleteButtonArea
+                    onTapped:{
+                        favoriteIndex = index
+                        removeLoveModelbyBtn(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
                     }
                 }
-//////////////////////////////////////////////
+            }
+            //////////////////////////////////////////////
             Rectangle {
                 id: singleSelectedMark
                 visible: false
@@ -437,12 +457,10 @@ Item {
                 onStateChanged: {
                     if(state === "selected") {
                         selectedList.push(filePath)
-                        console.log("Selected ", filePath)
                     }else {
                         var i = selectedList.indexOf(filePath)
                         if (i !== -1) {
                             selectedList.splice(i, 1)
-                            console.log("unSelected ", filePath)
                         }
                     }
                 }
@@ -475,134 +493,133 @@ Item {
                 }
             }
 
-            MouseArea {
+            HoverHandler {
                 id: fullHover
-                //enabled: false
-                anchors.fill: single
-                hoverEnabled: true
-                onEntered: {
-                    single.color = Qt.rgba(0.8,0.8,0.8,1)
-                    // "singleOp" show 3 button
-                    if (favoritePage.state === "singleOp") {
-                        addToCurrentButton.visible = true
-                        deleteButton.visible = true
+                onHoveredChanged: {
+                    if(hovered){
+                        single.color = Qt.rgba(0.8,0.8,0.8,1)
+                        // "singleOp" show 2 button
+                        if (localPage.state === "singleOp") {
+                            addToCurrentButton.visible = true
+                            deleteButton.visible = true
+                        }else {
+                            // addToCurrentButtonArea.enabled = false
+                            // deleteButtonArea.enabled = false
+                        }///////////////////////////////////////////
                     }else {
-                        // addToLoveButtonArea.enabled = false
-                        // addToCurrentButtonArea.enabled = false
-                        // deleteButtonArea.enabled = false
+                        single.color = single.originalColor
+                        // "multiOp" hide 2 button
+                        //if (localPage.state === "multiOp")
+                        addToCurrentButton.visible = false
+                        deleteButton.visible = false
                     }
                 }
-                onExited: {
-                    single.color = single.originalColor
-                    // "multiOp" hide 3 button
-                    //if (localPage.state === "multiOp")
-                    addToCurrentButton.visible = false
-                    deleteButton.visible = false
-
-                }
             }
 
-            MouseArea {
-                id: addToCurrentButtonArea
 
-                anchors.fill: addToCurrentButton
-                onClicked: {
-                    console.log("ADDToCurrent")
-                    favoriteIndex = index
-                    addToCurrentModelbyBtn(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
-                }
-            }
 
-            MouseArea {
-                id: deleteButtonArea
+            // MouseArea {
+            //     id: addToCurrentButtonArea
 
-                anchors.fill: deleteButton
-                onClicked:{
-                    favoriteIndex = index
-                    removeLoveModelbyBtn(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
-                    console.log("DELETE")
-                }
-            }
+            //     anchors.fill: addToCurrentButton
+            //     onClicked: {
+            //         console.log("ADDToCurrent")
+            //         favoriteIndex = index
+            //         addToCurrentModelbyBtn(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
+            //     }
+            // }
+
+            // MouseArea {
+            //     id: deleteButtonArea
+
+            //     anchors.fill: deleteButton
+            //     onClicked:{
+            //         favoriteIndex = index
+            //         removeLoveModelbyBtn(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
+            //         console.log("DELETE")
+            //     }
+            // }
 
             //TODO : put below into a function ( onClicked\ onDoubleClicked
 
-            MouseArea {
+            Item {
                 id: clickToPlayFullArea
                 enabled: false
-                anchors.top: single.top
-                anchors.bottom: single.bottom
-                anchors.right: single.right
-                anchors.left: single.left
+                anchors.fill: single
 
-                onClicked: {
-                    singleSelectedMark.state = singleSelectedMark.state === "selected" ? "unselected" : "selected"
+                TapHandler {
+                    onTapped: {
+                        singleSelectedMark.state = singleSelectedMark.state === "selected" ? "unselected" : "selected"
+                    }
                 }
             }
 
-            MouseArea {
+            Item {
                 id: clickToPlayLeftArea
                 anchors.top: single.top
                 anchors.bottom: single.bottom
                 anchors.right: addToCurrentButton.left
                 anchors.left: single.left
 
-                onClicked: {
-                    // console.log("musicModel.getCount() : ", musicModel.getCount())
-                    // currentIndex = index
-                    // //musicModel.removeMusic(currentIndex)
-                    // // var deleteIndex = currentIndex;
-                    // // if(!deleteFiles.includes[deleteIndex]){
-                    // //     deleteFiles.push(deleteIndex)
-                    // //     console.log(deleteIndex)
-                    // // }
-                    // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
-                    // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
-                    // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                    // console.log(path)
-                    // musicplayer.player.source = path
-                    // //deleteMusic(filePathTxt, deleteFiles)
+                TapHandler {
+                    onTapped: {
+                        // console.log("musicModel.getCount() : ", musicModel.getCount())
+                        // currentIndex = index
+                        // //musicModel.removeMusic(currentIndex)
+                        // // var deleteIndex = currentIndex;
+                        // // if(!deleteFiles.includes[deleteIndex]){
+                        // //     deleteFiles.push(deleteIndex)
+                        // //     console.log(deleteIndex)
+                        // // }
+                        // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
+                        // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
+                        // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
+                        // console.log(path)
+                        // musicplayer.player.source = path
+                        // //deleteMusic(filePathTxt, deleteFiles)
 
-                    // //MusicPathOperations.DeletePathTotxt(filePathTxt, )
-                }
-
-                onDoubleClicked: {
-                    favoriteIndex = index
-                    addToCurrentModelbyDbc(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
+                        // //MusicPathOperations.DeletePathTotxt(filePathTxt, )
+                    }
+                    onDoubleTapped: {
+                        favoriteIndex = index
+                        addToCurrentModelbyDbc(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
+                    }
                 }
             }
 
-            MouseArea {
+            Item {
                 id: clickToPlayRightArea
                 anchors.top: single.top
                 anchors.bottom: single.bottom
                 anchors.right: single.right
                 anchors.left: deleteButton.right
 
-                onClicked: {
-                    // console.log("musicModel.getCount() : ", musicModel.getCount())
-                    // currentIndex = index
-                    // //musicModel.removeMusic(currentIndex)
-                    // // var deleteIndex = currentIndex;
-                    // // if(!deleteFiles.includes[deleteIndex]){
-                    // //     deleteFiles.push(deleteIndex)
-                    // //     console.log(deleteIndex)
-                    // // }
-                    // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
-                    // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
-                    // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                    // console.log(path)
-                    // musicplayer.player.source = path
-                    // //deleteMusic(filePathTxt, deleteFiles)
+                TapHandler {
+                    onTapped: {
+                        // console.log("musicModel.getCount() : ", musicModel.getCount())
+                        // currentIndex = index
+                        // //musicModel.removeMusic(currentIndex)
+                        // // var deleteIndex = currentIndex;
+                        // // if(!deleteFiles.includes[deleteIndex]){
+                        // //     deleteFiles.push(deleteIndex)
+                        // //     console.log(deleteIndex)
+                        // // }
+                        // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
+                        // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
+                        // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
+                        // console.log(path)
+                        // musicplayer.player.source = path
+                        // //deleteMusic(filePathTxt, deleteFiles)
 
-                    // //MusicPathOperations.DeletePathTotxt(filePathTxt, )
-                }
-
-                onDoubleClicked: {
-                    favoriteIndex=index
-                    addToCurrentModelbyDbc(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
+                        // //MusicPathOperations.DeletePathTotxt(filePathTxt, )
+                    }
+                    onDoubleTapped: {
+                        favoriteIndex=index
+                        addToCurrentModelbyDbc(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
+                    }
                 }
             }
-//////////////////////////////////////////////
+            //////////////////////////////////////////////
         }
     }
 
@@ -613,28 +630,23 @@ Item {
     function searchByloveModel(musicPath){
         for(var i = 0; i < favoritePage.musicModel.getCount(); i++) {
             if (favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(i,0), MusicModel.FilePathRole) === musicPath) {
-                console.log("Found in lovePage")
                 return i;   //found
             }else {
-                console.log("notFound in lovePage")
-                console.log(favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(i,0), MusicModel.FilePathRole))
-                console.log(musicPath)
+                //console.log(favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(i,0), MusicModel.FilePathRole))
+                //console.log(musicPath)
                 continue;  //not found
             }
         }
-        console.log("notFound")
+        //console.log("notFound")
         return -1;
     }
 
     function insertSongToLast(musicpath){
         favoritePage,musicModel.loadFromFile(musicpath,filePathTxt)
 
-        console.log("insertSongToLast  musicpath",musicpath)
         var newIndex = searchByloveModel(musicpath)
-        console.log("insertSongToLast  newIndex",newIndex)
         if(newIndex !== -1&&favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole)===false){
             favoritePage.musicModel.changeIsLove(newIndex)
-            console.log("改变了当前这首歌为喜欢",favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole))
         }
     }
 
@@ -670,7 +682,6 @@ Item {
             return "00:00"
 
         var totalSeconds = milliseconds
-        console.log("total seconds : ", totalSeconds)
         var minutes = Math.floor(totalSeconds / 60.0)
         var seconds = totalSeconds % 60
         //

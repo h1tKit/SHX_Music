@@ -1,3 +1,8 @@
+/*
+name : RoundRectangleButton
+version : 2.0
+by huang kun
+*/
 import QtQuick
 import QtQuick.Controls
 
@@ -35,26 +40,28 @@ Item {
             }
         }
 
-        MouseArea {
-            anchors.fill: background
-            onPressed: {
-                background.color = hoverBackgroundColor
-                root.tapped()
+        HoverHandler {
+            onHoveredChanged: {
+                if(hovered){
+                    background.color = hoverBackgroundColor
+                    background.isHovered = true
+                }else {
+                    background.color = backgroundColor
+                    background.isHovered = false
+                }
             }
-            onReleased: {
-                background.color = backgroundColor
-                clickedRecoverTimer.start()
-            }
-            hoverEnabled: true
-            onEntered: {
-                background.color = hoverBackgroundColor
-                background.isHovered = true
-            }
-            onExited: {
-                background.color = backgroundColor
-                background.isHovered = false
+        }
+
+        TapHandler {
+            onPressedChanged: {
+                if(pressed){
+                    background.color = hoverBackgroundColor
+                    root.tapped()
+                }else {
+                    background.color = backgroundColor
+                    clickedRecoverTimer.start()
+                }
             }
         }
     }
-
 }

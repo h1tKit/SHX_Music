@@ -22,6 +22,7 @@
         <file>image/remove.png</file>
         <file>image/CD.png</file>
         <file>image/delete.png</file>
+        <file>image/playing.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

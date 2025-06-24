@@ -47,12 +47,6 @@ Window {
         Component.onCompleted: initCurrentModel()
     }
 
-    //
-    PlayListDialog{
-        id:playDialog1
-        controller:control
-    }
-
 
     Rectangle {
         id: titleBar
@@ -153,8 +147,7 @@ Window {
         player: player1
         controler: control
         favoritepage: favoritePage
-        //
-        listdialog: playDialog1
+
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -187,7 +180,6 @@ Window {
             onOpenLoveList: {
                 localPage.visible=false
                 favoritePage.visible=true
-                console.log("OPEN LOVE++++++++++++")
             }
         }
 
@@ -210,69 +202,71 @@ Window {
                 }
             }
 
-            onRemoveSongbyBtn:{
-                var i = localPage.searchBylocalModel(removerequestPath)
-                var modelIndex = localPage.musicModel.createModelIndex(localPage.currentIndex,0);
-                var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
-                if(i===-1){
-                    console.log("错误，不应该找不到")
-                }else{
-                    localPage.removeSongbyLocalModel(i)
-                    console.log("删除一首本地音乐")
+            Connections {
+                target: localPage
+                function onRemoveSongbyBtn(removerequestPath){
+                    var i = localPage.searchBylocalModel(removerequestPath)
+                    var modelIndex = localPage.musicModel.createModelIndex(localPage.currentIndex,0);
+                    var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                    if(i===-1){
+                        console.log("错误，不应该找不到")
+                    }else{
+                        localPage.removeSongbyLocalModel(i)
+                        console.log("删除一首本地音乐")
+                    }
                 }
-            }
 
-
-            onAddToLoveModel: {
-                console.log("addloverequestpath",addloverequestPath)
-                var i = favoritePage.searchByloveModel(addloverequestPath)
-                var modelIndex = localPage.musicModel.createModelIndex(currentIndex,0);
-                var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
-                var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
-                if(i===-1){
-                    favoritePage.insertSongToLast(musicpath)
-                    console.log("添加进喜欢列表")
-                }else{
-                    console.log("当前喜欢列表已有这首歌")
+                function onAddToLoveModel(addloverequestPath) {
+                    //console.log("addloverequestpath",addloverequestPath)
+                    var i = favoritePage.searchByloveModel(addloverequestPath)
+                    var modelIndex = localPage.musicModel.createModelIndex(localPage.currentIndex,0);
+                    var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                    var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                    if(i===-1){
+                        favoritePage.insertSongToLast(musicpath)
+                        console.log("添加进喜欢列表")
+                    }else{
+                        console.log("当前喜欢列表已有这首歌")
+                    }
                 }
-            }
 
-            onAddToCurrentModelbyDbc: {
-                console.log("localrequestpath",dbcrequestPath)
-                var i = control.searchSongbyReserve(dbcrequestPath)
-                // var i = control.searchSong(dbcrequestPath)
+                function onAddToCurrentModelbyDbc(dbcrequestPath) {
+                    //console.log("localrequestpath",dbcrequestPath)
+                    var i = control.searchSongbyReserve(dbcrequestPath)
+                    // var i = control.searchSong(dbcrequestPath)
 
+                    var modelIndex =localPage.musicModel.createModelIndex(localPage.currentIndex,0);
+                    var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                    var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                    if(i===-1){
+                        control.insertSongToNextbyDbc(musicpath,localPage.musicModel,musicpath)
 
-                var modelIndex =localPage.musicModel.createModelIndex(currentIndex,0);
-                var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
-                var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
-                if(i===-1){
-                    control.insertSongToNextbyDbc(musicpath,localPage.musicModel,musicpath)
+                        //console.log("musicpath",musicpath)
+                        //console.log("The insert path",localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole))
+                        //console.log("添加新歌:", musicpath)
 
-                    console.log("musicpath",musicpath)
-                    console.log("The insert path",localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole))
-                    console.log("添加新歌:", musicpath)
+                    }else{
+                        control.jumpToSong(i)
+                        //console.log("跳转到已有歌曲:", i)
 
-                }else{
-                    control.jumpToSong(i)
-                    console.log("跳转到已有歌曲:", i)
-
+                    }
+                    control.playSong(control.currentIndex)
                 }
-                control.playSong(control.currentIndex)
-            }
 
-            onAddToCurrentModelbyBtn: {
-                var i = control.searchSong(btnrequestPath)
+                function onAddToCurrentModelbyBtn(btnrequestPath) {
+                    var i = control.searchSong(btnrequestPath)
 
-                var modelIndex =localPage.musicModel.createModelIndex(currentIndex,0);
-                var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
-                var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                    var modelIndex =localPage.musicModel.createModelIndex(localPage.currentIndex,0);
+                    var musicpath = localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
+                    var path = "file://" + localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole)
                     //单纯添加到下一首，及不播放，也不切换光标
                     control.insertSongToNextbyBtn(musicpath)
-                    console.log("musicpath",musicpath)
-                    console.log("The insert path",localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole))
-                    console.log("添加新歌:", musicpath)
+                    //console.log("musicpath",musicpath)
+                    //console.log("The insert path",localPage.musicModel.data(modelIndex, localPage.musicModel.FilePathRole))
+                    //console.log("添加新歌:", musicpath)
+                }
             }
+
             onAddMusic: {
                 addMusicDialog.open()
             }
@@ -295,57 +289,50 @@ Window {
                 }
             }
 
-            onRemoveLoveModelbyBtn: {
-                console.log("removelove  musicpath",removeLoverequestPath)
-                var i = favoritePage.searchByloveModel(removeLoverequestPath)
-                var modelIndex = favoritePage.musicModel.createModelIndex(favoriteIndex,0);
-                var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
-                if(i===-1){
-                    console.log("错误，不应该没找到")
-                }else{
-                    favoritePage.removeLoveModel(i)
-                    console.log("从喜欢列表删除")
+            Connections {
+                target: favoritePage
+                function onRemoveLoveModelbyBtn(removeLoverequestPath) {
+                    var i = favoritePage.searchByloveModel(removeLoverequestPath)
+                    var modelIndex = favoritePage.musicModel.createModelIndex(favoritePage.favoriteIndex,0);
+                    var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                    if(i===-1){
+                        console.log("错误，不应该没找到")
+                    }else{
+                        favoritePage.removeLoveModel(i)
+                        console.log("从喜欢列表删除")
+                    }
                 }
-            }
 
-            onAddToCurrentModelbyDbc:{
-                console.log("localrequestpath",dbcrequestPath)
-                var i = control.searchSongbyReserve(dbcrequestPath)
-                // var i = control.searchSong(dbcrequestPath)
+                function onAddToCurrentModelbyDbc(dbcrequestPath) {
+                    var i = control.searchSongbyReserve(dbcrequestPath)
+                    // var i = control.searchSong(dbcrequestPath)
 
 
-                var modelIndex =favoritePage.musicModel.createModelIndex(favoriteIndex,0);
-                var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
-                var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
-                if(i===-1){
-                    control.insertSongToNextbyDbc(musicpath,favoritePage.musicModel,musicpath)
+                    var modelIndex =favoritePage.musicModel.createModelIndex(favoritePage.favoriteIndex,0);
+                    var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                    var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                    if(i===-1){
+                        control.insertSongToNextbyDbc(musicpath,favoritePage.musicModel,musicpath)
+                        console.log("添加新歌:", musicpath)
 
-                    console.log("musicpath",musicpath)
-                    console.log("The insert path",favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole))
+                    }else{
+                        control.jumpToSong(i)
+                        console.log("跳转到已有歌曲:", i)
+
+                    }
+                    control.playSong(control.currentIndex)
+                }
+
+                function onAddToCurrentModelbyBtn(btnrequestPath) {
+                    var i = control.searchSong(btnrequestPath)
+
+                    var modelIndex =favoritePage.musicModel.createModelIndex(favoritePage.favoriteIndex,0);
+                    var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                    var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
+                    //单纯添加到下一首，及不播放，也不切换光标
+                    control.insertSongToNextbyBtn(musicpath)
                     console.log("添加新歌:", musicpath)
-
-                }else{
-                    control.jumpToSong(i)
-                    console.log("跳转到已有歌曲:", i)
-
                 }
-                control.playSong(control.currentIndex)
-            }
-
-            ////////////////////////////////////！！！！！！！！千万不能删，只是为了区分单机和双击好测试才注释
-
-            onAddToCurrentModelbyBtn: {
-                var i = control.searchSong(btnrequestPath)
-
-                var modelIndex =favoritePage.musicModel.createModelIndex(favoriteIndex,0);
-                var musicpath = favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
-                var path = "file://" + favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole)
-                //单纯添加到下一首，及不播放，也不切换光标
-                control.insertSongToNextbyBtn(musicpath)
-                console.log("musicpath",musicpath)
-                console.log("The insert path",favoritePage.musicModel.data(modelIndex, favoritePage.musicModel.FilePathRole))
-                console.log("添加新歌:", musicpath)
-
             }
         }
     }
@@ -356,8 +343,8 @@ Window {
         signal openByFile()
         signal openByFolder()
 
-        width: 200
-        height: 100
+        width: 120
+        height: 81
 
         x: window.width - width
         y: titleBar.height + 45
@@ -366,53 +353,74 @@ Window {
         //onRejected: console.log("Cancel clicked")
 
         background: Rectangle{
+            anchors.fill: parent
+            radius: 8
             color: Qt.rgba(0.94,0.94,0.94,1)
             border.width: 2
             border.color: Qt.rgba(0.82,0.82,0.82,1)
 
-            RoundRectangleButton {
-                id: byFile
-                hoverBackgroundColor: "transparent"
-                anchors.left: parent.left
-                anchors.leftMargin: 20
-                anchors.verticalCenter: parent.verticalCenter
-                width: 50
-                height: 50
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 1
+                Item {
+                    id: byFileItem
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    RoundRectangleButton {
+                        id: byFileButton
+                        anchors.fill: parent
+                        radius: 8
 
-                onTapped: addMusicDialog.openByFile()
-
-                Image {
-                    id: byFileIcon
-                    source: "qrc:/control/image/file_add.png"
-                    anchors.fill: parent
+                        onTapped: addMusicDialog.openByFile()
+                    }
+                    Image {
+                        id: byFileIcon
+                        source: "qrc:/control/image/file_add.png"
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        width: 24
+                        height: 24
+                    }
+                    Text {
+                        id: byFileText
+                        text: qsTr("添加文件")
+                        color: Qt.rgba(0.2,0.2,0.2,1)
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: 14
+                        font.pixelSize: 14
+                    }
                 }
-            }
-            Rectangle {
-                id: verticalLine
-                color: Qt.rgba(0.85,0.85,0.85,1)
-                anchors.top: parent.top
-                anchors.topMargin: 20
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 20
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: 2
-            }
+                Item {
+                    id: byFolderItem
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    RoundRectangleButton {
+                        id: byFolderButton
+                        anchors.fill: parent
+                        radius: 8
 
-            RoundRectangleButton {
-                id: byFolder
-                hoverBackgroundColor: "transparent"
-                anchors.right: parent.right
-                anchors.rightMargin: 20
-                anchors.verticalCenter: parent.verticalCenter
-                width: 50
-                height: 50
-
-                onTapped: addMusicDialog.openByFolder()
-
-                Image {
-                    id: byFolderIcon
-                    source: "qrc:/control/image/folder_add.png"
-                    anchors.fill: parent
+                        onTapped: addMusicDialog.openByFolder()
+                    }
+                    Image {
+                        id: byFolderIcon
+                        source: "qrc:/control/image/folder_add.png"
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        width: 24
+                        height: 24
+                    }
+                    Text {
+                        id: byFolderText
+                        text: qsTr("添加文件夹")
+                        color: Qt.rgba(0.2,0.2,0.2,1)
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: 14
+                        font.pixelSize: 14
+                    }
                 }
             }
         }
@@ -436,86 +444,139 @@ Window {
     }
 
 
-    Item {//resizeWindow
+    Item {
+        id: resizeWindow
         anchors.fill: parent
-        MouseArea {
-            anchors.right: parent.right
-            anchors.top: parent.top
-            width: 6
-            height: 6
-            cursorShape: Qt.SizeBDiagCursor
-            onPressed: {
-                window.startSystemResize(Qt.RightEdge | Qt.TopEdge)
-            }
-        }
-        MouseArea {
+
+        property real edgeSize: 6
+        property real cornerSize: 7
+
+        Item {
+            id: leftTopArea
             anchors.left: parent.left
             anchors.top: parent.top
-            width: 6
-            height: 6
-            cursorShape: Qt.SizeFDiagCursor
-            onPressed: {
-                window.startSystemResize(Qt.LeftEdge | Qt.TopEdge)
+            width: resizeWindow.cornerSize
+            height: resizeWindow.cornerSize
+
+            HoverHandler {
+                cursorShape: Qt.SizeFDiagCursor
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed) window.startSystemResize(Qt.LeftEdge | Qt.TopEdge)
+                }
             }
         }
-        MouseArea {
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            width: 6
-            height: 6
-            cursorShape: Qt.SizeFDiagCursor
-            onPressed: {
-                window.startSystemResize(Qt.RightEdge | Qt.BottomEdge)
-            }
-        }
-        MouseArea {
+        Item {
+            id: leftBottomArea
             anchors.left: parent.left
             anchors.bottom: parent.bottom
-            width: 6
-            height: 6
-            cursorShape: Qt.SizeBDiagCursor
-            onPressed: {
-                window.startSystemResize(Qt.LeftEdge | Qt.BottomEdge)
+            width: resizeWindow.cornerSize
+            height: resizeWindow.cornerSize
+
+            HoverHandler {
+                cursorShape: Qt.SizeBDiagCursor
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed) window.startSystemResize(Qt.LeftEdge | Qt.BottomEdge)
+                }
             }
         }
-        MouseArea {
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            width: 4
-            height: parent.height - 16
-            cursorShape: Qt.SizeHorCursor
-            onPressed: {
-                window.startSystemResize(Qt.LeftEdge)
-            }
-        }
-        MouseArea {
+        Item {
+            id: rightTopArea
             anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            width: 4
-            height: parent.height - 16
-            cursorShape: Qt.SizeHorCursor
-            onPressed: {
-                window.startSystemResize(Qt.RightEdge)
-            }
-        }
-        MouseArea {
             anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width - 16
-            height: 4
-            cursorShape: Qt.SizeVerCursor
-            onPressed: {
-                window.startSystemResize(Qt.TopEdge)
+            width: resizeWindow.cornerSize
+            height: resizeWindow.cornerSize
+
+            HoverHandler {
+                cursorShape: Qt.SizeBDiagCursor
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed) window.startSystemResize(Qt.RightEdge | Qt.TopEdge)
+                }
             }
         }
-        MouseArea {
+        Item {
+            id: rightBottomArea
+            anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width - 16
-            height: 4
-            cursorShape: Qt.SizeVerCursor
-            onPressed: {
-                window.startSystemResize(Qt.BottomEdge)
+            width: resizeWindow.cornerSize
+            height: resizeWindow.cornerSize
+
+            HoverHandler {
+                cursorShape: Qt.SizeFDiagCursor
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed) window.startSystemResize(Qt.RightEdge | Qt.BottomEdge)
+                }
+            }
+        }
+        Item {
+            id: leftArea
+            anchors.left: parent.left
+            anchors.top: leftTopArea.bottom
+            anchors.bottom: leftBottomArea.top
+            width: resizeWindow.edgeSize
+
+            HoverHandler {
+                cursorShape: Qt.SizeHorCursor
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed) window.startSystemResize(Qt.LeftEdge)
+                }
+            }
+        }
+        Item {
+            id: rightArea
+            anchors.right: parent.right
+            anchors.top: rightTopArea.bottom
+            anchors.bottom: rightBottomArea.top
+            width: resizeWindow.edgeSize
+
+            HoverHandler {
+                cursorShape: Qt.SizeHorCursor
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed) window.startSystemResize(Qt.RightEdge)
+                }
+            }
+        }
+        Item {
+            id: topArea
+            anchors.left: leftTopArea.right
+            anchors.top: parent.top
+            anchors.right: rightTopArea.left
+            height: resizeWindow.edgeSize
+
+            HoverHandler {
+                cursorShape: Qt.SizeVerCursor
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed) window.startSystemResize(Qt.TopEdge)
+                }
+            }
+        }
+        Item {
+            id: bottomArea
+            anchors.left: leftBottomArea.right
+            anchors.bottom: parent.bottom
+            anchors.right: rightBottomArea.left
+            height: resizeWindow.edgeSize
+
+            HoverHandler {
+                cursorShape: Qt.SizeVerCursor
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed) window.startSystemResize(Qt.BottomEdge)
+                }
             }
         }
     }

@@ -1,7 +1,0 @@
-import QtQuick
-
-Item {
-    ListView {
-
-    }
-}

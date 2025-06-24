@@ -7,6 +7,7 @@ Item {
 
     signal openLocalList()
     signal openLoveList()
+    signal openLyric()
     signal resizeMenu()
 
     Rectangle {
@@ -44,11 +45,20 @@ Item {
         selectedMark.y = 20
         localListText.color = Qt.rgba(0.2,0.2,0.2,1)
         loveListText.color = Qt.rgba(0.4,0.4,0.4,1)
+        lyricText.color = Qt.rgba(0.4,0.4,0.4,1)
     }
     onOpenLoveList:  {
         selectedMark.y = 80
         localListText.color = Qt.rgba(0.4,0.4,0.4,1)
         loveListText.color = Qt.rgba(0.2,0.2,0.2,1)
+        lyricText.color = Qt.rgba(0.4,0.4,0.4,1)
+    }
+
+    onOpenLyric: {
+        selectedMark.y = 140
+        localListText.color = Qt.rgba(0.4,0.4,0.4,1)
+        loveListText.color = Qt.rgba(0.4,0.4,0.4,1)
+        lyricText.color = Qt.rgba(0.2,0.2,0.2,1)
     }
 
     ColumnLayout {
@@ -106,6 +116,33 @@ Item {
                 text: qsTr("我的喜欢")
                 color: Qt.rgba(0.4,0.4,0.4,1)
                 anchors.left: loveListIcon.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 20
+            }
+        }
+        RoundRectangleButton {
+            id: lyricButton
+            Layout.preferredWidth: root.width
+            Layout.preferredHeight: 40
+            hoverBackgroundColor: "transparent"
+
+            onTapped: openLyric()
+
+            Image {
+                id: lyricIcon
+                source: "qrc:/control/image/playing.png"
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                width: 20
+                height: 20
+            }
+            Text {
+                id: lyricText
+                text: qsTr("正在播放")
+                color: Qt.rgba(0.4,0.4,0.4,1)
+                anchors.left: lyricIcon.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 20

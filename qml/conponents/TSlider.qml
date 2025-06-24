@@ -1,6 +1,6 @@
 /*
 name : TSlider
-version : 1.0
+version : 2.0
 by huang kun
 
 进度条用于计算占比的长度为 总长度-手柄宽度
@@ -12,7 +12,7 @@ import QtQuick
 
 Item {
     id: root
-    property real value : Math.round(handle.x / (un.width - handle.width) * (to - from) + from)
+    property real value: 0// : Math.round(handle.x / (un.width - handle.width) * (to - from) + from)
     property real from
     property real to
     property real dragValue
@@ -41,7 +41,7 @@ Item {
             height: parent.height
             radius: parent.height/2
 
-            width: handle.x + handle.width/2
+            width: (root.value - from)/(to - from) * (un.width - handle.width)//Qt.binding(function() {return handle.x + handle.width/2})
 
             color: Qt.rgba(1, 0.608, 0.137,1)
         }
@@ -59,6 +59,7 @@ Item {
             color: "gray"
             Rectangle {
                 id: central
+                property real preScale : 1
                 anchors.centerIn: parent
                 height: 10
                 width: 10
@@ -72,78 +73,68 @@ Item {
                     }
                 }
             }
-            MouseArea {
-                id: centralMouseArea
-                property real preScale : 1
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: {
-                    central.scale = 1.4
-                    preScale = 1.4
-                }
-                onExited: {
-                    central.scale = 1
-                    preScale = 1
-                }
-                onPressed: {
-                    central.scale = 0.7
-                }
-                onReleased: {
-                    central.scale = preScale
-                }
 
-                onMouseXChanged: {
-                    if(pressed) {
-                        if(mouseX + handle.x <= handle.width/2) {
-                            handle.x = 0
-                        }else if(mouseX + handle.x >= un.width - handle.width/2) {
-                            handle.x = un.width - handle.width
-                        }else {
-                            handle.x = mouseX + handle.x - handle.width/2
-                        }
-                        track.width = handle.x + handle.width/2
-                        //拖动handle影响dragValue输出
-                        root.dragValue = Math.round(handle.x / (un.width - handle.width) * (root.to - root.from) + root.from)
-                        draged(root.dragValue)
+            HoverHandler {
+                id: handleHover
+                onHoveredChanged: {
+                    if(hovered){
+                        central.scale = 1.4
+                        central.preScale = 1.4
+                    }else {
+                        central.scale = 1
+                        central.preScale = 1
+                    }
+                }
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed){
+                        central.scale = 0.7
+                    }else {
+                        central.scale = central.preScale
+                    }
+                }
+            }
+            DragHandler {
+                id: drager
+                xAxis.minimum: 0
+                xAxis.maximum: un.width - handle.width
+                dragThreshold: 0
+            }
+            onXChanged: {
+                //拖动handle影响dragValue输出
+                track.width = Qt.binding(function() {return handle.x + handle.width/2})
+                if(drager.active || unDragHandler.active || unPointHandler.active){
+                    root.dragValue = Math.round(handle.x / (un.width - handle.width) * (root.to - root.from) + root.from)
+                    root.draged(root.dragValue)
+                }
+            }
+        }
+
+        PointHandler {
+            id: unPointHandler
+            onActiveChanged: {
+                if(active){
+                    if(unPointHandler.point.position.x <= handle.width/2){
+                        handle.x = 0
+                    }else if(unPointHandler.point.position.x >= un.width - handle.width/2){
+                        handle.x = un.width - handle.width
+                    }else {
+                        handle.x = unPointHandler.point.position.x - handle.width / 2
                     }
                 }
             }
         }
 
-        MouseArea {
-            id: unMouseArea
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: handle.top
-            anchors.bottom: handle.bottom
-            //propagateComposedEvents: true
-
-            onPressed: {
-                if(mouseX > handle.x && mouseX < handle.x + handle.width) {
-                    central.scale = 0.7
-                }
-            }
-            onReleased: {
-                if(mouseX > handle.x && mouseX < handle.x + handle.width) {
-                    central.scale = centralMouseArea.preScale
-                }
-            }
-
-            onMouseXChanged: {
-                if(mouseX <= handle.width/2) {
-                    handle.x = 0
-                }else if(mouseX >= un.width - handle.width/2) {
-                    handle.x = un.width - handle.width
-                }else {
-                    handle.x = mouseX - handle.width/2
-                }
-                track.width = handle.x + handle.width/2
-                //拖动handle影响dragValue输出
-                root.dragValue = Math.round(handle.x / (un.width - handle.width) * (root.to - root.from) + root.from)
-                draged(root.dragValue)
-            }
+        DragHandler {
+            id: unDragHandler
+            target: handle
+            xAxis.minimum: 0
+            xAxis.maximum: un.width - handle.width
+            dragThreshold: 0
         }
     }
+
     onValueChanged: {
         //外部输入value影响handle位置
         track.width = Qt.binding(function(){return handle.x + handle.width/2})

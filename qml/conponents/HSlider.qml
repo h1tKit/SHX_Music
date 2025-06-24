@@ -1,6 +1,6 @@
 /*
-name : TSlider
-version : 1.0
+name : HSlider
+version : 2.0
 by huang kun
 
 进度条用于计算占比的长度为 总长度-手柄宽度
@@ -15,7 +15,7 @@ Item {
 
     property bool isHandleHovered: false
 
-    property real value : Math.round(handle.y / (un.height - handle.height) * (to - from) + from)
+    property real value: 0// : Math.round(handle.y / (un.height - handle.height) * (to - from) + from)
     property real from
     property real to
     property real dragValue
@@ -42,9 +42,9 @@ Item {
             id: track
 
             width: parent.width
-            radius: parent.width/2
+            radius: parent.radius
 
-            height: handle.y + handle.height/2
+            height: (root.value - from)/(to - from) * (un.height - handle.height) //Qt.binding(function(){return handle.y + handle.height/2})
 
             color: Qt.rgba(1, 0.608, 0.137,1)
         }
@@ -53,7 +53,6 @@ Item {
             //进度条的“手柄？”
             id: handle
             anchors.horizontalCenter: un.horizontalCenter
-            x: (root.value - root.from) / (root.to - root.from) * (un.height - handle.height)
 
             height: 16
             width: 16
@@ -62,6 +61,7 @@ Item {
             color: "gray"
             Rectangle {
                 id: central
+                property real preScale : 1
                 anchors.centerIn: parent
                 height: 10
                 width: 10
@@ -75,79 +75,68 @@ Item {
                     }
                 }
             }
-            MouseArea {
-                id: centralMouseArea
-                property real preScale : 1
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: {
-                    root.isHandleHovered = true
-                    central.scale = 1.2
-                    preScale = 1.2
+            HoverHandler {
+                id: handleHover
+                onHoveredChanged: {
+                    if(hovered){
+                        root.isHandleHovered = true
+                        central.scale = 1.2
+                        central.preScale = 1.2
+                    }else {
+                        root.isHandleHovered = false
+                        central.scale = 1
+                        central.preScale = 1
+                    }
                 }
-                onExited: {
-                    root.isHandleHovered = false
-                    central.scale = 1
-                    preScale = 1
+            }
+            TapHandler {
+                onPressedChanged: {
+                    if(pressed){
+                        central.scale = 0.7
+                    }else {
+                        central.scale = central.preScale
+                    }
                 }
-                onPressed: {
-                    central.scale = 0.7
+            }
+            DragHandler {
+                id: drager
+                yAxis.minimum: 0
+                yAxis.maximum: un.height - handle.height
+                dragThreshold: 0
+            }
+            onYChanged: {
+                //拖动handle影响dragValue输出
+                track.height = Qt.binding(function(){return handle.y + handle.height/2})
+                if(drager.active || unDragHandler.active || unPointHandler.active){
+                    root.dragValue = Math.round(handle.y / (un.height - handle.height) * (root.to - root.from) + root.from)
+                    draged(root.dragValue)
                 }
-                onReleased: {
-                    central.scale = preScale
-                }
+            }
+        }
 
-                onMouseYChanged: {
-                    if(pressed) {
-                        if(mouseY + handle.y <= handle.height/2) {
-                            handle.y = 0
-                        }else if(mouseY + handle.y >= un.height - handle.height/2) {
-                            handle.y = un.height - handle.height
-                        }else {
-                            handle.y = mouseY + handle.y - handle.height/2
-                        }
-                        track.height = handle.y + handle.height/2
-                        //拖动handle影响dragValue输出
-                        root.dragValue = Math.round(handle.y / (un.height - handle.height) * (root.to - root.from) + root.from)
-                        draged(root.dragValue)
+        PointHandler {
+            id: unPointHandler
+            onActiveChanged: {
+                if(active){
+                    if(unPointHandler.point.position.y <= handle.height/2){
+                        handle.y = 0
+                    }else if(unPointHandler.point.position.y >= un.height - handle.height/2){
+                        handle.y = un.height - handle.height
+                    }else {
+                        handle.y = unPointHandler.point.position.y - handle.height / 2
                     }
                 }
             }
         }
-
-        MouseArea {
-            id: unMouseArea
-            anchors.left: handle.left
-            anchors.right: handle.right
-            anchors.top: un.top
-            anchors.bottom: un.bottom
-
-            onPressed: {
-                if(mouseY > handle.y && mouseY < handle.y + handle.height) {
-                    central.scale = 0.7
-                }
-            }
-            onReleased: {
-                if(mouseY > handle.y && mouseY < handle.y + handle.height) {
-                    central.scale = centralMouseArea.preScale
-                }
-            }
-
-            onMouseYChanged: {
-                if(mouseY <= handle.height/2) {
-                    handle.y = 0
-                }else if(mouseY >= un.height - handle.height/2) {
-                    handle.y = un.height - handle.height
-                }else {
-                    handle.y = mouseY - handle.height/2
-                }
-                track.height = handle.y + handle.height/2
-                //拖动handle影响dragValue输出
-                root.dragValue = Math.round(handle.y / (un.height - handle.height) * (root.to - root.from) + root.from)
-                draged(root.dragValue)
-            }
+        DragHandler {
+            id: unDragHandler
+            target: handle
+            yAxis.minimum: 0
+            yAxis.maximum: un.height - handle.height
+            dragThreshold: 0
         }
     }
+
     onValueChanged: {
         //外部输入value影响handle位置
         track.height = Qt.binding(function(){return handle.y + handle.height/2})

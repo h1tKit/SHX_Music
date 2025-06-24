@@ -230,7 +230,6 @@ Item {
     RowLayout {
         id: centralControler
         anchors.horizontalCenter: parent.horizontalCenter
-        //anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         spacing: 40
@@ -323,7 +322,8 @@ Item {
         id: playModeButton
         width: 34
         height: 34
-        hoverBackgroundColor: "transparent"
+        radius: 8
+
         anchors.right: volumeButton.left
         anchors.rightMargin: 30
         anchors.verticalCenter: parent.verticalCenter
@@ -373,6 +373,7 @@ Item {
         visible: false
         width: 40
         height: 150
+        radius: 8
         anchors.horizontalCenter: volumeButton.horizontalCenter
         anchors.bottom: volumeButton.top
         anchors.bottomMargin: 20
@@ -385,7 +386,6 @@ Item {
 
         onIsHoverdChanged: {
             if (isHoverd){
-                console.log("ENTER VOLUMESLIDER")
                 hoverButtonShowTimer.stop()
             }else {
                 if (!volumeButtonMouseArea.containsMouse) {
@@ -408,7 +408,8 @@ Item {
 
         width: 30
         height: 30
-        hoverBackgroundColor: "transparent"
+        radius: 8
+        //hoverBackgroundColor: "transparent"
         anchors.right: listButton.left
         anchors.rightMargin: 30
         anchors.verticalCenter: parent.verticalCenter
@@ -416,25 +417,25 @@ Item {
 
         property real preVolume: 0.4
 
-        MouseArea {
+        HoverHandler {
             id: volumeButtonMouseArea
-            anchors.fill: parent
-            hoverEnabled: true
             property bool containsMouse: false
-
-            onEntered: {
-                containsMouse = true
-                hoverButtonShowTimer.stop()
-                volumeSlider.visible = true
-            }
-            onExited: {
-                containsMouse = false
-                if (!volumeSlider.isHoverd) {
-                    hoverButtonShowTimer.start()
+            onHoveredChanged: {
+                if(hovered){
+                    volumeButtonMouseArea.containsMouse = true
+                    hoverButtonShowTimer.stop()
+                    volumeSlider.visible = true
+                }else {
+                    volumeButtonMouseArea.containsMouse = false
+                    if (!volumeSlider.isHoverd) {
+                        hoverButtonShowTimer.start()
+                    }
                 }
             }
-            onClicked: {
-                console.log("CLICK")
+        }
+
+        TapHandler {
+            onTapped: {
                 volumeButton.state = (volumeButton.state === "normal" ? "mute" : "normal")
             }
         }
@@ -484,7 +485,8 @@ Item {
             listButton.enabled = true
         }
         function onUpdateDetail(songTitle, artist) {
-            console.log("+++++++++++++", songTitle)
+            if(songTitle === undefined) songTitle = ""
+            if(artist === undefined) artist = ""
             detailTitle.text = songTitle
             detailArtist.text = artist
         }
@@ -494,7 +496,8 @@ Item {
         id: listButton
         width: 30
         height: 30
-        hoverBackgroundColor: "transparent"
+        radius: 8
+
         anchors.right: parent.right
         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
@@ -512,7 +515,6 @@ Item {
         ]
 
         onTapped: {
-            console.log("TAPPED")
             if (state === "closed") {
                 controler.dialogVisible = true
             }
@@ -521,15 +523,11 @@ Item {
 
     function formatTime(milliseconds) {
         if (!milliseconds || milliseconds <= 0) {
-            console.log("BINDING YES")
             return "00:00"
         }
-
         var totalSeconds = Math.floor(milliseconds / 1000)
-        //console.log("Total Seconds : ", totalSeconds)
         var minutes = Math.floor(totalSeconds / 60)
         var seconds = totalSeconds % 60
-        //
         return minutes.toString().padStart(2, '0') +
                 ":" +
                 seconds.toString().padStart(2, '0')

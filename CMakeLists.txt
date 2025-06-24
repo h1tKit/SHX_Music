@@ -46,19 +46,19 @@ qt_add_qml_module(
   SOURCES
   cpp/musicinfo.cpp
   cpp/musicpathoperations.cpp
-  QML_FILES qml/logic/FavoriteBtnLogic.qml
+  QML_FILES
   QML_FILES qml/conponents/SideMenu.qml
   RESOURCES image/brightness.png image/delete.png image/loop.png image/love_empty.png image/love.png image/musiclist.png image/night.png image/pause.png image/play.png image/random.png image/single_loop.png image/skip_next.png image/skip_previous.png image/volume_mute.png image/volume.png
   RESOURCES icon.qrc
   QML_FILES qml/conponents/LocalPage.qml
-  QML_FILES qml/logic/MusicDeal.qml
-  QML_FILES qml/conponents/VolumeSlider.qml qml/conponents/PlayingList.qml qml/conponents/SongList.qml
-  QML_FILES qml/conponents/PlayListDialog.qml
-  QML_FILES qml/conponents/ViewArea.qml
+  QML_FILES
+  QML_FILES qml/conponents/VolumeSlider.qml qml/conponents/PlayingList.qml
+  QML_FILES
+  QML_FILES
   QML_FILES qml/conponents/HSlider.qml
   SOURCES cpp/musicmodel.cpp
   SOURCES heads/musicmodel.h
-  QML_FILES qml/logic/MusicControl.qml
+  QML_FILES
   RESOURCES data/currentMusic.txt
   QML_FILES
   RESOURCES data/localMusic.txt
@@ -72,7 +72,10 @@ qt_add_qml_module(
   SOURCES heads/imageproviader.h
   SOURCES cpp/imageproviader.cpp
   SOURCES heads/lyricparser.h
-  SOURCES cpp/lyricparser.cpp)
+  SOURCES cpp/lyricparser.cpp
+  QML_FILES qml/conponents/LrcDisplay.qml
+  SOURCES heads/lrcmodel.h
+  SOURCES cpp/lrcmodel.cpp)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 
