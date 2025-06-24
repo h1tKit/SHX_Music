@@ -16,16 +16,15 @@ Item {
     signal updateDetail(var songTitle, var artist, var cover)
     //signal sourceEmpty()
 
-    //这个当前播放列表记录路径位置，需要xys提供接口
-
     property alias playdialog: _playDialog
     property alias currentModel: currentModel
 
     property var addMusicPath
 
     property var musicplayer
+     //这个当前播放列表记录路径位置
     property var currentList: []
-    property int currentIndex: -1//: currentView.currentIndex > 0 ? 0 : -1  //初始化时绑定到count
+    property int currentIndex: -1//: currentView.currentIndex > 0 ? 0 : -1
 
     property int playMode: 0 // 0-顺序 1-随机 2-单曲循环
 
@@ -43,13 +42,11 @@ Item {
         MusicPathOperations.OperationTxt(control.filePath)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
             currentModel.loadFromFile(MusicPathOperations.pathList[i],favoritefilePath)
-            // currentModel.setCount()
         }
-        //连接信号
         updateCurrentList();
         if (currentModel.getCount() > 0) {
-            currentIndex = 0  // 设置为第一首
-            musicplayer.source = currentList[0]  // 预加载第一首
+            currentIndex = 0
+            musicplayer.source = currentList[0]
             //console.log("默认加载第一首:", currentList[0])
         }
         musicplayer.player.mediaStatusChanged.connect(autoPlay)
@@ -58,11 +55,8 @@ Item {
 
     onCurrentIndexChanged:{
         if (currentIndex >= 0 && currentIndex < currentModel.getCount()&& !isNavigatingHistory) {
-            //changeSong()
             currentView.currentIndex = currentIndex
-            // changeIslovebyCurrent(currentModel.data(currentModel.createModelIndex(currentIndex), MusicModel.IsLoveRole))
             //console.log("oncurrentchanged IslovebyCurrent",currentModel.data(currentModel.createModelIndex(currentIndex), MusicModel.IsLoveRole))
-            // addToHistory(currentIndex);
         }
         var ind = currentModel.createModelIndex(currentIndex,0)
         updateDetail(currentModel.data(ind, MusicModel.TitleRole), currentModel.data(ind, MusicModel.ArtistRole), currentModel.data(ind, MusicModel.CoverArtRole))
@@ -84,7 +78,6 @@ Item {
                 return i;   //found
             }else {
                 //console.log(currentModel.data(currentModel.createModelIndex(i,0), MusicModel.FilePathRole))
-                //console.log(musicPath)
                 continue;  //not found
             }
         }
@@ -141,9 +134,7 @@ Item {
                 currentIndex--
                 updateCurrentList();
             }
-            // if(currentModel.getCount()===1){
-            //     removeAllInCurrentModel()
-            // }
+
         }
     }
 
@@ -152,7 +143,6 @@ Item {
         currentModel.clearMusic()
         currentIndex=-1
         musicplayer.source= ""
-        //sourceEmpty()
         //console.log("SOURCE EMPTY")
     }
 
@@ -175,16 +165,14 @@ Item {
             //非空播放列表，正常传路径
             currentModel.insertMusic(currentIndex,musicPath)
             //console.log("正在执行正常到非空列表")
-            // currentIndex++
             updateCurrentList();
             currentView.update()
             currentIndex++;
             currentView.positionViewAtIndex(currentIndex, ListView.Center);
             currentView.currentIndex = currentIndex;
             //console.log("my currentIndex is ",currentIndex)
-            // currentIndex=currentView.index
         }
-        currentView.forceLayout();  // 强制重新布局
+        currentView.forceLayout();
 
     }
 
@@ -200,14 +188,11 @@ Item {
                 //非空播放列表，正常传路径
                 currentModel.insertMusic(currentIndex,musicPath)
                 //console.log("正在执行正常到非空列表")
-                // currentIndex++
                 updateCurrentList();
                 currentView.update()
-                // currentIndex++;
                 currentView.positionViewAtIndex(currentIndex, ListView.Center);
                 currentView.currentIndex = currentIndex;
                 //console.log("my currentIndex is ",currentIndex)
-                // currentIndex=currentView.index
             }
         }
 
@@ -244,9 +229,7 @@ Item {
 
     }
 
-    // function givecurrentIslove(){
 
-    // }
 
 
     MusicModel {
@@ -258,8 +241,6 @@ Item {
 
         visible: false
 
-        //width: 200
-        //height: parent.height
         width: parent.width
         height: parent.height
 
@@ -337,9 +318,8 @@ Item {
         }
 
         //三个点来适配，
-        //model用playlistModel
-        //判断正在那一首时用index === controller.currentIndex
-        //MouseArea点击歌曲时用controller.playSong(index)
+        //判断正在那一首时用index === currentIndex
+        //MouseArea点击歌曲时用playSong(index)
         //需要把当前ListView的index传过去，来支持相互绑定
         ListView{
             id: currentView
@@ -401,9 +381,7 @@ Item {
                         control.currentIndex = index
                         control.playSong(index)
                     }
-                    // onDoubleClicked: {
-                    //     removeSongInCurrentModel(index)
-                    // }
+
                 }
 
                 MouseArea {
@@ -430,10 +408,7 @@ Item {
             ScrollBar.vertical: ScrollBar {}
         }
 
-        // {
-        //     currentModel.clearMusic()
-        //     currentModel.clearCount()
-        // }
+
         onOpened: {
             control.opened()
             control.state = "open"
@@ -449,8 +424,7 @@ Item {
 
     //更新currentList
     function updateCurrentList() {
-        currentList = []; // 清空当前列表
-        //console.log("更新列表")
+        currentList = [];
         //console.log(currentModel.getCount())
         //console.log("count = ", currentModel.getCount())
         for (var i = 0; i < currentModel.getCount(); i++) {
@@ -468,10 +442,7 @@ Item {
         }
     }
 
-    // Connections {
-    //     target: currentModel
-    //     onCurrentIndexChanged: updateCurrentList()
-    // }
+
 
     //自动播放下一首
     function autoPlay(){
@@ -533,7 +504,6 @@ Item {
         }
 
         if(playMode === 1){
-            // 随机模式 - 使用历史记录
             var prevIndex = popHistory();
             if (prevIndex >= 0 && prevIndex < currentList.length) {
                 //console.log("shangyishou")
@@ -542,7 +512,6 @@ Item {
                 changeSong();
                 isNavigatingHistory=false;
             } else {
-                // 没有历史记录时保持当前歌曲
                 //console.log("如果再点击上一首会循环播放")
                 singleLoop();
             }
@@ -577,7 +546,6 @@ Item {
     //更新当前播放顺序到Player的Source
     function changeSong() {
         musicplayer.source = currentList[control.currentIndex];
-        //console.log("change song")
         musicplayer.player.position=0
         musicplayer.play();
     }
@@ -585,7 +553,6 @@ Item {
     function addToHistory(index) {
         if (playMode !== 1) return;
 
-        // 避免重复添加相同的索引
         if (playHistory.length === 0 || playHistory[playHistory.length - 1] !== index) {
             playHistory.push(index);
             // historyPointer = playHistory.length - 1;
@@ -601,7 +568,7 @@ Item {
         if (playHistory.length > 0) {
             return playHistory.pop();
         }
-        return -1; // 栈为空时返回无效索引
+        return -1;
     }
 
     onPlayModeChanged: {
@@ -610,7 +577,7 @@ Item {
         }
     }
 
-    // 清空历史记录(切换模式)
+    // 清空历史记录(playmodel!==1)
     function clearHistory() {
         playHistory = [];
         //console.log("历史记录已清空");

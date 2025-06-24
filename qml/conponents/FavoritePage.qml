@@ -197,71 +197,7 @@ Item {
                     height: 1
                     Layout.fillWidth: true
                 }
-                // Item {
-                //     Layout.fillHeight: true
-                //     Layout.fillWidth: true
-                //     id: multiOpItem
-                //     RoundRectangleButton {
-                //         id: multiOpButton
-                //         anchors.left: parent.left
-                //         anchors.verticalCenter: parent.verticalCenter
-                //         width: 120
-                //         height: 20
-                //         state: "waiting"
 
-                //         states: [
-                //             State {
-                //                 name: "operating"
-                //                 PropertyChanges {
-                //                     target: favoritePage
-                //                     state: "multiOp"
-                //                 }
-                //                 PropertyChanges {
-                //                     target: multiOpIcon
-                //                     border.color: "red"
-                //                 }
-                //             },
-                //             State {
-                //                 name: "waiting"
-                //                 PropertyChanges {
-                //                     target: favoritePage
-                //                     state: "singleOp"
-                //                 }
-                //                 PropertyChanges {
-                //                     target: multiOpIcon
-                //                     border.color: Qt.rgba(0.106, 0.553, 0.788,1)
-                //                 }
-                //             }
-                //         ]
-
-                //         onTapped: {
-                //             multiOpButton.state = multiOpButton.state === "operating" ? "waiting" : "operating"
-                //             //editDialog.multiOp()
-                //         }
-
-                //         Rectangle {
-                //             id: multiOpIcon
-                //             anchors.verticalCenter: parent.verticalCenter
-                //             anchors.left: parent.left
-                //             anchors.leftMargin: 10
-                //             width: 16
-                //             height: 16
-                //             radius: 8
-                //             color: "transparent"
-                //             border.width: 2
-                //             border.color: Qt.rgba(0.106, 0.553, 0.788,1)
-
-                //         }
-                //     }
-                //     Text {
-                //         id: multiOpText
-                //         text: qsTr("批量操作")
-                //         anchors.verticalCenter: parent.verticalCenter
-                //         anchors.right: parent.right
-                //         anchors.rightMargin: 15
-                //         font.pixelSize: 15
-                //     }
-                // }
             }
         }
     }
@@ -422,7 +358,6 @@ Item {
                     }
                 }
             }
-            //////////////////////////////////////////////
             Rectangle {
                 id: singleSelectedMark
                 visible: false
@@ -518,27 +453,7 @@ Item {
 
 
 
-            // MouseArea {
-            //     id: addToCurrentButtonArea
 
-            //     anchors.fill: addToCurrentButton
-            //     onClicked: {
-            //         console.log("ADDToCurrent")
-            //         favoriteIndex = index
-            //         addToCurrentModelbyBtn(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
-            //     }
-            // }
-
-            // MouseArea {
-            //     id: deleteButtonArea
-
-            //     anchors.fill: deleteButton
-            //     onClicked:{
-            //         favoriteIndex = index
-            //         removeLoveModelbyBtn(musicModel.data(musicModel.createModelIndex(favoriteIndex), MusicModel.FilePathRole))
-            //         console.log("DELETE")
-            //     }
-            // }
 
             //TODO : put below into a function ( onClicked\ onDoubleClicked
 
@@ -563,22 +478,7 @@ Item {
 
                 TapHandler {
                     onTapped: {
-                        // console.log("musicModel.getCount() : ", musicModel.getCount())
-                        // currentIndex = index
-                        // //musicModel.removeMusic(currentIndex)
-                        // // var deleteIndex = currentIndex;
-                        // // if(!deleteFiles.includes[deleteIndex]){
-                        // //     deleteFiles.push(deleteIndex)
-                        // //     console.log(deleteIndex)
-                        // // }
-                        // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
-                        // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
-                        // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                        // console.log(path)
-                        // musicplayer.player.source = path
-                        // //deleteMusic(filePathTxt, deleteFiles)
 
-                        // //MusicPathOperations.DeletePathTotxt(filePathTxt, )
                     }
                     onDoubleTapped: {
                         favoriteIndex = index
@@ -596,22 +496,7 @@ Item {
 
                 TapHandler {
                     onTapped: {
-                        // console.log("musicModel.getCount() : ", musicModel.getCount())
-                        // currentIndex = index
-                        // //musicModel.removeMusic(currentIndex)
-                        // // var deleteIndex = currentIndex;
-                        // // if(!deleteFiles.includes[deleteIndex]){
-                        // //     deleteFiles.push(deleteIndex)
-                        // //     console.log(deleteIndex)
-                        // // }
-                        // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
-                        // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
-                        // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                        // console.log(path)
-                        // musicplayer.player.source = path
-                        // //deleteMusic(filePathTxt, deleteFiles)
 
-                        // //MusicPathOperations.DeletePathTotxt(filePathTxt, )
                     }
                     onDoubleTapped: {
                         favoriteIndex=index
@@ -619,7 +504,6 @@ Item {
                     }
                 }
             }
-            //////////////////////////////////////////////
         }
     }
 
@@ -650,15 +534,7 @@ Item {
         }
     }
 
-    // function removeLoveModel(musicpath){
-    //     console.log("removelove  musicpath",musicpath)
-    //     var newIndex = searchByloveModel(musicpath)
-    //     if(newIndex !== -1){
-    //         favoritePage.musicModel.removeMusic(newIndex)
-    //         favoritePage.musicModel.changeIsLove(newIndex)
-    //         console.log("改变了当前这首歌为不喜欢",favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole))
-    //     }
-    // }
+
 
     function removeLoveModel(musicIndex){
         if(musicIndex!==-1){
