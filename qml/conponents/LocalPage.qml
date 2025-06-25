@@ -448,7 +448,6 @@ Item {
                 }
 
             }
-            //////////////////////////////////////////////
             Rectangle {
                 id: singleSelectedMark
                 visible: false
@@ -571,24 +570,7 @@ Item {
                 anchors.right: addToLoveButton.left
                 anchors.left: single.left
 
-                //onClicked: {
-                    //console.log("musicModel.getCount() : ", musicModel.getCount())
-                    // currentIndex = index
-                    //musicModel.removeMusic(currentIndex)
-                    // var deleteIndex = currentIndex;
-                    // if(!deleteFiles.includes[deleteIndex]){
-                    //     deleteFiles.push(deleteIndex)
-                    //     console.log(deleteIndex)
-                    // }
-                    // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
-                    // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
-                    // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                    // console.log(path)
-                    // musicplayer.player.source = path
-                    //deleteMusic(filePathTxt, deleteFiles)
 
-                    //MusicPathOperations.DeletePathTotxt(filePathTxt, )
-                //}
 
                 TapHandler {
                     onDoubleTapped: {
@@ -605,24 +587,7 @@ Item {
                 anchors.right: single.right
                 anchors.left: deleteButton.right
 
-                //onClicked: {
-                    // console.log("musicModel.getCount() : ", musicModel.getCount())
-                    // currentIndex = index
-                    // //musicModel.removeMusic(currentIndex)
-                    // // var deleteIndex = currentIndex;
-                    // // if(!deleteFiles.includes[deleteIndex]){
-                    // //     deleteFiles.push(deleteIndex)
-                    // //     console.log(deleteIndex)
-                    // // }
-                    // var modelIndex = musicModel.createModelIndex(currentIndex, 0);
-                    // console.log(musicModel.data(modelIndex, MusicModel.FilePathRole))
-                    // var path = "file://" + musicModel.data(modelIndex, MusicModel.FilePathRole)
-                    // console.log(path)
-                    // musicplayer.player.source = path
-                    // //deleteMusic(filePathTxt, deleteFiles)
 
-                    // //MusicPathOperations.DeletePathTotxt(filePathTxt, )
-                //}
 
                 TapHandler {
                     onDoubleTapped: {
@@ -631,7 +596,6 @@ Item {
                     }
                 }
             }
-            //////////////////////////////////////////////
         }
     }
 

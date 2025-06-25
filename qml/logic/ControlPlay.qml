@@ -28,7 +28,7 @@ Item {
 
     //这个当前播放列表记录路径位置
     property var currentList: []
-    property int currentIndex: -1//: currentView.currentIndex > 0 ? 0 : -1  //初始化时绑定到count
+    property int currentIndex: -1//: currentView.currentIndex > 0 ? 0 : -1
 
     property int playMode: 0 // 0-顺序 1-随机 2-单曲循环
 
@@ -194,7 +194,7 @@ Item {
             currentView.currentIndex = currentIndex;
             //console.log("my currentIndex is ",currentIndex)
         }
-        currentView.forceLayout();  // 强制重新布局
+        currentView.forceLayout();
 
     }
 
@@ -256,8 +256,7 @@ Item {
 
         visible: false
 
-        //width: 200
-        //height: parent.height
+
         width: parent.width
         height: parent.height
 
