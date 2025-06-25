@@ -227,5 +227,5 @@ QString MusicPathOperations::SeekLyricPath(
     const QString &filePath)
 {
     int lastDotIndex = filePath.lastIndexOf('.');
-    return (filePath.left(lastDotIndex) + "lrc");
+    return (filePath.left(lastDotIndex) + ".lrc");
 }

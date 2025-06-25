@@ -12,6 +12,8 @@ Item {
     //
     property var listdialog
 
+    signal updatePlaySliderTime(var time)
+
     // property alias lovebutton: loveButton
 
     Rectangle {
@@ -216,7 +218,14 @@ Item {
             from: 0
             to: player.player.duration
             value: player.player.position
-            onDraged: player.player.position = setValue
+
+            Connections {
+                function onDraged(setValue) {player.player.position = setValue}
+            }
+
+            onValueChanged: {
+                updatePlaySliderTime(value)
+            }
         }
 
         Text {
@@ -373,10 +382,10 @@ Item {
         visible: false
         width: 40
         height: 150
-        radius: 8
-        anchors.horizontalCenter: volumeButton.horizontalCenter
-        anchors.bottom: volumeButton.top
-        anchors.bottomMargin: 20
+        radius: 9
+
+        x: parent.width - 70 - volumeButton.width/2 - width/2
+        y: - height + 25
 
         onVolumeValueChanged: {
             player.volume = volumeSlider.volumeValue
@@ -421,11 +430,14 @@ Item {
             id: volumeButtonMouseArea
             property bool containsMouse: false
             onHoveredChanged: {
+                //console.log("Hovered changed")
                 if(hovered){
+                    volumeSlider.stillVisible = true
                     volumeButtonMouseArea.containsMouse = true
                     hoverButtonShowTimer.stop()
                     volumeSlider.visible = true
                 }else {
+                    volumeSlider.stillVisible = false
                     volumeButtonMouseArea.containsMouse = false
                     if (!volumeSlider.isHoverd) {
                         hoverButtonShowTimer.start()

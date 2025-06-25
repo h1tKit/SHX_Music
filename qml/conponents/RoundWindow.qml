@@ -33,6 +33,10 @@ Window {
     Player {
         id: player1
         player.audioOutput.volume: 0.4
+
+        onPlaying: lyricPage.isPlaying = true
+
+        onPaused: lyricPage.isPlaying = false
     }
 
     ControlPlay {
@@ -45,6 +49,15 @@ Window {
         anchors.bottom: playBar.top
         anchors.right: parent.right
         Component.onCompleted: initCurrentModel()
+
+        Connections {
+            target: control
+            function onUpdateLrc(lrcPath) {
+                console.log("PATH ", lrcPath)
+                lyricPage.lrcPath = lrcPath
+                lyricPage.initLrc()
+            }
+        }
     }
 
 
@@ -153,6 +166,13 @@ Window {
         anchors.bottom: parent.bottom
         height: 100
         z: 999
+
+        Connections {
+            target: playBar
+            function onUpdatePlaySliderTime(time) {
+                lyricPage.playingTime = time
+            }
+        }
     }
 
     RowLayout {
@@ -175,11 +195,19 @@ Window {
             onOpenLocalList: {
                 localPage.visible=true
                 favoritePage.visible=false
+                lyricPage.visible = false
             }
 
             onOpenLoveList: {
                 localPage.visible=false
                 favoritePage.visible=true
+                lyricPage.visible = false
+            }
+
+            onOpenLyric: {
+                localPage.visible = false
+                favoritePage.visible = false
+                lyricPage.visible = true
             }
         }
 
@@ -271,6 +299,7 @@ Window {
                 addMusicDialog.open()
             }
         }
+
         FavoritePage{
             id:favoritePage
             musicplayer:player1
@@ -334,6 +363,12 @@ Window {
                     console.log("添加新歌:", musicpath)
                 }
             }
+        }
+
+        LrcDisplay {
+            id: lyricPage
+            Layout.fillHeight: true
+            Layout.fillWidth: true
         }
     }
 
@@ -428,9 +463,9 @@ Window {
         MusicFileDialog{
             id:mfDialog
             onFilesSelected:{
-                console.log("接收到 ", mfDialog.selectedFilePaths.length, " 个文件")
+                //console.log("接收到 ", mfDialog.selectedFilePaths.length, " 个文件")
                 reciverFromFile = mfDialog.selectedFilePaths;
-                console.log("=========",reciverFromFile[0])
+                //console.log("=========",reciverFromFile[0])
             }
         }
 

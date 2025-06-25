@@ -452,9 +452,6 @@ Item {
             }
 
 
-
-
-
             //TODO : put below into a function ( onClicked\ onDoubleClicked
 
             Item {
@@ -507,8 +504,7 @@ Item {
         }
     }
 
-    // signal removeLoveModel(var requestPath)
-    //to do
+
 
 
     function searchByloveModel(musicPath){
@@ -526,7 +522,7 @@ Item {
     }
 
     function insertSongToLast(musicpath){
-        favoritePage,musicModel.loadFromFile(musicpath,filePathTxt)
+        favoritePage,musicModel.loadFromFileAsync(musicpath,filePathTxt)
 
         var newIndex = searchByloveModel(musicpath)
         if(newIndex !== -1&&favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole)===false){
@@ -548,7 +544,7 @@ Item {
     function initfavoriteModel(filePathTxt){
         MusicPathOperations.OperationTxt(filePathTxt)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
-            musicModel.loadFromFile(MusicPathOperations.pathList[i],filePathTxt)
+            musicModel.loadFromFileAsync(MusicPathOperations.pathList[i],filePathTxt)
             musicModel.changeIsLove(i)
         }
     }

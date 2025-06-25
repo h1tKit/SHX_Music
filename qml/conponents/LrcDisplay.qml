@@ -1,89 +1,112 @@
 import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import Lyric
 
 Item {
+    id: root
+    visible: false
 
-    ListModel {
-        id: lrcModel
-        ListElement {
-            time: 0
-            str: "Valder Fields"
+    property var lrcPath
+    property string defalutPath: "../../data/empty.lrc"
+    property var playingTime
+
+    LyricParser{
+        id:lyric
+    }
+
+    property bool isPlaying: false
+    property int currentLyricIndex: 0
+    property bool isScrolling: false
+
+    function initLrc() {
+        if(!lyric.parseFile(root.lrcPath)){
+            lyric.parseFile(defalutPath)
         }
-        ListElement {
-            time: 1
-            str: "I was found on the ground by the fountain about"
-        }
-        ListElement {
-            time: 7
-            str: "a fields of a summer stride"
-        }
-        ListElement {
-            time: 10
-            str: "lying in the sun after i had tried"
-        }
-        ListElement {
-            time: 14
-            str: "lying in the sun by the side"
-        }
-        ListElement {
-            time: 21
-            str: "we all agreed that the council would end up three hours over time"
-        }
-        ListElement {
-            time: 29
-            str: "shoe laces were tied at the traffic lights"
+        lyricsListView.model = lyric.getAllLyrics()
+    }
+
+    onIsPlayingChanged: {
+        if(isPlaying){
+            playTimer.running = true
+        }else {
+            playTimer.running = false
         }
     }
 
     Rectangle {
         id: background
-        color: "white"
         anchors.fill: parent
+        color: Qt.rgba(0.95,0.95,0.95,1)
     }
 
     ListView {
-
-    }
-
-    ListView {
-        id: lrcView
+        id: lyricsListView
         anchors.fill: parent
         clip: true
-        model: lrcModel
-        spacing: 15
-        currentIndex: currentLineIndex
-        highlightRangeMode: ListView.StrictlyEnforceRange
+        cacheBuffer: 120
 
-        delegate: Row {
-            width: parent.width
-            height: text.height + 10
+        interactive: false
+        flickableDirection: Flickable.VerticalFlick
+
+        contentY: -parent.height/2
+
+        delegate: Item {
+            id: lyricItem
+            width: lyricsListView.width
+            height: 56
 
             Text {
-                id: lrcText
-                text: model.text
-                color: index === currentLineIndex ? Qt.rgba(0.7,0.3,0.2,1) : Qt.rgba(0.4,0.4,0.4,1)
-                font.pixelSize: index === currentLineIndex ? 18 : 14
-                font.bold: index === currentLineIndex
+                id: lyricText
+                text: modelData
                 horizontalAlignment: Text.AlignHCenter
-                width: parent.width
-                wrapMode: Text.WordWrap
 
-                Behavior on color { ColorAnimation { duration: 300 } }
-                Behavior on font.pixelSize { NumberAnimation { duration: 300 } }
+                color: index === currentLyricIndex ? Qt.rgba(0.376, 0.753, 0.788,1) : Qt.rgba(0.4,0.4,0.4,1) //"#ff5500" : "#666"
+                font.family: "Noto Sans"
+                font.pixelSize: index === currentLyricIndex ? 28 : 18
+                font.bold: index === currentLyricIndex
+                anchors.verticalCenter: lyricItem.verticalCenter
+                width: lyricItem.width
+                wrapMode: Text.WordWrap
+                maximumLineCount: 2
+
+                Behavior on font.pixelSize {
+                    NumberAnimation {
+                        duration: 300
+                        easing.type: Easing.InOutQuart
+                    }
+                }
             }
         }
 
-        flickDeceleration: 500
-        snapMode: ListView.SnapOneItem
-        highlight: Rectangle {
-            color: "transparent"
-            border.color: "#ff5500"
-            border.width: 1
-            radius: 4
-            height: contentItem.height
-            width: parent.width - 20
-            y: contentItem.y
-            x: 10
+        Behavior on contentY {
+            NumberAnimation {
+                duration: 300
+                easing.type: Easing.OutCubic
+            }
         }
     }
 
+    onPlayingTimeChanged: {
+        updateCurrentLyricIndex()
+    }
+
+    onCurrentLyricIndexChanged: {
+        lyricsListView.contentY = -parent.height/2 + 56 * currentLyricIndex
+    }
+
+    Timer {
+        id: playTimer
+        interval: 100
+        running: isPlaying
+        repeat: true
+
+        onTriggered: {
+            updateCurrentLyricIndex();
+        }
+    }
+
+    function updateCurrentLyricIndex() {
+        currentLyricIndex = lyric.getCurrentLine(root.playingTime)
+    }
 }

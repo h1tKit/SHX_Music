@@ -13,6 +13,8 @@ import QtQuick
 Item {
     id: root
 
+    signal draging()
+
     property bool isHandleHovered: false
 
     property real value: 0// : Math.round(handle.y / (un.height - handle.height) * (to - from) + from)
@@ -98,11 +100,19 @@ Item {
                     }
                 }
             }
+
             DragHandler {
                 id: drager
+                target: handle
                 yAxis.minimum: 0
                 yAxis.maximum: un.height - handle.height
                 dragThreshold: 0
+
+                onActiveChanged: {
+                    if(active){
+                        root.draging()
+                    }
+                }
             }
             onYChanged: {
                 //拖动handle影响dragValue输出
@@ -134,6 +144,12 @@ Item {
             yAxis.minimum: 0
             yAxis.maximum: un.height - handle.height
             dragThreshold: 0
+
+            onActiveChanged: {
+                if(active){
+                    root.draging()
+                }
+            }
         }
     }
 

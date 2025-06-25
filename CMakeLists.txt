@@ -47,41 +47,82 @@ qt_add_qml_module(
   cpp/musicinfo.cpp
   cpp/musicpathoperations.cpp
   QML_FILES
-  QML_FILES qml/conponents/SideMenu.qml
-  RESOURCES image/brightness.png image/delete.png image/loop.png image/love_empty.png image/love.png image/musiclist.png image/night.png image/pause.png image/play.png image/random.png image/single_loop.png image/skip_next.png image/skip_previous.png image/volume_mute.png image/volume.png
-  RESOURCES icon.qrc
-  QML_FILES qml/conponents/LocalPage.qml
   QML_FILES
-  QML_FILES qml/conponents/VolumeSlider.qml qml/conponents/PlayingList.qml
+  qml/conponents/SideMenu.qml
+  RESOURCES
+  image/brightness.png
+  image/delete.png
+  image/loop.png
+  image/love_empty.png
+  image/love.png
+  image/musiclist.png
+  image/night.png
+  image/pause.png
+  image/play.png
+  image/random.png
+  image/single_loop.png
+  image/skip_next.png
+  image/skip_previous.png
+  image/volume_mute.png
+  image/volume.png
+  RESOURCES
+  icon.qrc
+  QML_FILES
+  qml/conponents/LocalPage.qml
   QML_FILES
   QML_FILES
-  QML_FILES qml/conponents/HSlider.qml
-  SOURCES cpp/musicmodel.cpp
-  SOURCES heads/musicmodel.h
+  qml/conponents/VolumeSlider.qml
+
   QML_FILES
-  RESOURCES data/currentMusic.txt
   QML_FILES
-  RESOURCES data/localMusic.txt
-  SOURCES heads/fileOperations.h
-  SOURCES cpp/fileOperations.cpp
-  RESOURCES data/favoriteMusic.txt
-  QML_FILES qml/conponents/FavoritePage.qml
-  SOURCES heads/searchmusic.h
-  SOURCES cpp/searchmusic.cpp
-  QML_FILES qml/conponents/MusicFileDialog.qml
-  SOURCES heads/imageproviader.h
-  SOURCES cpp/imageproviader.cpp
-  SOURCES heads/lyricparser.h
-  SOURCES cpp/lyricparser.cpp
-  QML_FILES qml/conponents/LrcDisplay.qml
-  SOURCES heads/lrcmodel.h
-  SOURCES cpp/lrcmodel.cpp)
+  QML_FILES
+  qml/conponents/HSlider.qml
+  SOURCES
+  cpp/musicmodel.cpp
+  SOURCES
+  heads/musicmodel.h
+  QML_FILES
+  RESOURCES
+  data/currentMusic.txt
+  QML_FILES
+  RESOURCES
+  data/localMusic.txt
+  SOURCES
+  heads/fileOperations.h
+  SOURCES
+  cpp/fileOperations.cpp
+  RESOURCES
+  data/favoriteMusic.txt
+  QML_FILES
+  qml/conponents/FavoritePage.qml
+  SOURCES
+  heads/searchmusic.h
+  SOURCES
+  cpp/searchmusic.cpp
+  QML_FILES
+  qml/conponents/MusicFileDialog.qml
+  SOURCES
+  heads/imageproviader.h
+  SOURCES
+  cpp/imageproviader.cpp
+  SOURCES
+  heads/lyricparser.h
+  SOURCES
+  cpp/lyricparser.cpp
+  QML_FILES
+  qml/conponents/LrcDisplay.qml
+  SOURCES
+
+  SOURCES
+
+  RESOURCES data/empty.lrc)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 
 target_link_libraries(appSHXM PRIVATE Qt6::Quick)
 target_link_libraries(appSHXM PRIVATE Qt6::Widgets Qt6::Qml Qt6::Quick)
 target_link_libraries(appSHXM PRIVATE TagLib::TagLib)
+target_link_libraries(appSHXM PRIVATE Qt6::Concurrent)
 
 set_target_properties(
   appSHXM

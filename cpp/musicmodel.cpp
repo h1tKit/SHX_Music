@@ -3,10 +3,43 @@
 #include "./heads/musicpathoperations.h"
 #include <QVariantMap>
 #include <qvariant.h>
+#include <QtConcurrent>
 
 MusicModel::MusicModel(
     QObject *parent)
-{}
+    : QAbstractListModel(parent)
+{
+    m_watcher = new QFutureWatcher<MusicItem>(this);
+    connect(m_watcher, &QFutureWatcher<MusicItem>::finished, this, [this]() {
+        if (m_watcher->future().isResultReadyAt(0)) {
+            onMusicLoaded(m_watcher->resultAt(0));
+        }
+        emit loadingFinished();
+    });
+}
+
+void MusicModel::loadFromFileAsync(
+    const QString &filePath, const QString &fileLovePath)
+{
+    emit loadingStarted();
+
+    // 创建一个新的watcher，而不是使用共享的m_watcher
+    QFutureWatcher<MusicItem> *watcher = new QFutureWatcher<MusicItem>(this);
+
+    QFuture<MusicItem> future = QtConcurrent::run(
+        [this, filePath, fileLovePath]() { return loadFromFile(filePath, fileLovePath); });
+
+    watcher->setFuture(future);
+
+    // 使用lambda捕获watcher，确保每个任务有自己的回调
+    connect(watcher, &QFutureWatcher<MusicItem>::finished, this, [this, watcher]() {
+        if (watcher->future().isResultReadyAt(0)) {
+            onMusicLoaded(watcher->resultAt(0));
+        }
+        watcher->deleteLater(); // 任务完成后删除watcher
+        emit loadingFinished();
+    });
+}
 
 int MusicModel::rowCount(
     const QModelIndex &parent) const
@@ -51,6 +84,8 @@ QVariant MusicModel::data(
         return item.channels;
     case IsLoveRole:
         return item.isLove;
+    case LyricPathRole:
+        return item.lyricPath;
     default:
         return QVariant();
     }
@@ -149,11 +184,9 @@ void MusicModel::updateMusic(
     emit dataChanged(idx, idx);
 }
 
-void MusicModel::loadFromFile(
+MusicModel::MusicItem MusicModel::loadFromFile(
     const QString &filePath, const QString &fileLovePath)
 {
-    beginInsertRows(QModelIndex(), m_musicList.count(), m_musicList.count());
-
     MusicItem item;
     MusicInfo musicInfo;
     MusicPathOperations musicPathOperations;
@@ -181,18 +214,28 @@ void MusicModel::loadFromFile(
         if (item.coverArt.isNull()) {
             //item.coverArt.load(":/default_cover.png");
         }
-
-        m_musicList.append(item);
     }
 
-    endInsertRows();
-    emit musicAdd();
+    return item;
 }
 
 QModelIndex MusicModel::createModelIndex(
-    int row, int column)
+    int row, int column) const
 {
     return createIndex(row, column);
+}
+
+void MusicModel::copyModel(
+    MusicModel *copy)
+{
+    if (!copy) {
+        return;
+    }
+
+    beginResetModel();
+    m_musicList = copy->m_musicList; // 复制数据
+    endResetModel();
+    emit musicAdd();
 }
 
 void MusicModel::insertMusic(
@@ -262,7 +305,7 @@ QString MusicModel::getMuiscPath(
     return m_musicList[index].filePath;
 }
 
-int MusicModel::getCount()
+int MusicModel::getCount() const
 {
     return m_musicList.size();
 }
@@ -271,4 +314,15 @@ void MusicModel::changeIsLove(
     int index)
 {
     m_musicList[index].isLove = !m_musicList[index].isLove;
+}
+
+void MusicModel::onMusicLoaded(
+    const MusicItem &item)
+{
+    if (!item.filePath.isEmpty()) {
+        beginInsertRows(QModelIndex(), m_musicList.count(), m_musicList.count());
+        m_musicList.append(item);
+        endInsertRows();
+        emit musicAdd();
+    }
 }

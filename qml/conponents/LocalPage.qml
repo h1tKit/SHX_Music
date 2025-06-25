@@ -672,7 +672,7 @@ Item {
         console.log("localModel 初始化开始")
         MusicPathOperations.OperationTxt(filePathTxt)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
-            musicModel.loadFromFile(MusicPathOperations.pathList[i],favoritefilePathTxt)
+            musicModel.loadFromFileAsync(MusicPathOperations.pathList[i],favoritefilePathTxt)
         }
     }
 
@@ -715,7 +715,7 @@ Item {
 
     onReceivedDataChanged:{
         for(var i = 0; i < receivedData.length; i++){
-            musicModel.loadFromFile(receivedData[i],favoritefilePathTxt)
+            musicModel.loadFromFileAsync(receivedData[i],favoritefilePathTxt)
         }
     }
 }
