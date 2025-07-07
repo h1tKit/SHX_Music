@@ -53,7 +53,7 @@ Item {
 
     Connections{
         target: currentModel
-        onLoadingFinished: {
+        function onLoadingFinished() {
             initcurrentlist()
         }
     }

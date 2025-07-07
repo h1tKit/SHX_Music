@@ -380,8 +380,8 @@ Item {
     VolumeSlider {
         id: volumeSlider
         visible: false
-        width: 40
-        height: 150
+        height: 40
+        width: 150
         radius: 9
 
         x: parent.width - 70 - volumeButton.width/2 - width/2

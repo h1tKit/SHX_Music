@@ -88,6 +88,8 @@ QVariant MusicModel::data(
         return item.channels;
     case IsLoveRole:
         return item.isLove;
+    case LyricPathRole:
+        return item.lyricPath;
     default:
         return QVariant();
     }

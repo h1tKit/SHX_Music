@@ -100,9 +100,9 @@ Item {
 
         SearchBar {
             anchors.left:titleText.right
-            //anchors.right:parent.right
-            height:40
-            width: 300
+            anchors.leftMargin: 100 + (localPage.width - 800) * 0.1
+            height: 30
+            width: 300 + (localPage.width - 800) * 0.1
             anchors.verticalCenter:parent.verticalCenter
             onTextChanged: musicModel.search(text)
         }
@@ -350,6 +350,16 @@ Item {
             required property var duration
             required property var filePath
             required property var index
+
+            Text {
+                id: indexText
+                text: (index + 1).toString()
+                color: Qt.rgba(0.4,0.4,0.4,1)
+                font.pixelSize: 14
+                anchors.left: single.left
+                anchors.leftMargin: 12
+                anchors.verticalCenter: single.verticalCenter
+            }
 
             Text {
                 id: singleTitleText

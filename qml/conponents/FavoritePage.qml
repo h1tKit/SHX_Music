@@ -81,9 +81,9 @@ Item {
 
         SearchBar {
             anchors.left:titleText.right
-            //anchors.right:parent.right
-            height:40
-            width: 300
+            anchors.leftMargin: 100 + (favoritePage.width - 800) * 0.1
+            height: 30
+            width: 300 + (favoritePage.width - 800) * 0.1
             anchors.verticalCenter:parent.verticalCenter
             onTextChanged: musicModel.search(text)
         }
@@ -286,6 +286,16 @@ Item {
             required property var duration
             required property var filePath
             required property var index
+
+            Text {
+                id: indexText
+                text: (index + 1).toString()
+                color: Qt.rgba(0.4,0.4,0.4,1)
+                font.pixelSize: 14
+                anchors.left: single.left
+                anchors.leftMargin: 12
+                anchors.verticalCenter: single.verticalCenter
+            }
 
             Text {
                 id: singleTitleText
@@ -531,7 +541,7 @@ Item {
     }
 
     function insertSongToLast(musicpath){
-        favoritePage,musicModel.loadFromFileAsync(musicpath,filePathTxt)
+        favoritePage.musicModel.loadFromFileAsync(musicpath,filePathTxt)
 
         var newIndex = searchByloveModel(musicpath)
         if(newIndex !== -1&&favoritePage.musicModel.data(favoritePage.musicModel.createModelIndex(newIndex), MusicModel.IsLoveRole)===false){
@@ -551,10 +561,11 @@ Item {
 
 
     function initfavoriteModel(filePathTxt){
+        console.log("FavoriteModel初始化开始")
         MusicPathOperations.OperationTxt(filePathTxt)
+        console.log("FavoriteModel Length ", MusicPathOperations.pathList.length)
         for(var i = 0; i < MusicPathOperations.pathList.length; i++){
             musicModel.loadFromFileAsync(MusicPathOperations.pathList[i],filePathTxt)
-            musicModel.changeIsLove(i)
         }
     }
 

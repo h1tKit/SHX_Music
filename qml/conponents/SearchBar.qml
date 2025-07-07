@@ -32,20 +32,14 @@ Item {
 
     }
 
-    RoundRectangleButton {
-        id: searchButton
-        anchors.right: searchArea.right
-        anchors.rightMargin: 10
-        anchors.verticalCenter: searchArea.verticalCenter
-        height: searchArea.height * 0.7
-        width: height
-        radius: 8
-    }
-
     Image {
         id: searchIcon
         source: "qrc:/control/image/search.png"
-        anchors.fill: searchButton
+        width: searchArea.height * 0.5
+        height: width
+        anchors.verticalCenter: searchArea.verticalCenter
+        anchors.right: searchArea.right
+        anchors.rightMargin: 8
     }
 }
 

@@ -43,10 +43,10 @@ Item {
             visible: true
             id: track
 
-            width: parent.width
+            height: parent.height
             radius: parent.radius
 
-            height: (root.value - from)/(to - from) * (un.height - handle.height) //Qt.binding(function(){return handle.y + handle.height/2})
+            width: (root.value - from)/(to - from) * (un.width - handle.width) //Qt.binding(function(){return handle.y + handle.height/2})
 
             color: Qt.rgba(1, 0.608, 0.137,1)
         }
@@ -54,7 +54,7 @@ Item {
         Rectangle {
             //进度条的“手柄？”
             id: handle
-            anchors.horizontalCenter: un.horizontalCenter
+            anchors.verticalCenter: un.verticalCenter
 
             height: 16
             width: 16
@@ -104,8 +104,8 @@ Item {
             DragHandler {
                 id: drager
                 target: handle
-                yAxis.minimum: 0
-                yAxis.maximum: un.height - handle.height
+                xAxis.minimum: 0
+                xAxis.maximum: un.width - handle.width
                 dragThreshold: 0
 
                 onActiveChanged: {
@@ -114,11 +114,11 @@ Item {
                     }
                 }
             }
-            onYChanged: {
+            onXChanged: {
                 //拖动handle影响dragValue输出
-                track.height = Qt.binding(function(){return handle.y + handle.height/2})
+                track.width = Qt.binding(function(){return handle.x + handle.width/2})
                 if(drager.active || unDragHandler.active || unPointHandler.active){
-                    root.dragValue = Math.round(handle.y / (un.height - handle.height) * (root.to - root.from) + root.from)
+                    root.dragValue = Math.round(handle.x / (un.width - handle.width) * (root.to - root.from) + root.from)
                     draged(root.dragValue)
                 }
             }
@@ -128,12 +128,12 @@ Item {
             id: unPointHandler
             onActiveChanged: {
                 if(active){
-                    if(unPointHandler.point.position.y <= handle.height/2){
-                        handle.y = 0
-                    }else if(unPointHandler.point.position.y >= un.height - handle.height/2){
-                        handle.y = un.height - handle.height
+                    if(unPointHandler.point.position.x <= handle.width/2){
+                        handle.x = 0
+                    }else if(unPointHandler.point.position.x >= un.width - handle.width/2){
+                        handle.x = un.width - handle.width
                     }else {
-                        handle.y = unPointHandler.point.position.y - handle.height / 2
+                        handle.x = unPointHandler.point.position.x - handle.width / 2
                     }
                 }
             }
@@ -141,8 +141,8 @@ Item {
         DragHandler {
             id: unDragHandler
             target: handle
-            yAxis.minimum: 0
-            yAxis.maximum: un.height - handle.height
+            xAxis.minimum: 0
+            xAxis.maximum: un.width - handle.width
             dragThreshold: 0
 
             onActiveChanged: {
@@ -155,8 +155,8 @@ Item {
 
     onValueChanged: {
         //外部输入value影响handle位置
-        track.height = Qt.binding(function(){return handle.y + handle.height/2})
-        handle.y = Qt.binding(function(){return (root.value - root.from) / (root.to - root.from) * (un.height - handle.height)})
+        track.width = Qt.binding(function(){return handle.x + handle.width/2})
+        handle.x = Qt.binding(function(){return (root.value - root.from) / (root.to - root.from) * (un.width - handle.width)})
     }
 
 }
