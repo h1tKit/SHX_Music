@@ -98,6 +98,15 @@ Item {
             height: 1
         }
 
+        SearchBar {
+            anchors.left:titleText.right
+            //anchors.right:parent.right
+            height:40
+            width: 300
+            anchors.verticalCenter:parent.verticalCenter
+            onTextChanged: musicModel.search(text)
+        }
+
         RoundRectangleButton {
             id: addToLoveButtonInBar
             visible: false

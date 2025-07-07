@@ -115,7 +115,8 @@ qt_add_qml_module(
 
   SOURCES
 
-  RESOURCES data/empty.lrc)
+  RESOURCES data/empty.lrc
+  QML_FILES qml/conponents/SearchBar.qml)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 

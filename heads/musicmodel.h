@@ -6,6 +6,7 @@
 #include <QImage>
 #include <QVector>
 #include <QFutureWatcher>
+#include <QTimer>
 
 class MusicModel : public QAbstractListModel
 {
@@ -47,6 +48,9 @@ public:
     Q_INVOKABLE QString getMuiscPath(int index); //写回txt写路径回去
     Q_INVOKABLE int getCount() const;
     Q_INVOKABLE void changeIsLove(int index);
+    //search
+    Q_INVOKABLE void search(const QString &keyword);
+    void performSearch();
 
 signals:
     void musicAdd();
@@ -71,12 +75,23 @@ private:
         int channels;
         bool isLove;
         QString lyricPath;
+
+        bool operator==(
+            const MusicItem &other) const
+        {
+            return title == other.title && artist == other.artist;
+        }
     };
 
     MusicItem loadFromFile(const QString &filePath, const QString &fileLovePath);
     QList<MusicItem> m_musicList;
     int count = 0;
     QFutureWatcher<MusicItem> *m_watcher;
+
+    //search
+    QTimer *m_searchTimer;
+    QString m_searchKeyword;
+    QList<MusicItem> m_allMusicList;
 
 private slots:
     void onMusicLoaded(const MusicItem &item);

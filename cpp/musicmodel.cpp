@@ -16,6 +16,10 @@ MusicModel::MusicModel(
         }
         emit loadingFinished();
     });
+
+    m_searchTimer = new QTimer(this);
+    m_searchTimer->setSingleShot(true);
+    connect(m_searchTimer, &QTimer::timeout, this, &MusicModel::performSearch);
 }
 
 void MusicModel::loadFromFileAsync(
@@ -84,8 +88,6 @@ QVariant MusicModel::data(
         return item.channels;
     case IsLoveRole:
         return item.isLove;
-    case LyricPathRole:
-        return item.lyricPath;
     default:
         return QVariant();
     }
@@ -316,12 +318,48 @@ void MusicModel::changeIsLove(
     m_musicList[index].isLove = !m_musicList[index].isLove;
 }
 
+void MusicModel::search(
+    const QString &keyword)
+{
+    if (m_searchKeyword == keyword)
+        return;
+
+    m_searchKeyword = keyword;
+    m_searchTimer->stop();
+    m_searchTimer->start(300);
+}
+
+void MusicModel::performSearch()
+{
+    if (m_searchKeyword.isEmpty()) {
+        if (m_musicList != m_allMusicList) {
+            beginResetModel();
+            m_musicList = m_allMusicList;
+            endResetModel();
+        }
+        return;
+    }
+
+    QList<MusicItem> filteredList;
+    for (const auto &item : m_allMusicList) {
+        if (item.title.contains(m_searchKeyword, Qt::CaseInsensitive)
+            || item.artist.contains(m_searchKeyword, Qt::CaseInsensitive)) {
+            filteredList.append(item);
+        }
+    }
+
+    beginResetModel();
+    m_musicList = filteredList;
+    endResetModel();
+}
+
 void MusicModel::onMusicLoaded(
     const MusicItem &item)
 {
     if (!item.filePath.isEmpty()) {
         beginInsertRows(QModelIndex(), m_musicList.count(), m_musicList.count());
         m_musicList.append(item);
+        m_allMusicList.append(item);
         endInsertRows();
         emit musicAdd();
     }
