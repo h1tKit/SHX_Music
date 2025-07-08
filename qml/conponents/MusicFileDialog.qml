@@ -48,7 +48,7 @@ Item{
         onStatusChanged: {
             if (status === FolderListModel.Ready) {
                 // 模型加载完成后处理文件
-                //selectedFilePaths = []
+                selectedFilePaths = []
                 for (var i = 0; i < folderModel.count; i++) {
                     if (!isFolder(i)) {
                         selectedFilePaths.push(get(i, "filePath"))
