@@ -15,9 +15,14 @@ Item {
     signal paused()
     signal sourceEmpty()
     signal sourceNotEmpty()
+    signal sourceUpdate()
 
     property var play: function(){_player.play()}
     property var pause: function(){_player.pause()}
+
+    onSourceChanged: {
+        sourceUpdate()
+    }
 
     MediaPlayer {
         id: _player

@@ -58,6 +58,16 @@ Item {
         }
     }
 
+    Connections {
+        target: musicplayer
+        function onSourceUpdate(){
+            console.log("SC")
+            var ind = currentModel.createModelIndex(currentIndex,0)
+            updateDetail(currentModel.data(ind, MusicModel.TitleRole), currentModel.data(ind, MusicModel.ArtistRole), currentModel.data(ind, MusicModel.CoverArtRole))
+            updateLrc(currentModel.data(ind, MusicModel.LyricPathRole))
+        }
+    }
+
     function initcurrentlist(){
         // console.log("currentModel final is ",currentModel.getCount())
         updateCurrentList();
@@ -76,11 +86,6 @@ Item {
             currentView.currentIndex = currentIndex
             //console.log("oncurrentchanged IslovebyCurrent",currentModel.data(currentModel.createModelIndex(currentIndex), MusicModel.IsLoveRole))
         }
-        var ind = currentModel.createModelIndex(currentIndex,0)
-        updateDetail(currentModel.data(ind, MusicModel.TitleRole), currentModel.data(ind, MusicModel.ArtistRole), currentModel.data(ind, MusicModel.CoverArtRole))
-        updateLrc(currentModel.data(ind, MusicModel.LyricPathRole))
-        console.log("__+_+_+_+_+",currentModel.data(ind, MusicModel.FilePathRole))
-        console.log("__+_+_+_+_+",currentModel.data(ind, MusicModel.LyricPathRole))
     }
 
     Component.onDestruction: {
