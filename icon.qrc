@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/control">
+        <file>image/play.png</file>
+        <file>image/skip_next.png</file>
+        <file>image/skip_previous.png</file>
+        <file>image/love_empty.png</file>
+        <file>image/love.png</file>
+        <file>image/pause.png</file>
+        <file>image/volume.png</file>
+        <file>image/volume_mute.png</file>
+        <file>image/loop.png</file>
+        <file>image/musiclist.png</file>
+        <file>image/random.png</file>
+        <file>image/single_loop.png</file>
+        <file>image/music.png</file>
+        <file>image/add_square.png</file>
+        <file>image/file_add.png</file>
+        <file>image/folder_add.png</file>
+        <file>image/menu_edit.png</file>
+        <file>image/love_add.png</file>
+        <file>image/add.png</file>
+        <file>image/remove.png</file>
+        <file>image/CD.png</file>
+        <file>image/delete.png</file>
+        <file>image/playing.png</file>
+        <file>image/search.png</file>
+        <file>image/lrc.png</file>
+        <file>image/lrc_on.png</file>
+        <file>image/locked.svg</file>
+        <file>image/unlocked.svg</file>
+    </qresource>
+</RCC>
