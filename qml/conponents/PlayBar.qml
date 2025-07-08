@@ -14,6 +14,16 @@ Item {
 
     signal updatePlaySliderTime(var time)
 
+    property var lrcWindow: null
+
+    function closeWholeWindow(){
+        if(desktopLrcButton.state === "visible"){
+            lrcWindow.close()
+            desktopLrcButton.desktopLrcIsClosed = true
+            lrcWindow = null
+        }
+    }
+
     // property alias lovebutton: loveButton
 
     Rectangle {
@@ -328,13 +338,87 @@ Item {
     }
 
     RoundRectangleButton {
+        id: desktopLrcButton
+        width: 34
+        height: 34
+        radius: 8
+
+        anchors.right: playModeButton.left
+        anchors.rightMargin: 25
+        anchors.verticalCenter: parent.verticalCenter
+
+        states: [
+            State {
+                name: "visible"
+                PropertyChanges {
+                    target: desktopLrcIcon
+                    source: "qrc:/control/image/lrc_on.png"
+                }
+            },
+            State {
+                name: "unvisible"
+                PropertyChanges {
+                    target: desktopLrcIcon
+                    source: "qrc:/control/image/lrc.png"
+                }
+            }
+        ]
+
+        state: "unvisible"
+
+        onTapped: {
+            desktopLrcButton.state = (desktopLrcButton.state === "visible" ? "unvisible" : "visible")
+        }
+
+
+        property var lrcPath
+
+        property bool desktopLrcIsClosed: true
+
+        onDesktopLrcIsClosedChanged: {
+            console.log("BOOL CHANGED")
+            if(desktopLrcIsClosed){
+                state = "unvisible"
+            }
+        }
+
+        onStateChanged: {
+            if(state === "visible"){
+                var component = Qt.createComponent("DesktopLrc.qml");
+                if (component.status === Component.Ready) {
+                    lrcWindow = component.createObject(null)
+                    lrcWindow.show()
+                    lrcWindow.lrcFilePath = Qt.binding(function() {return desktopLrcButton.lrcPath})
+                    lrcWindow.time = Qt.binding(function() {return player.currentTime})
+                    lrcWindow.isClosed = false
+                    desktopLrcIsClosed = Qt.binding(function() {return lrcWindow.isClosed})
+
+                }
+            }else {
+                if(lrcWindow){
+                    lrcWindow.close()
+                    desktopLrcIsClosed = true
+                    lrcWindow = null
+                }
+            }
+        }
+
+        Image {
+            id: desktopLrcIcon
+            anchors.fill: parent
+            scale: 0.8
+        }
+
+    }
+
+    RoundRectangleButton {
         id: playModeButton
         width: 34
         height: 34
         radius: 8
 
         anchors.right: volumeButton.left
-        anchors.rightMargin: 30
+        anchors.rightMargin: 25
         anchors.verticalCenter: parent.verticalCenter
 
         onStateChanged: {
@@ -420,7 +504,7 @@ Item {
         radius: 8
         //hoverBackgroundColor: "transparent"
         anchors.right: listButton.left
-        anchors.rightMargin: 30
+        anchors.rightMargin: 25
         anchors.verticalCenter: parent.verticalCenter
         state: "normal"
 
@@ -502,7 +586,13 @@ Item {
             detailTitle.text = songTitle
             detailArtist.text = artist
         }
+        function onUpdateLrc(lrcPath) {
+            console.log("PATH ", lrcPath)
+            desktopLrcButton .lrcPath = lrcPath
+        }
     }
+
+
 
     RoundRectangleButton {
         id: listButton

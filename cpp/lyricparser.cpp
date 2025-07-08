@@ -43,7 +43,7 @@ bool LyricParser::parseFile(
 QString LyricParser::getLyric(
     qint64 positionMs)
 {
-    if (!m_lyricMap.isEmpty())
+    if (m_lyricMap.isEmpty())
         return "无歌词";
 
     auto it = m_lyricMap.upperBound(positionMs);

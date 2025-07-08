@@ -135,21 +135,31 @@ Window {
                     font.pixelSize: 16
                     anchors.centerIn: parent
                 }
-                onTapped: window.close()
+                onTapped: {
+                    playBar.closeWholeWindow()
+                    window.close()
+                }
             }
         }
 
-        MouseArea {
-            id: titleControlArea
+        Item {
+            id: dragArea
             anchors.left: parent.left
             anchors.right: windowControlButtons.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            onPressed: {
-                window.startSystemMove()
+
+            TapHandler {
+                onDoubleTapped: {
+                    window.toggleMaximize()
+                }
             }
-            onDoubleClicked: {
-                window.toggleMaximize()
+            DragHandler {
+                onActiveChanged: {
+                    if(active){
+                        window.startSystemMove()
+                    }
+                }
             }
         }
     }//title ends here
@@ -644,5 +654,6 @@ Window {
         MusicPathOperations.writeToTxt("../../data/favoriteMusic.txt", favoritePage.musicModel)
         MusicPathOperations.writeToTxt("../../data/currentMusic.txt", control.currentModel)
         console.log("音乐列表已保存")
+        //playBar.closeWholeWindow()
     }
 }

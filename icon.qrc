@@ -24,5 +24,9 @@
         <file>image/delete.png</file>
         <file>image/playing.png</file>
         <file>image/search.png</file>
+        <file>image/lrc.png</file>
+        <file>image/lrc_on.png</file>
+        <file>image/locked.svg</file>
+        <file>image/unlocked.svg</file>
     </qresource>
 </RCC>

@@ -50,29 +50,12 @@ qt_add_qml_module(
   QML_FILES
   qml/conponents/SideMenu.qml
   RESOURCES
-  image/brightness.png
-  image/delete.png
-  image/loop.png
-  image/love_empty.png
-  image/love.png
-  image/musiclist.png
-  image/night.png
-  image/pause.png
-  image/play.png
-  image/random.png
-  image/single_loop.png
-  image/skip_next.png
-  image/skip_previous.png
-  image/volume_mute.png
-  image/volume.png
-  RESOURCES
   icon.qrc
   QML_FILES
   qml/conponents/LocalPage.qml
   QML_FILES
   QML_FILES
   qml/conponents/VolumeSlider.qml
-
   QML_FILES
   QML_FILES
   QML_FILES
@@ -112,11 +95,13 @@ qt_add_qml_module(
   QML_FILES
   qml/conponents/LrcDisplay.qml
   SOURCES
-
   SOURCES
-
-  RESOURCES data/empty.lrc
-  QML_FILES qml/conponents/SearchBar.qml)
+  RESOURCES
+  data/empty.lrc
+  QML_FILES
+  qml/conponents/SearchBar.qml
+  QML_FILES
+  qml/conponents/DesktopLrc.qml)
 
 target_compile_features(appSHXM PRIVATE cxx_std_23)
 
